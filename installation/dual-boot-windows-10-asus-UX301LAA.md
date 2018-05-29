@@ -26,22 +26,11 @@
 
     With UEFI comes the "Secure Boot Control" options that ensures your PC only uses signed firmware that is trusted by the manufacturer. While it prevents malicious firmware to be installed, this could also potentially prevents you from installing Linux drivers. Note that it is still possible to [install Arch Linux with "Secure Boot Control" enabled](https://wiki.archlinux.org/index.php/Secure_Boot).
 
-    * Enter UEFI/BIOS configuration:
-
-      * select `Windows menu key > Power > Hold Shift + Restart`.
-
-      * then select `Troubleshoot > Advanced Options > UEFI Firmware Settings`.
-
-        <img src="./dual-boot-windows-10-asus-UX301LAA/restart-choose-an-option.png" alt="restart choose an option" height="300px"/>
-        <img src="./dual-boot-windows-10-asus-UX301LAA/restart-troubleshoot.png" alt="restart troubleshoot" height="300px"/>
-        <br/>
-        <img src="./dual-boot-windows-10-asus-UX301LAA/restart-advanced-options.png" alt="restart advanced options" height="300px"/>
-
-      See [How to enter BIOS configuration?](https://www.asus.com/support/faq/1013015/) or [How to Access UEFI BIOS in Windows 10](https://www.cocosenor.com/articles/windows-10/access-uefi-bios-in-windows-10.html) for alternative methods.
+    * Enter [UEFI/BIOS configuration](#enter-uefibios-configuration)
 
     * Under the "Security" tab, set "Secure Boot Control" to disabled: https://www.asus.com/support/FAQ/1013017/
 
-      <img src="./dual-boot-windows-10-asus-UX301LAA/UEFI.png" alt="UEFI" height="300px"/>
+      <img src="./dual-boot-windows-10-asus-UX301LAA/uefi-secure-boot.png" alt="UEFI Secure Boot" height="300px"/>
 
 For more information check out [How to prepare Windows for dual boot with Ubuntu or Linux Mint](https://sites.google.com/site/easylinuxtipsproject/windows).
 
@@ -81,10 +70,83 @@ For more information check out [How to prepare Windows for dual boot with Ubuntu
 
       Since ISOHybrid images comes with their own file system and partitions, one need to select the "Disk Image" mode.
 
-      For more details see:
+    For more details see:
+
       * [ISO Image Mode vs DD Image Mode](https://github.com/pbatard/rufus/issues/843)
       * [Why Is Creating a Bootable USB Drive More Complex Than Creating Bootable CDs?](https://www.howtogeek.com/291484/why-is-creating-a-bootable-usb-drive-more-complex-than-creating-bootable-cds/)
       * [How to build from Linux an ISO hybrid image bootable from BIOS or UEFI](https://github.com/patatetom/isohybrid-bios-uefi)
       * [Creating a bootable USB drive from an ISO image](https://www.turnkeylinux.org/blog/iso2usb)
 
 For more information check out [How to Create Bootable Arch Linux on USB Drive](https://linoxide.com/linux-how-to/create-bootable-arch-linux-usb-drive/) and the Arch Linux wiki on [USB flash installation media](https://wiki.archlinux.org/index.php/USB_flash_installation_media#Using_Rufus).
+
+## Create a partition for Linux
+
+This operation could be done entirely with Linux. However it can be more convenient to create the partition directly with Windows in order to not mess up existing disk partitions, in particular when the laptop is configured with RAID.
+
+> RAID (Redundant Array of Independent Disks) is a data storage virtualization technology that combines multiple physical disk drive components into one or more logical units for the purposes of data redundancy, performance improvement, or both
+>
+> \- Wikipedia
+
+RAID is used to enhance performance and/or data recovery. It defines [6 levels](https://en.wikipedia.org/wiki/Standard_RAID_levels) that leverage different techniques such as striping, mirroring and parity.
+
+There are three [types of RAID](https://en.wikipedia.org/wiki/RAID#Implementations):
+
+* Hardware RAID: RAID managed by an actual external RAID controller.
+* Software RAID: RAID managed by the Operating System.
+* Firmware/Driver RAID, also called "fake RAID": RAID managed by the motherboard.
+
+1.  Check ASUS PC UX301LAA disk type
+
+    * Open the "Disk Management" panel: go to `Control Panel > System and Security > Administrative Tools > Create and format hard disk partitions` and check how many disks there are and their type:
+
+      <img src="./dual-boot-windows-10-asus-UX301LAA/disk-management-basic-disk.png" alt="Disk Management Basic Disk Type" height="300px"/>
+
+      There is only one disk and it is of type "Basic". This excludes the possibility of having a Software RAID since in that case the OS would show multiple disk of type "Dynamic" with the same drive letter.
+
+    * Right click on the disk where the partition will be and select "Properties":
+
+      <img src="./dual-boot-windows-10-asus-UX301LAA/disk-properties.png" alt="Disk Properties" height="300px"/>
+
+      The device display name is "Intel RAID 0 Volume" which strongly hints that the PC is using a Firmware/Fake RAID.
+
+    * Enter [UEFI/BIOS configuration](#enter-uefibios-configuration) and check the SATA mode:
+
+      <img src="./dual-boot-windows-10-asus-UX301LAA/uefi-sata.jpg" alt="UEFI" height="300px"/>
+
+      AHCI (Advanced Host Controller Interface) is the regular SATA mode that would consider each disk as a separate disk.
+
+      RAID (Redundant Array of Independent Disks) is a SATA mode where disks are combined together into a one or multiple "virtual disk" according to one of the standard RAID levels.
+
+      The SATA mode is set to "RAID": it confirms this PC is using Firmware/Fake RAID.
+
+    * To double check, download and install [Intel® Rapid Storage Technology (Intel® RST) User Interface and Driver](https://downloadcenter.intel.com/download/27681/Intel-Rapid-Storage-Technology-Intel-RST-User-Interface-and-Driver). Then open "Intel® Rapid Storage Technology" and check the disk type:
+
+      <img src="./dual-boot-windows-10-asus-UX301LAA/intel-rst.png" alt="Intel RST" height="300px"/>
+
+      This PC has one 512GB disk made of two 256GB SSD (i.e. 238GiB) organize in a [RAID 0](https://en.wikipedia.org/wiki/Standard_RAID_levels#RAID_0): this means that the data is split between the two disks in stripes of 128KiB.
+
+    See [How to check if hardware RAID is configured?](https://serverfault.com/questions/53368/how-to-check-if-hardware-raid-is-configured) for more details.
+
+1.  Using Disk Management, create a new partition:
+
+    * Select an existing partition
+    * Right click and select "Shrink Volume...".
+    * Specify the space you want to free: in our case, we create a slot of 100GB unallocated.
+    * To make sure our new partition will be seen without any issues by Linux, format it (for example as NTFS).
+
+1.  We will later on format the newly defined partition with a file system that Linux supports.
+
+# General Tips
+
+## Enter UEFI/BIOS configuration:
+
+* select `Windows menu key > Power > Hold Shift + Restart`.
+
+* then select `Troubleshoot > Advanced Options > UEFI Firmware Settings`.
+
+  <img src="./dual-boot-windows-10-asus-UX301LAA/restart-choose-an-option.png" alt="restart choose an option" height="300px"/>
+  <img src="./dual-boot-windows-10-asus-UX301LAA/restart-troubleshoot.png" alt="restart troubleshoot" height="300px"/>
+  <br/>
+  <img src="./dual-boot-windows-10-asus-UX301LAA/restart-advanced-options.png" alt="restart advanced options" height="300px"/>
+
+See [How to enter BIOS configuration?](https://www.asus.com/support/faq/1013015/) or [How to Access UEFI BIOS in Windows 10](https://www.cocosenor.com/articles/windows-10/access-uefi-bios-in-windows-10.html) for alternative methods.
