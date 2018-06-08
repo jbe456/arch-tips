@@ -113,11 +113,13 @@ There are three [types of RAID](https://en.wikipedia.org/wiki/RAID#Implementatio
 
       <img src="./dual-boot-windows-10-asus-UX301LAA/uefi-sata.jpg" alt="UEFI" height="300px"/>
 
-      AHCI (Advanced Host Controller Interface) is the regular SATA mode that would consider each disk as a separate disk.
+      [SATA](https://en.wikipedia.org/wiki/Serial_ATA) (Serial ATA, abbreviated from "Serial AT Attachment") is a computer bus interface that connects host bus adapters to mass storage devices such as hard disk drives, optical drives, and solid-state drives. It replaces the older PATA (Parallel ATA) standard. See [Why is serial data transmission faster than parallel?](https://superuser.com/questions/602819/why-is-serial-data-transmission-faster-than-parallel)
 
-      RAID (Redundant Array of Independent Disks) is a SATA mode where disks are combined together into a one or multiple "virtual disk" according to one of the standard RAID levels.
+      [AHCI](https://en.wikipedia.org/wiki/Advanced_Host_Controller_Interface) (Advanced Host Controller Interface) is an enhanced version of the SATA standard. It would consider each physical disk as a separate disk.
 
-      The SATA mode is set to "RAID": it confirms this PC is using Firmware/Fake RAID.
+      [RAID](https://en.wikipedia.org/wiki/RAID) (Redundant Array of Independent Disks) is a SATA mode where physical disks are combined together by the firmware into a one or multiple "virtual disk" according to one of the standard RAID levels.
+
+      The SATA mode, set to "RAID", confirms this PC is using Firmware/Fake RAID.
 
     * To double check, download and install [Intel® Rapid Storage Technology (Intel® RST) User Interface and Driver](https://downloadcenter.intel.com/download/27681/Intel-Rapid-Storage-Technology-Intel-RST-User-Interface-and-Driver). Then open "Intel® Rapid Storage Technology" and check the disk type:
 
