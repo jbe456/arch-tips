@@ -138,6 +138,16 @@ There are three [types of RAID](https://en.wikipedia.org/wiki/RAID#Implementatio
 
 1.  We will later on format the newly defined partition with a file system that Linux supports.
 
+## Install Arch Linux
+
+These steps are mainly inspired from [Arch Linux Installation Guide](https://wiki.archlinux.org/index.php/Installation_guide)
+
+### Boot from USB
+
+1. Insert USB key
+1. Enter [UEFI/BIOS configuration](#enter-uefibios-configuration)
+1. Select the USB media to boot from: "Arch Linux archiso_x86_64 UEFI CD"
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
