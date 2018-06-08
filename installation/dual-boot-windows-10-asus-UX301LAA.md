@@ -148,6 +148,96 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 1. Enter [UEFI/BIOS configuration](#enter-uefibios-configuration)
 1. Select the USB media to boot from: "Arch Linux archiso_x86_64 UEFI CD"
 
+### Prepare installation
+
+* Configure the keyboard to the correct layout: `loadkeys fr`
+
+  See [Keyboard configuration in console](https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console)
+
+* Connect to the Wifi
+
+  See [Wireless network configuration](https://wiki.archlinux.org/index.php/Wireless_network_configuration)
+
+  ```bash
+  > iw dev # Get the interface name
+  phy#0
+    Interface <wifi_interface_name>
+      ifindex 2
+      wdev 0x1
+      addr <xx:xx:xx:xx:xx:xx>
+      type managed
+
+  > wifi-menu <wifi_interface_name> # Open Wifi panel, select network and enter password if necessary
+  > ping google.com # check internet
+  ```
+
+* Identify the partition to format 
+
+  See [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid)
+
+  Be careful to identify the correct partition as all its data will be erased once formatted. 
+
+  ```bash
+  > lsblk                                                               
+  NAME        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+  sda           8:0    0 238.5G  0 disk  
+  └─md126       9:126  0   477G  0 raid0 
+    ├─md126p1 259:0    0   100M  0 md    
+    ├─md126p2 259:1    0   900M  0 md    
+    ├─md126p3 259:2    0   128M  0 md    
+    ├─md126p4 259:3    0 155.8G  0 md    
+    ├─md126p5 259:4    0 200.1G  0 md    
+    ├─md126p6 259:5    0   100G  0 md    
+    └─md126p7 259:6    0    20G  0 md    
+  sdb           8:16   0 238.5G  0 disk  
+  └─md126       9:126  0   477G  0 raid0 
+    ├─md126p1 259:0    0   100M  0 md    
+    ├─md126p2 259:1    0   900M  0 md    
+    ├─md126p3 259:2    0   128M  0 md    
+    ├─md126p4 259:3    0 155.8G  0 md    
+    ├─md126p5 259:4    0 200.1G  0 md    
+    ├─md126p6 259:5    0   100G  0 md    
+    └─md126p7 259:6    0    20G  0 md    
+
+  > sudo blkid
+  /dev/sdb: TYPE="isw_raid_member"
+  /dev/md126: PTUUID="<PTUUID>" PTTYPE="gpt"
+  /dev/sda: TYPE="isw_raid_member"
+  /dev/md126p1: LABEL="SYSTEM" UUID="<UUID>" TYPE="vfat" PARTLABEL="EFI system partition" PARTUUID="<PARTUUID>"
+  /dev/md126p2: LABEL="Recovery" UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
+  /dev/md126p3: PARTLABEL="Microsoft reserved partition" PARTUUID="<PARTUUID>"
+  /dev/md126p4: LABEL="OS" UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
+  /dev/md126p5: LABEL="Data" UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
+  /dev/md126p6: UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
+  /dev/md126p7: LABEL="Restore" UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
+  ```
+
+  `sd` stands for [SCSI disk drive driver](https://linux.die.net/man/4/sd). [SCSI](https://en.wikipedia.org/wiki/SCSI) (Small Computer System Interface) is a set of standards for physically connecting and transferring data between computers and peripheral devices.
+
+  `md` stands for [multi device driver](https://linux.die.net/man/4/md), and represent the virtual RAID disk.
+
+  `p` stands for partition.
+
+  `isw_raid_member` refers to Intel firmware RAID as opposed to `linux_raid_member` which refers to Linux Software RAID.
+
+  Linux detects two 238.5G physical drives "sda" and "sdb" that are virtually grouped under a RAID 0 "md126". The partition to format is "md126p6".
+
+* Format the partition
+
+  See [mkfs](https://linux.die.net/man/8/mkfs)
+
+  The created Linux file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
+
+  ```bash
+  > mkfs --type=ext4 /dev/md126p6
+  ```
+
+* Mount the file system:
+
+  ```bash
+  > mount /dev/md126p6 /mnt # Mount the Linux partition
+  ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
