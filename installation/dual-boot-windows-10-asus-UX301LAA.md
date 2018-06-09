@@ -232,11 +232,30 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > mkfs --type=ext4 /dev/md126p6
   ```
 
-* Mount the file system:
+* Mount the Linux file system:
 
   ```bash
   > mount /dev/md126p6 /mnt # Mount the Linux partition
   ```
+  
+### Installation
+
+* Select the mirror closest to your location
+
+  ```bash
+  > vim /etc/pacman.d/mirrorlist # edit mirror list
+  > /United + Enter # search for "United" 
+  > Shit + v # select whole line
+  > Down arrow # select line below
+  > :m 6 # move both lines to 6th line (i.e. at the top of mirror list)
+  ```
+
+* Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) package using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in) 
+
+  ```bash
+  > pacstrap /mnt base
+  ```
+
 
 # General Tips
 
