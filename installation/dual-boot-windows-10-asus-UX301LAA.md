@@ -232,10 +232,20 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > mkfs --type=ext4 /dev/md126p6
   ```
 
-* Mount the Linux file system:
+  Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) partition, used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition.
+
+* Mount all relevant partitions: 
+  
+  We use the output from `blkid` above to identify each partition:
+    
+    * the Linux partition "md126p6"
+    * the ESP (EFI System partition) "md126p1"
+    * the Windows partition "md126p4"
 
   ```bash
   > mount /dev/md126p6 /mnt # Mount the Linux partition
+  > mount /dev/md126p1 /mnt/boot # Mount the ESP
+  > mount /dev/md126p4 /mnt/windows # Mount the Windows partition
   ```
   
 ### Installation
@@ -255,7 +265,6 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   ```bash
   > pacstrap /mnt base
   ```
-
 
 # General Tips
 
