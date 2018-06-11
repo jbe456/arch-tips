@@ -273,6 +273,38 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > pacstrap /mnt base
   ```
 
+### Configuration
+
+* Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
+
+  The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
+
+  ```bash
+  > genfstab -U /mnt >> /mnt/etc/fstab # persist mounted partitions
+  > cat /mnt/etc/fstab # check it has been correctly generated
+  # Static information about the filesystems.
+  # See fstab(5) for details.
+
+  # <file system> <dir> <type> <options> <dump> <pass>
+
+  # /dev/md126p6
+  UUID=<UUID>     /         	ext4      	rw,relatime,stripe=64,data=ordered	0 1
+
+  # /dev/md126p1 LABEL=SYSTEM
+  UUID=<UUID>     /boot     	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro	0 2
+
+  # /dev/md126p4 LABEL=OS
+  UUID=<UUID>	    /windows  	ntfs      	ro,relatime,uid=0,gid=0,fmask=0177,dmask=077,nls=utf8,errors=continue,mft_zone_multiplier=1	0 0
+  ```
+
+* Change root using the [arch-chroot script](https://git.archlinux.org/arch-install-scripts.git/tree/arch-chroot.in)
+
+  [Chroot](https://wiki.archlinux.org/index.php/change_root) (Change Root) is an operation that changes the apparent root directory for the current running process and their children. 
+
+  ```
+  arch-chroot /mnt
+  ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
