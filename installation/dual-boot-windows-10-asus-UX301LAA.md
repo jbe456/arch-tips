@@ -238,9 +238,16 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   
   We use the output from `blkid` above to identify each partition:
     
-    * the Linux partition "md126p6"
-    * the ESP (EFI System partition) "md126p1"
-    * the Windows partition "md126p4"
+    * the Linux partition: "md126p6"
+    * the [ESP](https://en.wikipedia.org/wiki/EFI_system_partition) (EFI System partition): "md126p1"
+
+      What is an ESP?
+
+      > When a computer is booted, UEFI firmware loads files stored on the ESP to start installed operating systems and various utilities. An ESP contains the boot loaders or kernel images for all installed operating systems (which are contained in other partitions), device driver files for hardware devices present in a computer and used by the firmware at boot time, system utility programs that are intended to be run before an operating system is booted, and data files such as error logs.
+      > 
+      > \- Wikipedia
+
+    * the Windows partition: "md126p4"
 
   ```bash
   > mount /dev/md126p6 /mnt # Mount the Linux partition
