@@ -305,6 +305,39 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   arch-chroot /mnt
   ```
 
+* Configure time and timezone
+
+  There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock) a physical clock powered by a battery. At boot time, the system clock initial value is set from the hardware clock.
+
+  We also want to make sure that we synchronize the clocks with [NTP servers](https://en.wikipedia.org/wiki/Network_Time_Protocol) (Network Time Protocol). By default, Linux connect to servers from the [NTP Pool Project](http://www.pool.ntp.org/) and calls are made at a regular intervals over UDP via port 123 (Check file `/etc/systemd/timesyncd.conf` for configuration).
+
+  ```bash
+  > timedatectl set-ntp true # Synchronize clock with NTP server
+  > timedatectl set-timezone America/New_York # Set correct time zone. Equivalent to 'ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime'
+  > hwclock --systohc # Set the Hardware Clock to the current System Time.
+  > timedatectl status # Check date & time are correct
+                          Local time: Mon 2018-05-07 23:46:59 EDT
+                    Universal time: Tue 2018-05-08 03:46:59 UTC
+                          RTC time: Tue 2018-05-08 03:46:59
+                        Time zone: America/New_York (EDT, -0400)
+        System clock synchronized: yes
+  systemd-timesyncd.service active: yes
+                  RTC in local TZ: no
+  ```
+
+  It is recommended to keep the hardware clock in Coordinated Universal Time (UTC) rather than local time: i.e. Universal and RTC time should be equal. Most operating system considers the hardware clock to be UTC except Windows for [ridiculous compatibility reasons and supposedly to avoid confusing users when setting time via bios (!)](https://blogs.msdn.microsoft.com/oldnewthing/20040902-00/?p=37983).
+
+  The [Arch Linux wiki](https://wiki.archlinux.org/index.php/time#Time_standard) explains well the drawbacks of using local time for hardware clock:
+
+  >If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set to localtime, more than one operating system may adjust it after a DST change for example, thus resulting in an over-correction; problems may also arise when traveling between different time zones and using one of the operating systems to reset the system/hardware clock.
+
+  To have Windows consider the hardware clock as UTC, do the following:
+
+  * In the registry, under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, add a key `RealTimeIsUniversal` with a value `00000001` of type `dword`
+  * Disable Windows Time Service by running this command: `sc config w32time start= disabled`
+
+  See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
