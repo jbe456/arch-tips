@@ -352,11 +352,43 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   * `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
 
 * Install Vim
-
+  
   We will use Vim later on to edit configuration files. It is a best practice to update the system before installing new packages to avoid incompatibilities.
 
   ```bash
   > pacman -Syu vim
+  ```
+
+* Configure the locale
+
+  Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code, "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code, and "codeset" is a character set or encoding identifier.
+
+  Here are the main characters sets:
+
+  * [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
+  * [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
+  * [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
+
+  Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
+
+  ```bash
+  > vim /etc/locale.gen # edit locale file
+  > /en_US + Enter # search for "en_US" 
+  > n # go to next occurence until you find your entry
+  > i # enter in edit mode
+  > <Suppr> # uncomment line
+  ```
+
+  * Generate the locale
+  
+  ```bash
+  > locale-gen
+  ```
+
+  * Set the system locale
+
+  ```bash
+  > vim /etc/locale.conf LANG=en-US.UTF-8
   ```
 
 # General Tips
