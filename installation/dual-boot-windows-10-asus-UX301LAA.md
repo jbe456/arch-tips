@@ -338,6 +338,27 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
 
+* Upgrade the whole system:
+
+  [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
+
+  ```bash
+  > pacman -Syu
+  ```
+  where:
+
+  * `S` or `sync`: operation to install packages.
+  * `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
+  * `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
+
+* Install Vim
+
+  We will use Vim later on to edit configuration files. It is a best practice to update the system before installing new packages to avoid incompatibilities.
+
+  ```bash
+  > pacman -Syu vim
+  ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
