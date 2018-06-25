@@ -391,6 +391,66 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > vim /etc/locale.conf LANG=en-US.UTF-8
   ```
 
+  * Configure the keyboard layout
+
+  To list all keyboard layouts related to French:
+
+  ```bash
+  > localectl list-keymaps|grep fr #layout files can be listed using `ls /usr/share/kbd/keymaps/**/*.map.gz`
+  dvorak-ca-fr
+  dvorak-fr
+  fr
+  fr-bepo
+  fr-bepo-latin9
+  fr-latin1
+  fr-latin9
+  fr-pc
+  fr_CH
+  fr_CH-latin1
+  mac-fr
+  mac-fr_CH-latin1
+  sunt5-fr-latin1
+  ```
+
+  To try a keyboard layout:
+
+  ```bash
+  > loadkeys fr-latin9
+  ```
+
+  To compare the layouts:
+
+  ```bash
+  > mkdir /tmp/layouts # create temporary directory
+  > ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
+  /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz
+  /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz
+  /usr/share/kbd/keymaps/i386/azerty/fr.map.gz
+  /usr/share/kbd/keymaps/i386/azerty/fr-pc.map.gz
+  /usr/share/kbd/keymaps/i386/bepo/fr-bepo-latin9.map.gz
+  /usr/share/kbd/keymaps/i386/bepo/fr-bepo.map.gz
+  /usr/share/kbd/keymaps/i386/dvorak/dvorak-ca-fr.map.gz
+  /usr/share/kbd/keymaps/i386/dvorak/dvorak-fr.map.gz
+  /usr/share/kbd/keymaps/i386/qwertz/fr_CH-latin1.map.gz
+  /usr/share/kbd/keymaps/i386/qwertz/fr_CH.map.gz
+  /usr/share/kbd/keymaps/mac/all/mac-fr_CH-latin1.map.gz
+  /usr/share/kbd/keymaps/mac/all/mac-fr.map.gz
+  /usr/share/kbd/keymaps/sun/sunt5-fr-latin1.map.gz
+  > cp -t /tmp/layouts /usr/share/kbd/keymaps/i386/azerty/fr.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz # copy over the layouts
+  > cd /tmp/layouts
+  > gunzip *.gz # unzip
+  > vim -d fr.map fr-latin1.map # compare fr with fr-latin1
+  > vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
+  ```
+
+  `fr` differs for several keys from a regular french keyboard. `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset while `fr-latin9` is following the [ISO-8859-15](https://en.wikipedia.org/wiki/ISO/IEC_8859-15) charset. The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
+
+  To persist the keyboard layout:
+
+  ```bash
+  > vim /etc/vconsole.conf KEYMAP=fr-latin9
+  ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
