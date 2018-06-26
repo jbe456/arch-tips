@@ -451,6 +451,22 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > vim /etc/vconsole.conf KEYMAP=fr-latin9
   ```
 
+* Configure Network
+
+  * Define the hostname:
+
+  ```bash
+  > vim /etc/hostname <hostname>
+  ```
+
+  * Create the `hosts` file via `vim /etc/hosts`
+
+    ```
+    127.0.0.1 localhost
+    ::1 localhost
+    127.0.1.1 <hostname>.localdomain <hostname>
+    ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
