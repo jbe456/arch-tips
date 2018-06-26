@@ -467,6 +467,12 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     127.0.1.1 <hostname>.localdomain <hostname>
     ```
 
+* Set the root password
+
+  ```bash
+  > passwd
+  ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
