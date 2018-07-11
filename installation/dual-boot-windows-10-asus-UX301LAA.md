@@ -548,6 +548,82 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     #fallback_options="-S autodetect"
     ```
 
+  * Install GRUB
+
+    [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader. 
+
+    > A boot loader is the first program that runs when a computer starts. It is responsible for selecting, loading and transferring control to an operating system kernel. The kernel, in turn, initializes the rest of the operating system.
+    >
+    > - Arch Linux Wiki
+
+    1. Install:
+
+        * `grub`: the multiboot boot loader.
+        * `efibootmgr`: manipulates the boot manager and creates bootable .efi stub entries used by the GRUB installation script.
+        * `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
+
+        ```bash
+        > pacman -Syu grub efibootmgr intel-ucode
+        ```
+
+    2. Execute the following command to install the GRUB UEFI application `grubx64.efi` to `/boot/grub` and install its modules to `/boot/grub/x86_64-efi/`.
+
+        ```bash
+        > grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
+        ```
+
+    3. Remove the "Advanced Options" submenu: edit `/etc/default/grub` and add `GRUB_DISABLE_SUBMENU=y`
+
+    4. Add additional entries to the GRUB menu:
+
+        ```bash
+        > vim /boot/grub/custom.cfg
+        ```
+
+        And insert the content below to have the following entries:
+
+          * a windows startup
+          * a UEFI
+          * a shutdown
+          * a restart
+
+        ```bash
+        if [ "${grub_platform}" == "efi"]; then
+          menuentry "Microsoft Windows 10" {
+            insmod part_gpt
+            insmod fat
+            insmod search_fs_uuid
+            insmod chain
+            search --fs-uuid --set=root <ESP UUID>
+            chainloader /EFI/Microsoft/Boot/bootmgfw.efi
+          }
+        fi
+
+        menuentry "Firmware setup" {
+          fwsetup
+        }
+
+        menuentry "System shutdown" {
+          echo "System shutting down..."
+          halt
+        }
+
+        menuentry "System restart" {
+          echo "System rebooting..."
+          reboot
+        }
+        ```
+
+        Where `<ESP UUID>` is to replace with the UUID of the ESP obtained via `sudo blkid /dev/md126p1`
+
+    5. Generate GRUB config:
+
+        ```bash
+        > grub-mkconfig -o /boot/grub/grub.cfg
+        ```
+
+        It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
