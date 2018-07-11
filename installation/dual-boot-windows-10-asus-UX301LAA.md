@@ -679,6 +679,18 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 
         It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
 
+  - As this PC uses a firmware RAID, we need to make sure the initial ramdisk archive loads the `mdadm_udev` module, which is a utility to manage firmware/software RAID configurations.
+
+    1.  Edit `/etc/mkinitcpio.conf` and add `mdadm_udev` to the list of HOOKS:
+
+        ```bash
+        HOOKS=(base udev autodetect modconf block mdadm_udev filesystems keyboard fsck)
+        ```
+
+    1.  Regenerate the initial ramdisk archive using `mkinitcpio -p linux`
+
+    See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
