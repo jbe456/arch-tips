@@ -158,7 +158,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   See [Wireless network configuration](https://wiki.archlinux.org/index.php/Wireless_network_configuration)
 
-  ```bash
+  ```console
   > iw dev # Get the interface name
   phy#0
     Interface <wifi_interface_name>
@@ -177,7 +177,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   Be careful to identify the correct partition as all its data will be erased once formatted.
 
-  ```bash
+  ```console
   > lsblk
   NAME        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
   sda           8:0    0 238.5G  0 disk  
@@ -228,7 +228,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   The created Linux file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
 
-  ```bash
+  ```console
   > mkfs --type=ext4 /dev/md126p6
   ```
 
@@ -249,7 +249,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   - the Windows partition: "md126p4"
 
-  ```bash
+  ```console
   > mount /dev/md126p6 /mnt # Mount the Linux partition
   > mount /dev/md126p1 /mnt/boot # Mount the ESP
   > mount /dev/md126p4 /mnt/windows # Mount the Windows partition
@@ -259,7 +259,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 - Select the mirror closest to your location (United State in this case)
 
-  ```bash
+  ```console
   > vim /etc/pacman.d/mirrorlist # edit mirror list
   > /United + Enter # search for "United"
   > Shit + v # select whole line
@@ -269,7 +269,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 - Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) package using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)
 
-  ```bash
+  ```console
   > pacstrap /mnt base
   ```
 
@@ -279,7 +279,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
 
-  ```bash
+  ```console
   > genfstab -U /mnt >> /mnt/etc/fstab # persist mounted partitions
   > cat /mnt/etc/fstab # check it has been correctly generated
   # Static information about the filesystems.
@@ -311,7 +311,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   We also want to make sure that we synchronize the clocks with [NTP servers](https://en.wikipedia.org/wiki/Network_Time_Protocol) (Network Time Protocol). By default, Linux connect to servers from the [NTP Pool Project](http://www.pool.ntp.org/) and calls are made at a regular intervals over UDP via port 123 (Check file `/etc/systemd/timesyncd.conf` for configuration).
 
-  ```bash
+  ```console
   > timedatectl set-ntp true # Synchronize clock with NTP server
   > timedatectl set-timezone America/New_York # Set correct time zone. Equivalent to 'ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime'
   > hwclock --systohc # Set the Hardware Clock to the current System Time.
@@ -342,7 +342,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
 
-  ```bash
+  ```console
   > pacman -Syu
   ```
 
@@ -358,7 +358,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   We install `gvim` instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`). We will still use the `vim` command however.
 
-  ```bash
+  ```console
   > pacman -Syu gvim
   ```
 
@@ -374,7 +374,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
 
-  ```bash
+  ```console
   > vim /etc/locale.gen # edit locale file
   > /en_US + Enter # search for "en_US"
   > n # go to next occurence until you find your entry
@@ -384,13 +384,13 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   - Generate the locale
 
-  ```bash
+  ```console
   > locale-gen
   ```
 
   - Set the system locale
 
-  ```bash
+  ```console
   > vim /etc/locale.conf LANG=en-US.UTF-8
   ```
 
@@ -398,7 +398,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   To list all keyboard layouts related to French:
 
-  ```bash
+  ```console
   > localectl list-keymaps|grep fr #layout files can be listed using `ls /usr/share/kbd/keymaps/**/*.map.gz`
   dvorak-ca-fr
   dvorak-fr
@@ -417,13 +417,13 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   To try a keyboard layout:
 
-  ```bash
+  ```console
   > loadkeys fr-latin9
   ```
 
   To compare the layouts:
 
-  ```bash
+  ```console
   > mkdir /tmp/layouts # create temporary directory
   > ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
   /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz
@@ -450,7 +450,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   To persist the keyboard layout:
 
-  ```bash
+  ```console
   > vim /etc/vconsole.conf KEYMAP=fr-latin9
   ```
 
@@ -458,7 +458,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   - Define the hostname:
 
-  ```bash
+  ```console
   > vim /etc/hostname <hostname>
   ```
 
@@ -472,7 +472,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 - Set the root password
 
-  ```bash
+  ```console
   > passwd
   ```
 
@@ -484,7 +484,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
     See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
 
-    ```bash
+    ```console
     > mkdir /esp-backup
     > tar cfz /esp-backup/esp-backup.tar.gz /boot/
     ```
@@ -497,7 +497,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
     The output below are the one after installing GRUB and Arch Linux.
 
-    ```bash
+    ```console
     > df -h /boot # Disk Free, `h` for human readable
     Filesystem      Size  Used Avail Use% Mounted on
     /dev/md126p1     96M   75M   22M  78% /boot
@@ -563,13 +563,13 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
         - `efibootmgr`: manipulates the boot manager and creates bootable .efi stub entries used by the GRUB installation script.
         - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
 
-        ```bash
+        ```console
         > pacman -Syu grub efibootmgr intel-ucode
         ```
 
     1.  Execute the following command to install the GRUB UEFI application `grubx64.efi` to `/boot/grub` and install its modules to `/boot/grub/x86_64-efi/`.
 
-        ```bash
+        ```console
         > grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
         ```
 
@@ -577,7 +577,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
     1.  Add additional entries to the GRUB menu:
 
-        ```bash
+        ```console
         > vim /boot/grub/custom.cfg
         ```
 
@@ -619,7 +619,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
     1.  Generate GRUB config:
 
-        ```bash
+        ```console
         > grub-mkconfig -o /boot/grub/grub.cfg
         ```
 
