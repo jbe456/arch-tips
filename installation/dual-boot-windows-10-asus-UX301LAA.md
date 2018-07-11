@@ -222,17 +222,71 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   Linux detects two 238.5G physical drives "sda" and "sdb" that are virtually grouped under a RAID 0 "md126". The partition to format is "md126p6".
 
-- Format the partition
-
-  See [mkfs](https://linux.die.net/man/8/mkfs)
-
-  The created Linux file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
+  Here are alternative commands to confirm the firmware RAID:
 
   ```console
-  > mkfs --type=ext4 /dev/md126p6
+  > lspci -vv|grep -i raid
+  00:1f.2 RAID bus controller: Intel Corporation 82801 Mobile SATA Controller [RAID mode] (rev 04)
+  		  Subsystem: ASUSTeK Computer Inc. 82801 Mobile SATA Controller [RAID mode]
+  > sudo cat proc/mdstat
+  Personalities : [raid0]
+  md126 : active raid0 sda[1] sdb[0]
+        500113408 blocks super external:/md127/0 128k chunks
+
+  md127 : inactive sda[1](S) sdb[0](S)
+        4520 blocks super external:imsm
+
+  unused devices: <none>
+  > sudo mdadm -D /dev/md126
+  /dev/md126:
+        Container : /dev/md/imsm0, member 0
+      Raid Level : raid0
+      Array Size : 500113408 (476.95 GiB 512.12 GB)
+    Raid Devices : 2
+    Total Devices : 2
+
+            State : clean
+  Active Devices : 2
+  Working Devices : 2
+  Failed Devices : 0
+    Spare Devices : 0
+
+      Chunk Size : 128K
+
+            UUID : <uuid>
+      Number   Major   Minor   RaidDevice State
+        1       8        0        0      active sync   /dev/sda
+        0       8       16        1      active sync   /dev/sdb
+  > sudo mdadm -D /dev/imsm0
+  /dev/md/imsm0:
+          Version : imsm
+      Raid Level : container
+    Total Devices : 2
+
+  Working Devices : 2
+
+            UUID : <uuid>
+    Member Arrays : /dev/md/ASUS_OS_0
+
+      Number   Major   Minor   RaidDevice
+
+        0       8       16        -        /dev/sdb
+        1       8        0        -        /dev/sda
   ```
 
-  Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) partition, used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition.
+  Where `imsm` stands for [Intel Matrix Storage Manager](https://en.wikipedia.org/wiki/Intel_Matrix_RAID)
+
+- Format the partition
+
+See [mkfs](https://linux.die.net/man/8/mkfs)
+
+The created Linux file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
+
+```console
+> mkfs --type=ext4 /dev/md126p6
+```
+
+Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) partition, used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition.
 
 - Mount all relevant partitions:
 
@@ -645,7 +699,7 @@ See [How to enter BIOS configuration?](https://www.asus.com/support/faq/1013015/
 If, for any reason, the system does not boot and prompt you to Arch emergency shell:
 
 ```
-Error: can't find UUID=<UUID>
+Error: unable to find root device 'UUID=<uuid>'
 You are now being dropped into a emergency shell.
 ```
 
