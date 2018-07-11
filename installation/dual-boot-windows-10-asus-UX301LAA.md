@@ -475,6 +475,19 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > passwd
   ```
 
+* Configure the bootloader
+
+  * Backup the ESP (EFI System partition):
+
+    Before doing any modifications, we backup the ESP in case we need to restore its initial state. 
+  
+    See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
+
+    ```bash
+    > mkdir /esp-backup
+    > tar cfz /esp-backup/esp-backup.tar.gz /boot/
+    ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
