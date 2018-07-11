@@ -488,6 +488,38 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     > tar cfz /esp-backup/esp-backup.tar.gz /boot/
     ```
 
+  * Check there is enough space to install Linux on the ESP.
+
+    In this current configuration `/boot` is about 100M and the available space is not enough to install both default and fallback Linux image (see next paragraph).
+
+    We first use `df` to get the percentage of available space. Then we use, `du` to determine which element takes space. As a note, one can also install and use `ncdu` (Ncurses Disk Usage, see https://en.wikipedia.org/wiki/Ncurses). 
+
+    The output below are the one after installing GRUB and Arch Linux.
+
+    ```bash
+    > df -h /boot # Disk Free, `h` for human readable
+    Filesystem      Size  Used Avail Use% Mounted on
+    /dev/md126p1     96M   75M   22M  78% /boot
+    > du -chd1 /boot/* # Disk Usage, `h` for human readable, `c` for total, `d1` for max depth one
+    1.0K	/boot/BOOTSECT.BAK
+    25M	/boot/EFI/Microsoft
+    1.3M	/boot/EFI/Boot
+    318K	/boot/EFI/ASUS
+    120K	/boot/EFI/grub
+    27M	/boot/EFI
+    2.8M	/boot/grub/x86_64-efi
+    3.9M	/boot/grub/locale
+    2.8M	/boot/grub/themes
+    2.3M	/boot/grub/fonts
+    12M	/boot/grub
+    7.6M	/boot/initramfs-linux.img
+    1.6M	/boot/intel-ucode.img
+    23M	/boot/snapshots
+    2.0K	/boot/System Volume Information
+    5.1M	/boot/vmlinuz-linux
+    75M	total
+    ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
