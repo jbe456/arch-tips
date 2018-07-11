@@ -520,6 +520,34 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     75M	total
     ```
 
+  * Reduce Linux image installation size:
+
+    If there is not enough available space, one solution is to reduce the size of the images that will be generated installing the Linux boot files. 
+
+    The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"): each "initial ramdisk" is generated as an image file available on the ESP when loading Linux. `cpio` is similar to `tar`: it creates an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the `.img` extension.
+
+    By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start. When Linux does not start, we can always repair the system by booting on a USB stick. It is therefore acceptable to remove the "fallback" option.
+
+    Edit `/etc/mkinitcpio.d/linux.preset` and comment the fallback options:
+
+    ```bash
+    # mkinitcpio preset file for the 'linux' package
+
+    ALL_config="/etc/mkinitcpio.conf"
+    ALL_kver="/boot/vmlinuz-linux"
+
+    #PRESETS=('default' 'fallback')
+    PRESETS=('default')
+
+    #default_config="/etc/mkinitcpio.conf"
+    default_image="/boot/initramfs-linux.img"
+    #default_options=""
+
+    #fallback_config="/etc/mkinitcpio.conf"
+    #fallback_image="/boot/initramfs-linux-fallback.img"
+    #fallback_options="-S autodetect"
+    ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
