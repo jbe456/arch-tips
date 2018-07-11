@@ -355,8 +355,10 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   
   We will use Vim later on to edit configuration files. It is a best practice to update the system before installing new packages to avoid incompatibilities.
 
+  We install `gvim` instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`). We will still use the `vim` command however.
+
   ```bash
-  > pacman -Syu vim
+  > pacman -Syu gvim
   ```
 
 * Configure the locale
