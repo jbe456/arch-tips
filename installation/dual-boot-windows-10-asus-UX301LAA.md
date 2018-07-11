@@ -6,29 +6,29 @@
 
     Each motherboard is shipped with a firmware to handle the hardware initialization process. Designed in 1975, BIOS, a.k.a. "Basic Input-Output System" has been the norm for boot firmware until 2005. UEFI, a.k.a. "Unified Extensible Firmware Interface", is BIOS' improved successor. It is shipped with modern PC and is the one used in this tutorial to install Arch Linux.
 
-    * Open command prompt and launch "Sytem Information": `Windows + R > cmd > msinfo32`
+    - Open command prompt and launch "Sytem Information": `Windows + R > cmd > msinfo32`
 
       <img src="./dual-boot-windows-10-asus-UX301LAA/msinfo32.png" alt="msinfo32" height="300px"/>
 
-    * Make sure "BIOS mode" is `UEFI`
+    - Make sure "BIOS mode" is `UEFI`
 
 1.  Disable "fast startup":
 
     This is to avoid potential data loss. Indeed, Windows "fast startup" boots the sytem faster by reading the necessary information from the hibernation file. Therefore, once Windows is shutdown, if you attempt to copy some files from Linux to Windows, those files would be lost because not present in the hibernation file. See [Why disable Fast Boot on Windows 8 when having dual booting?](https://askubuntu.com/questions/452071/why-disable-fast-boot-on-windows-8-when-having-dual-booting) for more details.
 
-    * Go to `Control Panel > Hardware and Sound > Power Options > System Settings`
+    - Go to `Control Panel > Hardware and Sound > Power Options > System Settings`
 
       <img src="./dual-boot-windows-10-asus-UX301LAA/fast-startup.png" alt="fast startup" height="300px"/>
 
-    * Uncheck "Turn on fast start-up"
+    - Uncheck "Turn on fast start-up"
 
 1.  Disable "Secure Boot Control"
 
     With UEFI comes the "Secure Boot Control" options that ensures your PC only uses signed firmware that is trusted by the manufacturer. While it prevents malicious firmware to be installed, this could also potentially prevents you from installing Linux drivers. Note that it is still possible to [install Arch Linux with "Secure Boot Control" enabled](https://wiki.archlinux.org/index.php/Secure_Boot).
 
-    * Enter [UEFI/BIOS configuration](#enter-uefibios-configuration)
+    - Enter [UEFI/BIOS configuration](#enter-uefibios-configuration)
 
-    * Under the "Security" tab, set "Secure Boot Control" to disabled: https://www.asus.com/support/FAQ/1013017/
+    - Under the "Security" tab, set "Secure Boot Control" to disabled: https://www.asus.com/support/FAQ/1013017/
 
       <img src="./dual-boot-windows-10-asus-UX301LAA/uefi-secure-boot.png" alt="UEFI Secure Boot" height="300px"/>
 
@@ -43,7 +43,7 @@ For more information check out [How to prepare Windows for dual boot with Ubuntu
 
     <img src="./dual-boot-windows-10-asus-UX301LAA/rufus.png" alt="rufus" height="300px"/>
 
-    * Partition scheme: "GPT partition scheme for UEFI"
+    - Partition scheme: "GPT partition scheme for UEFI"
 
       MBR (Master Boot Record) and GPT (GUID Partition Table) are two different ways of storing the partitioning information on a drive. This information includes where partitions start and begin, so your operating system knows which sectors belong to each partition and which partition is bootable. GPT is MBR's improved successor and is the one used in this tutorial. For more details, see [What’s the Difference Between GPT and MBR When Partitioning a Drive?](https://www.linkedin.com/pulse/whats-difference-between-gpt-mbr-when-partitioning-drive-tiwari)
 
@@ -91,25 +91,25 @@ RAID is used to enhance performance and/or data recovery. It defines [6 levels](
 
 There are three [types of RAID](https://en.wikipedia.org/wiki/RAID#Implementations):
 
-* Hardware RAID: RAID managed by an actual external RAID controller.
-* Software RAID: RAID managed by the Operating System.
-* Firmware/Driver RAID, also called "fake RAID": RAID managed by the motherboard.
+- Hardware RAID: RAID managed by an actual external RAID controller.
+- Software RAID: RAID managed by the Operating System.
+- Firmware/Driver RAID, also called "fake RAID": RAID managed by the motherboard.
 
 1.  Check ASUS PC UX301LAA disk type
 
-    * Open the "Disk Management" panel: go to `Control Panel > System and Security > Administrative Tools > Create and format hard disk partitions` and check how many disks there are and their type:
+    - Open the "Disk Management" panel: go to `Control Panel > System and Security > Administrative Tools > Create and format hard disk partitions` and check how many disks there are and their type:
 
       <img src="./dual-boot-windows-10-asus-UX301LAA/disk-management-basic-disk.png" alt="Disk Management Basic Disk Type" height="300px"/>
 
       There is only one disk and it is of type "Basic". This excludes the possibility of having a Software RAID since in that case the OS would show multiple disk of type "Dynamic" with the same drive letter.
 
-    * Right click on the disk where the partition will be and select "Properties":
+    - Right click on the disk where the partition will be and select "Properties":
 
       <img src="./dual-boot-windows-10-asus-UX301LAA/disk-properties.png" alt="Disk Properties" height="300px"/>
 
       The device display name is "Intel RAID 0 Volume" which strongly hints that the PC is using a Firmware/Fake RAID.
 
-    * Enter [UEFI/BIOS configuration](#enter-uefibios-configuration) and check the SATA mode:
+    - Enter [UEFI/BIOS configuration](#enter-uefibios-configuration) and check the SATA mode:
 
       <img src="./dual-boot-windows-10-asus-UX301LAA/uefi-sata.jpg" alt="UEFI" height="300px"/>
 
@@ -121,7 +121,7 @@ There are three [types of RAID](https://en.wikipedia.org/wiki/RAID#Implementatio
 
       The SATA mode, set to "RAID", confirms this PC is using Firmware/Fake RAID.
 
-    * To double check, download and install [Intel® Rapid Storage Technology (Intel® RST) User Interface and Driver](https://downloadcenter.intel.com/download/27681/Intel-Rapid-Storage-Technology-Intel-RST-User-Interface-and-Driver). Then open "Intel® Rapid Storage Technology" and check the disk type:
+    - To double check, download and install [Intel® Rapid Storage Technology (Intel® RST) User Interface and Driver](https://downloadcenter.intel.com/download/27681/Intel-Rapid-Storage-Technology-Intel-RST-User-Interface-and-Driver). Then open "Intel® Rapid Storage Technology" and check the disk type:
 
       <img src="./dual-boot-windows-10-asus-UX301LAA/intel-rst.png" alt="Intel RST" height="300px"/>
 
@@ -131,10 +131,10 @@ There are three [types of RAID](https://en.wikipedia.org/wiki/RAID#Implementatio
 
 1.  Using Disk Management, create a new partition:
 
-    * Select an existing partition
-    * Right click and select "Shrink Volume...".
-    * Specify the space you want to free: in our case, we create a slot of 100GB unallocated.
-    * To make sure our new partition will be seen without any issues by Linux, format it (for example as NTFS).
+    - Select an existing partition
+    - Right click and select "Shrink Volume...".
+    - Specify the space you want to free: in our case, we create a slot of 100GB unallocated.
+    - To make sure our new partition will be seen without any issues by Linux, format it (for example as NTFS).
 
 1.  We will later on format the newly defined partition with a file system that Linux supports.
 
@@ -144,17 +144,17 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 ### Boot from USB
 
-1. Insert USB key
-1. Enter [UEFI/BIOS configuration](#enter-uefibios-configuration)
-1. Select the USB media to boot from: "Arch Linux archiso_x86_64 UEFI CD"
+1.  Insert USB key
+1.  Enter [UEFI/BIOS configuration](#enter-uefibios-configuration)
+1.  Select the USB media to boot from: "Arch Linux archiso_x86_64 UEFI CD"
 
 ### Prepare installation
 
-* Configure the keyboard to the correct layout: `loadkeys fr`
+- Configure the keyboard to the correct layout: `loadkeys fr`
 
   See [Keyboard configuration in console](https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console)
 
-* Connect to the Wifi
+- Connect to the Wifi
 
   See [Wireless network configuration](https://wiki.archlinux.org/index.php/Wireless_network_configuration)
 
@@ -171,33 +171,33 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > ping google.com # check internet
   ```
 
-* Identify the partition to format 
+- Identify the partition to format
 
   See [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid)
 
-  Be careful to identify the correct partition as all its data will be erased once formatted. 
+  Be careful to identify the correct partition as all its data will be erased once formatted.
 
   ```bash
-  > lsblk                                                               
+  > lsblk
   NAME        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
   sda           8:0    0 238.5G  0 disk  
-  └─md126       9:126  0   477G  0 raid0 
-    ├─md126p1 259:0    0   100M  0 md    
-    ├─md126p2 259:1    0   900M  0 md    
-    ├─md126p3 259:2    0   128M  0 md    
-    ├─md126p4 259:3    0 155.8G  0 md    
-    ├─md126p5 259:4    0 200.1G  0 md    
-    ├─md126p6 259:5    0   100G  0 md    
-    └─md126p7 259:6    0    20G  0 md    
+  └─md126       9:126  0   477G  0 raid0
+    ├─md126p1 259:0    0   100M  0 md
+    ├─md126p2 259:1    0   900M  0 md
+    ├─md126p3 259:2    0   128M  0 md
+    ├─md126p4 259:3    0 155.8G  0 md
+    ├─md126p5 259:4    0 200.1G  0 md
+    ├─md126p6 259:5    0   100G  0 md
+    └─md126p7 259:6    0    20G  0 md
   sdb           8:16   0 238.5G  0 disk  
-  └─md126       9:126  0   477G  0 raid0 
-    ├─md126p1 259:0    0   100M  0 md    
-    ├─md126p2 259:1    0   900M  0 md    
-    ├─md126p3 259:2    0   128M  0 md    
-    ├─md126p4 259:3    0 155.8G  0 md    
-    ├─md126p5 259:4    0 200.1G  0 md    
-    ├─md126p6 259:5    0   100G  0 md    
-    └─md126p7 259:6    0    20G  0 md    
+  └─md126       9:126  0   477G  0 raid0
+    ├─md126p1 259:0    0   100M  0 md
+    ├─md126p2 259:1    0   900M  0 md
+    ├─md126p3 259:2    0   128M  0 md
+    ├─md126p4 259:3    0 155.8G  0 md
+    ├─md126p5 259:4    0 200.1G  0 md
+    ├─md126p6 259:5    0   100G  0 md
+    └─md126p7 259:6    0    20G  0 md
 
   > sudo blkid
   /dev/sdb: TYPE="isw_raid_member"
@@ -222,7 +222,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   Linux detects two 238.5G physical drives "sda" and "sdb" that are virtually grouped under a RAID 0 "md126". The partition to format is "md126p6".
 
-* Format the partition
+- Format the partition
 
   See [mkfs](https://linux.die.net/man/8/mkfs)
 
@@ -234,40 +234,40 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) partition, used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition.
 
-* Mount all relevant partitions: 
-  
+- Mount all relevant partitions:
+
   We use the output from `blkid` above to identify each partition:
-    
-    * the Linux partition: "md126p6"
-    * the [ESP](https://en.wikipedia.org/wiki/EFI_system_partition) (EFI System partition): "md126p1"
 
-      What is an ESP?
+  - the Linux partition: "md126p6"
+  - the [ESP](https://en.wikipedia.org/wiki/EFI_system_partition) (EFI System partition): "md126p1"
 
-      > When a computer is booted, UEFI firmware loads files stored on the ESP to start installed operating systems and various utilities. An ESP contains the boot loaders or kernel images for all installed operating systems (which are contained in other partitions), device driver files for hardware devices present in a computer and used by the firmware at boot time, system utility programs that are intended to be run before an operating system is booted, and data files such as error logs.
-      > 
-      > \- Wikipedia
+    What is an ESP?
 
-    * the Windows partition: "md126p4"
+    > When a computer is booted, UEFI firmware loads files stored on the ESP to start installed operating systems and various utilities. An ESP contains the boot loaders or kernel images for all installed operating systems (which are contained in other partitions), device driver files for hardware devices present in a computer and used by the firmware at boot time, system utility programs that are intended to be run before an operating system is booted, and data files such as error logs.
+    >
+    > \- Wikipedia
+
+  - the Windows partition: "md126p4"
 
   ```bash
   > mount /dev/md126p6 /mnt # Mount the Linux partition
   > mount /dev/md126p1 /mnt/boot # Mount the ESP
   > mount /dev/md126p4 /mnt/windows # Mount the Windows partition
   ```
-  
+
 ### Installation
 
-* Select the mirror closest to your location (United State in this case)
+- Select the mirror closest to your location (United State in this case)
 
   ```bash
   > vim /etc/pacman.d/mirrorlist # edit mirror list
-  > /United + Enter # search for "United" 
+  > /United + Enter # search for "United"
   > Shit + v # select whole line
   > <Down arrow> # select line below
   > :m 6 # move both lines to 6th line (i.e. at the top of mirror list)
   ```
 
-* Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) package using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in) 
+- Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) package using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)
 
   ```bash
   > pacstrap /mnt base
@@ -275,7 +275,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 ### Configuration
 
-* Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
+- Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 
   The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
 
@@ -297,15 +297,15 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   UUID=<UUID>	    /windows  	ntfs      	ro,relatime,uid=0,gid=0,fmask=0177,dmask=077,nls=utf8,errors=continue,mft_zone_multiplier=1	0 0
   ```
 
-* Change root using the [arch-chroot script](https://git.archlinux.org/arch-install-scripts.git/tree/arch-chroot.in)
+- Change root using the [arch-chroot script](https://git.archlinux.org/arch-install-scripts.git/tree/arch-chroot.in)
 
-  [Chroot](https://wiki.archlinux.org/index.php/change_root) (Change Root) is an operation that changes the apparent root directory for the current running process and their children. 
+  [Chroot](https://wiki.archlinux.org/index.php/change_root) (Change Root) is an operation that changes the apparent root directory for the current running process and their children.
 
   ```
   arch-chroot /mnt
   ```
 
-* Configure time and timezone
+- Configure time and timezone
 
   There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock) a physical clock powered by a battery. At boot time, the system clock initial value is set from the hardware clock.
 
@@ -329,30 +329,31 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   The [Arch Linux wiki](https://wiki.archlinux.org/index.php/time#Time_standard) explains well the drawbacks of using local time for hardware clock:
 
-  >If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set to localtime, more than one operating system may adjust it after a DST change for example, thus resulting in an over-correction; problems may also arise when traveling between different time zones and using one of the operating systems to reset the system/hardware clock.
+  > If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set to localtime, more than one operating system may adjust it after a DST change for example, thus resulting in an over-correction; problems may also arise when traveling between different time zones and using one of the operating systems to reset the system/hardware clock.
 
   To have Windows consider the hardware clock as UTC, do the following:
 
-  * In the registry, under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, add a key `RealTimeIsUniversal` with a value `00000001` of type `dword`
-  * Disable Windows Time Service by running this command: `sc config w32time start= disabled`
+  - In the registry, under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, add a key `RealTimeIsUniversal` with a value `00000001` of type `dword`
+  - Disable Windows Time Service by running this command: `sc config w32time start= disabled`
 
   See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
 
-* Upgrade the whole system:
+- Upgrade the whole system:
 
   [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
 
   ```bash
   > pacman -Syu
   ```
+
   where:
 
-  * `S` or `sync`: operation to install packages.
-  * `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
-  * `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
+  - `S` or `sync`: operation to install packages.
+  - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
+  - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
 
-* Install Vim
-  
+- Install Vim
+
   We will use Vim later on to edit configuration files. It is a best practice to update the system before installing new packages to avoid incompatibilities.
 
   We install `gvim` instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`). We will still use the `vim` command however.
@@ -361,39 +362,39 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > pacman -Syu gvim
   ```
 
-* Configure the locale
+- Configure the locale
 
   Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code, "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code, and "codeset" is a character set or encoding identifier.
 
   Here are the main characters sets:
 
-  * [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
-  * [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
-  * [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
+  - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
+  - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
+  - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
 
   Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
 
   ```bash
   > vim /etc/locale.gen # edit locale file
-  > /en_US + Enter # search for "en_US" 
+  > /en_US + Enter # search for "en_US"
   > n # go to next occurence until you find your entry
   > i # enter in edit mode
   > <Suppr> # uncomment line
   ```
 
-  * Generate the locale
-  
+  - Generate the locale
+
   ```bash
   > locale-gen
   ```
 
-  * Set the system locale
+  - Set the system locale
 
   ```bash
   > vim /etc/locale.conf LANG=en-US.UTF-8
   ```
 
-  * Configure the keyboard layout
+  - Configure the keyboard layout
 
   To list all keyboard layouts related to French:
 
@@ -453,15 +454,15 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > vim /etc/vconsole.conf KEYMAP=fr-latin9
   ```
 
-* Configure Network
+- Configure Network
 
-  * Define the hostname:
+  - Define the hostname:
 
   ```bash
   > vim /etc/hostname <hostname>
   ```
 
-  * Create the `hosts` file via `vim /etc/hosts`
+  - Create the `hosts` file via `vim /etc/hosts`
 
     ```
     127.0.0.1 localhost
@@ -469,18 +470,18 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     127.0.1.1 <hostname>.localdomain <hostname>
     ```
 
-* Set the root password
+- Set the root password
 
   ```bash
   > passwd
   ```
 
-* Configure the bootloader
+- Configure the bootloader
 
-  * Backup the ESP (EFI System partition):
+  - Backup the ESP (EFI System partition):
 
-    Before doing any modifications, we backup the ESP in case we need to restore its initial state. 
-  
+    Before doing any modifications, we backup the ESP in case we need to restore its initial state.
+
     See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
 
     ```bash
@@ -488,11 +489,11 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     > tar cfz /esp-backup/esp-backup.tar.gz /boot/
     ```
 
-  * Check there is enough space to install Linux on the ESP.
+  - Check there is enough space to install Linux on the ESP.
 
     In this current configuration `/boot` is about 100M and the available space is not enough to install both default and fallback Linux image (see next paragraph).
 
-    We first use `df` to get the percentage of available space. Then we use, `du` to determine which element takes space. As a note, one can also install and use `ncdu` (Ncurses Disk Usage, see https://en.wikipedia.org/wiki/Ncurses). 
+    We first use `df` to get the percentage of available space. Then we use, `du` to determine which element takes space. As a note, one can also install and use `ncdu` (Ncurses Disk Usage, see https://en.wikipedia.org/wiki/Ncurses).
 
     The output below are the one after installing GRUB and Arch Linux.
 
@@ -520,9 +521,9 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     75M	total
     ```
 
-  * Reduce Linux image installation size:
+  - Reduce Linux image installation size:
 
-    If there is not enough available space, one solution is to reduce the size of the images that will be generated installing the Linux boot files. 
+    If there is not enough available space, one solution is to reduce the size of the images that will be generated installing the Linux boot files.
 
     The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"): each "initial ramdisk" is generated as an image file available on the ESP when loading Linux. `cpio` is similar to `tar`: it creates an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the `.img` extension.
 
@@ -548,33 +549,33 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     #fallback_options="-S autodetect"
     ```
 
-  * Install GRUB
+  - Install GRUB
 
-    [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader. 
+    [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader.
 
     > A boot loader is the first program that runs when a computer starts. It is responsible for selecting, loading and transferring control to an operating system kernel. The kernel, in turn, initializes the rest of the operating system.
     >
     > - Arch Linux Wiki
 
-    1. Install:
+    1.  Install:
 
-        * `grub`: the multiboot boot loader.
-        * `efibootmgr`: manipulates the boot manager and creates bootable .efi stub entries used by the GRUB installation script.
-        * `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
+        - `grub`: the multiboot boot loader.
+        - `efibootmgr`: manipulates the boot manager and creates bootable .efi stub entries used by the GRUB installation script.
+        - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
 
         ```bash
         > pacman -Syu grub efibootmgr intel-ucode
         ```
 
-    2. Execute the following command to install the GRUB UEFI application `grubx64.efi` to `/boot/grub` and install its modules to `/boot/grub/x86_64-efi/`.
+    1.  Execute the following command to install the GRUB UEFI application `grubx64.efi` to `/boot/grub` and install its modules to `/boot/grub/x86_64-efi/`.
 
         ```bash
         > grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
         ```
 
-    3. Remove the "Advanced Options" submenu: edit `/etc/default/grub` and add `GRUB_DISABLE_SUBMENU=y`
+    1.  Remove the "Advanced Options" submenu: edit `/etc/default/grub` and add `GRUB_DISABLE_SUBMENU=y`
 
-    4. Add additional entries to the GRUB menu:
+    1.  Add additional entries to the GRUB menu:
 
         ```bash
         > vim /boot/grub/custom.cfg
@@ -582,10 +583,10 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
         And insert the content below to have the following entries:
 
-          * a windows startup
-          * a UEFI
-          * a shutdown
-          * a restart
+        - a windows startup
+        - a UEFI
+        - a shutdown
+        - a restart
 
         ```bash
         if [ "${grub_platform}" == "efi"]; then
@@ -616,7 +617,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
         Where `<ESP UUID>` is to replace with the UUID of the ESP obtained via `sudo blkid /dev/md126p1`
 
-    5. Generate GRUB config:
+    1.  Generate GRUB config:
 
         ```bash
         > grub-mkconfig -o /boot/grub/grub.cfg
@@ -628,9 +629,9 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 ## Enter UEFI/BIOS configuration:
 
-* select `Windows menu key > Power > Hold Shift + Restart`.
+- select `Windows menu key > Power > Hold Shift + Restart`.
 
-* then select `Troubleshoot > Advanced Options > UEFI Firmware Settings`.
+- then select `Troubleshoot > Advanced Options > UEFI Firmware Settings`.
 
   <img src="./dual-boot-windows-10-asus-UX301LAA/restart-choose-an-option.png" alt="restart choose an option" height="300px"/>
   <img src="./dual-boot-windows-10-asus-UX301LAA/restart-troubleshoot.png" alt="restart troubleshoot" height="300px"/>
