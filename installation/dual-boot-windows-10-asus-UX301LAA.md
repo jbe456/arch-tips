@@ -603,6 +603,8 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
     #fallback_options="-S autodetect"
     ```
 
+    Generate the initial ramdisk archive using `mkinitcpio -p linux`
+
   - Install GRUB
 
     [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader.
