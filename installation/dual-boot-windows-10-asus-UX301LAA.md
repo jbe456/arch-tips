@@ -693,6 +693,12 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 
     See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details
 
+- reboot the machine and make sure GRUB correctly displays with all the desired options
+
+  ```console
+  > shutdown -r now
+  ```
+
 # General Tips
 
 ## Enter UEFI/BIOS configuration:
