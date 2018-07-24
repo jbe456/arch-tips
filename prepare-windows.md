@@ -30,8 +30,14 @@
 
     - Enter [UEFI/BIOS configuration](./general-tips.md#enter-uefibios-configuration)
 
-    - Under the "Security" tab, set "Secure Boot Control" to disabled: https://www.asus.com/support/FAQ/1013017/
+    - Disable "Secure Boot Control". Where the option is depends on the UEFI configuration screen:
 
-      <img src="./images/uefi-secure-boot.png" alt="UEFI Secure Boot" height="300px"/>
+      - Aptio Setup Utility - American Megatrends: under the "Security" tab, set "Secure Boot Control" to disabled: https://www.asus.com/support/FAQ/1013017/
+
+        <img src="./images/american-megatrends-uefi-secure-boot.png" alt="UEFI Secure Boot American Megatrends" height="300px"/>
+
+      - DELL 5520: under the "Secure Boot" node, set "Secure Boot" to disabled:
+
+        <img src="./images/dell-uefi-secure-boot.jpg" alt="UEFI Secure Boot DELL" height="300px"/>
 
 For more information check out [How to prepare Windows for dual boot with Ubuntu or Linux Mint](https://sites.google.com/site/easylinuxtipsproject/windows).
