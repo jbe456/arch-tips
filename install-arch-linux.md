@@ -553,6 +553,14 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 
     See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details
 
+- install wifi tools
+
+  In order for the new partition to be autonomous, we must make sure that we can connect to wifi before rebooting.
+
+  ```console
+  > pacman -Syu iw dialog wpa_supplicant wifi-menu
+  ```
+
 - reboot the machine and make sure GRUB correctly displays with all the desired options
 
   ```console
