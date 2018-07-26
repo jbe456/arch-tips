@@ -15,4 +15,5 @@ Instructions:
 1.  [Create an Arch Linux installer USB drive](./create-bootable-usb.md)
 1.  [Create a partition for Linux](./create-linux-partition.md)
 1.  [Install Arch Linux](./install-arch-linux.md)
+1.  [Configure Arch Linux](./configure-arch-linux.md)
 1.  [General Tips](./general-tips.md)
