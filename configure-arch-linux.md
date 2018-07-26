@@ -59,7 +59,7 @@
 - sound:
 
   - pacman -S alsa-utils
-  - gpasswd -a jbe audio
+  - gpasswd -a jbe audio + logout/login to take group changes into effect
   - vim /etc/modprobe.d/alsa-base.conf
     options snd_hda_intel enable=1 index=0
     options snd_hda_intel enable=0 index=1
