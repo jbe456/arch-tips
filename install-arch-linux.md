@@ -17,7 +17,9 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 ### Prepare installation
 
-- Configure the keyboard to the correct layout: `loadkeys fr`
+- Configure the keyboard to the correct layout:
+
+  - For french AZERTY: `loadkeys fr`
 
   See [Keyboard configuration in console](https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console)
 
