@@ -6,7 +6,14 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 1.  Insert USB key
 1.  Enter [UEFI/BIOS configuration](./general-tips.md#enter-uefibios-configuration)
-1.  Select the USB media to boot from: "Arch Linux archiso_x86_64 UEFI CD"
+1.  Boot on the USB. Depending on the UEFI configuration you can:
+
+    - select the USB media to boot from
+    - or change the boot sequence to place the USB media first
+
+    Exit and save.
+
+1.  Select "Arch Linux archiso_x86_64 UEFI CD"
 
 ### Prepare installation
 
