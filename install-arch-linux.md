@@ -145,6 +145,23 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
   Where `imsm` stands for [Intel Matrix Storage Manager](https://en.wikipedia.org/wiki/Intel_Matrix_RAID)
 
+  NB: if your partition is not listed by `blkid` or `lsblk`, one need to analyze the boot logs using `dmesg`. In particular, `grep` for "error", "fail" or "unable" keywords and disk related keywords such as "scsi", "ata", "sata", "ahci", "raid"...
+
+  Example with a drive connected in RAID SATA mode via PCIe:
+
+  ```console
+  > dmesg|grep -i ahci
+  [    3.546860] ahci 0000:00:17.0: version 3.0
+  [    3.547015] ahci 0000:00:17.0: Found 1 remapped NVMe devices.
+  [    3.547015] ahci 0000:00:17.0: Switch your BIOS from RAID to AHCI mode to use them.
+  [    3.547030] ahci 0000:00:17.0: controller can't do SNTF, turning off CAP_SNTF
+  [    3.547046] ahci 0000:00:17.0: SSS flag set, parallel bus scan disabled
+  [    3.547089] ahci 0000:00:17.0: AHCI 0001.0301 32 slots 1 ports 6 Gbps 0x2 impl RAID mode
+  [    3.547091] ahci 0000:00:17.0: flags: 64bit ncq stag pm led clo only pio slum part deso sadm sds apst
+  ```
+
+  One need then to switch the [SATA mode from RAID to AHCI](http://triplescomputers.com/blog/uncategorized/solution-switch-windows-10-from-raidide-to-ahci-operation/).
+
 - Format the partition
 
 See [mkfs](https://linux.die.net/man/8/mkfs)
