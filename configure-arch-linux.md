@@ -42,7 +42,7 @@
   - xrandr --output <output> --mode <mode>
   - driver touchpad
   - to start: xinit
-  - troubleshoot: /etc/x11/Xwrapper.config needs_root_rights=yes
+  - NB: Check [Xorg server won't start troubleshooting](./general-tips.md#xorg-server-wont-start) section for potential problems.
 - pacman -S i3
   - https://github.com/CSaratakij/i3wm-desktop-config
   - cp xserverrc xinitrc, comment default add exec i3 -V >> ~/i3log-$(date +'%F-%k-%M-%S') 2>&1

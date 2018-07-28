@@ -293,3 +293,7 @@ If your partition is not listed by `blkid` or `lsblk`, analyzing the boot logs u
   ```
 
   Only a specialized firm can recover the data in that case. See [RAID-0 SSD failure: I/O error, err_mask=0x4](https://superuser.com/questions/1342264/raid-0-ssd-failure-i-o-error-err-mask-0x4)
+
+## Xorg server won't start
+
+If starting Xorg server triggers the following error `parse_vt_settings: Cannot open /dev/tty0 (Permission denied)` and only works as root: edit /etc/x11/Xwrapper.config and add `needs_root_rights=yes`.
