@@ -195,6 +195,19 @@ Where `imsm` stands for [Intel Matrix Storage Manager](https://en.wikipedia.org/
 
   Linux detects one 477G physical drive "nvme0n1".
 
+## Drives
+
+### Drive Interfaces:
+
+- https://www.storagereview.com/ssd_interfaces
+- https://en.wikipedia.org/wiki/Hard_disk_drive_interface
+- https://beebom.com/pcie-vs-sata-ssd-interface/
+- http://www.userbenchmark.com/Faq/What-s-the-difference-between-SATA-PCIe-and-NVMe/105
+
+### Drive Protocols
+
+- https://blogs.cisco.com/datacenter/nvme-for-absolute-beginners
+
 # Troubleshoot
 
 ## Linux won't boot
