@@ -34,7 +34,12 @@
   - pacman - xorg-server xorg-xinit
   - https://wiki.archlinux.org/index.php/Keyboard_configuration_in_Xorg
     - fr / latin9 / asus_laptop / caps:shiftlock
+    - fix delete return ~ + nice console shortcuts? https://www.linuxquestions.org/questions/linux-general-1/insert-and-delete-key-returns-~-in-a-terminal-876401/
   - dpi 120
+  - xrandr --output <output> --mode <mode>
+  - driver touchpad
+  - to start: xinit
+  - troubleshoot: /etc/x11/Xwrapper.config needs_root_rights=yes
 - pacman -S i3
   - https://github.com/CSaratakij/i3wm-desktop-config
   - cp xserverrc xinitrc, comment default add exec i3 -V >> ~/i3log-$(date +'%F-%k-%M-%S') 2>&1
