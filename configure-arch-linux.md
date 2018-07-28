@@ -53,13 +53,26 @@
     - https://github.com/madhur/awesome-conky
     - https://github.com/zenzire/conkyrc
     - https://blog.desdelinux.net/dmenu-un-lanzador-de-aplicaciones-ultra-ligero/
-- chromium + lastpass + ghostery
+- ## chromium
+  - choose font: ttf_liberation
+  - choose: libx264
+  - extensions: lastpass + ghostery
 - git
-  - openssh + https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+  - pacman -Syu openssh + https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
   - add key github
   - git clone git@...
 - pacaur -Syu visual-studio-code-bin
-- nodejs npm yarn python2
+  - extensions: prettier + gitlens
+  - settings:
+  ```json
+  {
+    "editor.formatOnSave": true,
+    "workbench.editor.enablePreview": false,
+    "javascript.validate.enable": false
+  }
+  ```
+- pacaur -Syu slack-desktop
+- pacman -Syu python2 nodejs npm yarn
 
 - sound:
 
