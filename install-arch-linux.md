@@ -220,7 +220,7 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
   - Set the system locale
 
   ```console
-  > vim /etc/locale.conf LANG=en-US.UTF-8
+  > vim /etc/locale.conf LANG=en_US.UTF-8
   ```
 
   - Configure the keyboard layout
