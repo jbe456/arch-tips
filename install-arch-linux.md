@@ -80,7 +80,9 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 
   ```console
   > mount /dev/md126p6 /mnt # Mount the Linux partition
+  > mkdir /mnt/boot
   > mount /dev/md126p1 /mnt/boot # Mount the ESP
+  > mkdir /mnt/windows
   > mount /dev/md126p4 /mnt/windows # Mount the Windows partition
   ```
 
