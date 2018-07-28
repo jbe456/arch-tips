@@ -481,5 +481,6 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 - reboot the machine and make sure GRUB correctly displays with all the desired options
 
   ```console
+  > exit # exit arch-chroot
   > shutdown -r now
   ```
