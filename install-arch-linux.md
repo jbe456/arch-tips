@@ -42,29 +42,14 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 - Identify the partition to format...
 
-  ...using [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid). See [understand lsblk and blkid output](./general-tips.md#understand-lsblk-and-blkid-output).
+  ...using [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid). See [understand lsblk and blkid output](./general-tips.md#lsblk-and-blkid-output).
 
   Be careful to identify the correct partition as all its data will be erased once formatted.
 
   NB:
 
   - If you have a RAID, see [how to get more info about it](./general-tips.md#get-info-about-raid).
-  - If your partition is not listed by `blkid` or `lsblk`, analyzing the boot logs using `dmesg` should provide more details. In particular, `grep` for "error", "fail" or "unable" keywords and disk related keywords such as "scsi", "ata", "sata", "ahci", "raid"...
-
-  Example with a drive connected in "RAID" SATA mode via PCIe:
-
-  ```console
-  > dmesg|grep -i ahci
-  [    3.546860] ahci 0000:00:17.0: version 3.0
-  [    3.547015] ahci 0000:00:17.0: Found 1 remapped NVMe devices.
-  [    3.547015] ahci 0000:00:17.0: Switch your BIOS from RAID to AHCI mode to use them.
-  [    3.547030] ahci 0000:00:17.0: controller can't do SNTF, turning off CAP_SNTF
-  [    3.547046] ahci 0000:00:17.0: SSS flag set, parallel bus scan disabled
-  [    3.547089] ahci 0000:00:17.0: AHCI 0001.0301 32 slots 1 ports 6 Gbps 0x2 impl RAID mode
-  [    3.547091] ahci 0000:00:17.0: flags: 64bit ncq stag pm led clo only pio slum part deso sadm sds apst
-  ```
-
-  One need then to switch the [SATA mode from RAID to AHCI](http://triplescomputers.com/blog/uncategorized/solution-switch-windows-10-from-raidide-to-ahci-operation/).
+  - If your partition is not listed by `blkid` or `lsblk`, see [how to troubleshoot missing partition](./general-tips.md#partitiondisk-not-visible).
 
 - Format the partition
 
