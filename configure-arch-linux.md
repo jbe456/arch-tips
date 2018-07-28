@@ -24,8 +24,11 @@
   - dmidecode|less
 - check hardware recommendations
   - https://wiki.debian.org/InstallingDebianOn/Asus/UX301LA
+- setup AUR: from https://gist.github.com/Tadly/0e65d30f279a34c33e9b
+  - `curl -Ls https://goo.gl/cF2iJy | bash`
+  - uncomment "Color" option in /etc/pacman.conf
 - install zsh
-  - setup AUR: https://gist.github.com/Tadly/0e65d30f279a34c33e9b
+  - make it default shell: chsh -s /bin/zsh
   - https://github.com/zsh-users/zsh-autosuggestions + ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE
   - theme zeta
 - Install Xorg server
@@ -89,9 +92,6 @@
     options snd_hda_intel enable=1 index=0
     options snd_hda_intel enable=0 index=1
 
-- backlight
-
-  - sudo tee /sys/class/backlight/intel_backlight/brightness <<< 50
 - backlight
 
   - sudo tee /sys/class/backlight/intel_backlight/brightness <<< 50
