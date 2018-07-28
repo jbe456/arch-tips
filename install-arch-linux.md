@@ -40,114 +40,18 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > ping google.com # check internet
   ```
 
-- Identify the partition to format
+- Identify the partition to format...
 
-  See [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid)
+  ...using [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid). See [understand lsblk and blkid output](./general-tips.md#understand-lsblk-and-blkid-output).
 
   Be careful to identify the correct partition as all its data will be erased once formatted.
 
-  ```console
-  > lsblk
-  NAME        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
-  sda           8:0    0 238.5G  0 disk  
-  └─md126       9:126  0   477G  0 raid0
-    ├─md126p1 259:0    0   100M  0 md
-    ├─md126p2 259:1    0   900M  0 md
-    ├─md126p3 259:2    0   128M  0 md
-    ├─md126p4 259:3    0 155.8G  0 md
-    ├─md126p5 259:4    0 200.1G  0 md
-    ├─md126p6 259:5    0   100G  0 md
-    └─md126p7 259:6    0    20G  0 md
-  sdb           8:16   0 238.5G  0 disk  
-  └─md126       9:126  0   477G  0 raid0
-    ├─md126p1 259:0    0   100M  0 md
-    ├─md126p2 259:1    0   900M  0 md
-    ├─md126p3 259:2    0   128M  0 md
-    ├─md126p4 259:3    0 155.8G  0 md
-    ├─md126p5 259:4    0 200.1G  0 md
-    ├─md126p6 259:5    0   100G  0 md
-    └─md126p7 259:6    0    20G  0 md
+  NB:
 
-  > sudo blkid
-  /dev/sdb: TYPE="isw_raid_member"
-  /dev/md126: PTUUID="<PTUUID>" PTTYPE="gpt"
-  /dev/sda: TYPE="isw_raid_member"
-  /dev/md126p1: LABEL="SYSTEM" UUID="<UUID>" TYPE="vfat" PARTLABEL="EFI system partition" PARTUUID="<PARTUUID>"
-  /dev/md126p2: LABEL="Recovery" UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
-  /dev/md126p3: PARTLABEL="Microsoft reserved partition" PARTUUID="<PARTUUID>"
-  /dev/md126p4: LABEL="OS" UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
-  /dev/md126p5: LABEL="Data" UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
-  /dev/md126p6: UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
-  /dev/md126p7: LABEL="Restore" UUID="<UUID>" TYPE="ntfs" PARTLABEL="Basic data partition" PARTUUID="<PARTUUID>"
-  ```
+  - If you have a RAID, see [how to get more info about it](./general-tips.md#get-info-about-raid).
+  - If your partition is not listed by `blkid` or `lsblk`, analyzing the boot logs using `dmesg` should provide more details. In particular, `grep` for "error", "fail" or "unable" keywords and disk related keywords such as "scsi", "ata", "sata", "ahci", "raid"...
 
-  `sd` stands for [SCSI disk drive driver](https://linux.die.net/man/4/sd). [SCSI](https://en.wikipedia.org/wiki/SCSI) (Small Computer System Interface) is a set of standards for physically connecting and transferring data between computers and peripheral devices.
-
-  `md` stands for [multi device driver](https://linux.die.net/man/4/md), and represent the virtual RAID disk.
-
-  `p` stands for partition.
-
-  `isw_raid_member` refers to Intel firmware RAID as opposed to `linux_raid_member` which refers to Linux Software RAID.
-
-  Linux detects two 238.5G physical drives "sda" and "sdb" that are virtually grouped under a RAID 0 "md126". The partition to format is "md126p6".
-
-  Here are alternative commands to confirm the firmware RAID:
-
-  ```console
-  > lspci -vv|grep -i raid
-  00:1f.2 RAID bus controller: Intel Corporation 82801 Mobile SATA Controller [RAID mode] (rev 04)
-  		  Subsystem: ASUSTeK Computer Inc. 82801 Mobile SATA Controller [RAID mode]
-  > sudo cat proc/mdstat
-  Personalities : [raid0]
-  md126 : active raid0 sda[1] sdb[0]
-        500113408 blocks super external:/md127/0 128k chunks
-
-  md127 : inactive sda[1](S) sdb[0](S)
-        4520 blocks super external:imsm
-
-  unused devices: <none>
-  > sudo mdadm -D /dev/md126
-  /dev/md126:
-        Container : /dev/md/imsm0, member 0
-      Raid Level : raid0
-      Array Size : 500113408 (476.95 GiB 512.12 GB)
-    Raid Devices : 2
-    Total Devices : 2
-
-            State : clean
-  Active Devices : 2
-  Working Devices : 2
-  Failed Devices : 0
-    Spare Devices : 0
-
-      Chunk Size : 128K
-
-            UUID : <uuid>
-      Number   Major   Minor   RaidDevice State
-        1       8        0        0      active sync   /dev/sda
-        0       8       16        1      active sync   /dev/sdb
-  > sudo mdadm -D /dev/imsm0
-  /dev/md/imsm0:
-          Version : imsm
-      Raid Level : container
-    Total Devices : 2
-
-  Working Devices : 2
-
-            UUID : <uuid>
-    Member Arrays : /dev/md/ASUS_OS_0
-
-      Number   Major   Minor   RaidDevice
-
-        0       8       16        -        /dev/sdb
-        1       8        0        -        /dev/sda
-  ```
-
-  Where `imsm` stands for [Intel Matrix Storage Manager](https://en.wikipedia.org/wiki/Intel_Matrix_RAID)
-
-  NB: if your partition is not listed by `blkid` or `lsblk`, one need to analyze the boot logs using `dmesg`. In particular, `grep` for "error", "fail" or "unable" keywords and disk related keywords such as "scsi", "ata", "sata", "ahci", "raid"...
-
-  Example with a drive connected in RAID SATA mode via PCIe:
+  Example with a drive connected in "RAID" SATA mode via PCIe:
 
   ```console
   > dmesg|grep -i ahci
