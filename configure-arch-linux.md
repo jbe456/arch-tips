@@ -92,3 +92,13 @@
 - backlight
 
   - sudo tee /sys/class/backlight/intel_backlight/brightness <<< 50
+- backlight
+
+  - sudo tee /sys/class/backlight/intel_backlight/brightness <<< 50
+
+- GRUB themes: https://github.com/shvchk/poly-dark
+
+- printer
+
+  - https://wiki.archlinux.org/index.php/CUPS
+  - https://wiki.archlinux.org/index.php/Avahi
