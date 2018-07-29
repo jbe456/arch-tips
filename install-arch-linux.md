@@ -15,7 +15,7 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 1.  Select "Arch Linux archiso_x86_64 UEFI CD"
 
-### Prepare installation
+### Setup USB
 
 - Configure the keyboard to the correct layout:
 
@@ -40,6 +40,8 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   > ping google.com # check internet
   ```
 
+### Prepare partition
+
 - Identify the partition to format...
 
   ...using [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid). See [understand lsblk and blkid output](./general-tips.md#lsblk-and-blkid-output).
@@ -62,6 +64,24 @@ The created Linux file system type will be [ext4](https://en.wikipedia.org/wiki/
 ```
 
 Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) partition, used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition. We prefer using a [swap file](https://wiki.archlinux.org/index.php/Swap#Swap_file).
+
+### Install Arch Linux
+
+- Select the mirror closest to your location (United State in this case)
+
+  ```console
+  > vim /etc/pacman.d/mirrorlist # edit mirror list
+  > /United + Enter # search for "United"
+  > Shit + v # select whole line
+  > <Down arrow> # select line below
+  > :m 6 # move both lines to 6th line (i.e. at the top of mirror list)
+  ```
+
+- Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) package using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)
+
+  ```console
+  > pacstrap /mnt base
+  ```
 
 - Mount all relevant partitions:
 
@@ -86,26 +106,6 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
   > mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
   ```
 
-### Installation
-
-- Select the mirror closest to your location (United State in this case)
-
-  ```console
-  > vim /etc/pacman.d/mirrorlist # edit mirror list
-  > /United + Enter # search for "United"
-  > Shit + v # select whole line
-  > <Down arrow> # select line below
-  > :m 6 # move both lines to 6th line (i.e. at the top of mirror list)
-  ```
-
-- Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) package using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)
-
-  ```console
-  > pacstrap /mnt base
-  ```
-
-### Configuration
-
 - Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 
   The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
@@ -118,15 +118,17 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 
   # <file system> <dir> <type> <options> <dump> <pass>
 
-  # /dev/md126p6
+  # /dev/<linux-partition>
   UUID=<UUID>     /         	ext4      	rw,relatime,stripe=64,data=ordered	0 1
 
-  # /dev/md126p1 LABEL=SYSTEM
+  # /dev/<esp> LABEL=SYSTEM
   UUID=<UUID>     /boot     	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro	0 2
 
-  # /dev/md126p4 LABEL=OS
+  # /dev/<windows-partition> LABEL=OS
   UUID=<UUID>	    /windows  	ntfs      	ro,relatime,uid=0,gid=0,fmask=0177,dmask=077,nls=utf8,errors=continue,mft_zone_multiplier=1	0 0
   ```
+
+### Minimalist installation
 
 - Change root using the [arch-chroot script](https://git.archlinux.org/arch-install-scripts.git/tree/arch-chroot.in)
 
@@ -135,171 +137,6 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
   ```
   arch-chroot /mnt
   ```
-
-- Configure time and timezone
-
-  There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock) a physical clock powered by a battery. At boot time, the system clock initial value is set from the hardware clock.
-
-  We also want to make sure that we synchronize the clocks with [NTP servers](https://en.wikipedia.org/wiki/Network_Time_Protocol) (Network Time Protocol). By default, Linux connect to servers from the [NTP Pool Project](http://www.pool.ntp.org/) and calls are made at a regular intervals over UDP via port 123 (Check file `/etc/systemd/timesyncd.conf` for configuration).
-
-  ```console
-  > timedatectl set-ntp true # Synchronize clock with NTP server
-  > timedatectl set-timezone America/New_York # Set correct time zone. Equivalent to 'ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime'
-  > hwclock --systohc # Set the Hardware Clock to the current System Time.
-  > timedatectl status # Check date & time are correct
-                          Local time: Mon 2018-05-07 23:46:59 EDT
-                    Universal time: Tue 2018-05-08 03:46:59 UTC
-                          RTC time: Tue 2018-05-08 03:46:59
-                        Time zone: America/New_York (EDT, -0400)
-        System clock synchronized: yes
-  systemd-timesyncd.service active: yes
-                  RTC in local TZ: no
-  ```
-
-  It is recommended to keep the hardware clock in Coordinated Universal Time (UTC) rather than local time: i.e. Universal and RTC time should be equal. Most operating system considers the hardware clock to be UTC except Windows for [ridiculous compatibility reasons and supposedly to avoid confusing users when setting time via bios (!)](https://blogs.msdn.microsoft.com/oldnewthing/20040902-00/?p=37983).
-
-  The [Arch Linux wiki](https://wiki.archlinux.org/index.php/time#Time_standard) explains well the drawbacks of using local time for hardware clock:
-
-  > If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set to localtime, more than one operating system may adjust it after a DST change for example, thus resulting in an over-correction; problems may also arise when traveling between different time zones and using one of the operating systems to reset the system/hardware clock.
-
-  To have Windows consider the hardware clock as UTC, do the following:
-
-  - In the registry, under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, add a key `RealTimeIsUniversal` with a value `00000001` of type `dword`
-  - Disable Windows Time Service by running this command: `sc config w32time start= disabled`
-
-  See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
-
-- Upgrade the whole system:
-
-  [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
-
-  ```console
-  > pacman -Syu
-  ```
-
-  where:
-
-  - `S` or `sync`: operation to install packages.
-  - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
-  - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
-
-- Install Vim
-
-  We will use Vim later on to edit configuration files. It is a best practice to update the system before installing new packages to avoid incompatibilities.
-
-  We install `gvim` instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`). We will still use the `vim` command however.
-
-  ```console
-  > pacman -Syu gvim
-  ```
-
-- Configure the locale
-
-  Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code, "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code, and "codeset" is a character set or encoding identifier.
-
-  Here are the main characters sets:
-
-  - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
-  - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
-  - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
-
-  Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
-
-  ```console
-  > vim /etc/locale.gen # edit locale file
-  > /en_US + Enter # search for "en_US"
-  > n # go to next occurence until you find your entry
-  > i # enter in edit mode
-  > <Suppr> # uncomment line
-  ```
-
-  - Generate the locale
-
-  ```console
-  > locale-gen
-  ```
-
-  - Set the system locale
-
-  ```console
-  > vim /etc/locale.conf LANG=en_US.UTF-8
-  ```
-
-  - Configure the keyboard layout
-
-  To list all keyboard layouts related to French:
-
-  ```console
-  > localectl list-keymaps|grep fr #layout files can be listed using `ls /usr/share/kbd/keymaps/**/*.map.gz`
-  dvorak-ca-fr
-  dvorak-fr
-  fr
-  fr-bepo
-  fr-bepo-latin9
-  fr-latin1
-  fr-latin9
-  fr-pc
-  fr_CH
-  fr_CH-latin1
-  mac-fr
-  mac-fr_CH-latin1
-  sunt5-fr-latin1
-  ```
-
-  To try a keyboard layout:
-
-  ```console
-  > loadkeys fr-latin9
-  ```
-
-  To compare the layouts:
-
-  ```console
-  > mkdir /tmp/layouts # create temporary directory
-  > ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
-  /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz
-  /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz
-  /usr/share/kbd/keymaps/i386/azerty/fr.map.gz
-  /usr/share/kbd/keymaps/i386/azerty/fr-pc.map.gz
-  /usr/share/kbd/keymaps/i386/bepo/fr-bepo-latin9.map.gz
-  /usr/share/kbd/keymaps/i386/bepo/fr-bepo.map.gz
-  /usr/share/kbd/keymaps/i386/dvorak/dvorak-ca-fr.map.gz
-  /usr/share/kbd/keymaps/i386/dvorak/dvorak-fr.map.gz
-  /usr/share/kbd/keymaps/i386/qwertz/fr_CH-latin1.map.gz
-  /usr/share/kbd/keymaps/i386/qwertz/fr_CH.map.gz
-  /usr/share/kbd/keymaps/mac/all/mac-fr_CH-latin1.map.gz
-  /usr/share/kbd/keymaps/mac/all/mac-fr.map.gz
-  /usr/share/kbd/keymaps/sun/sunt5-fr-latin1.map.gz
-  > cp -t /tmp/layouts /usr/share/kbd/keymaps/i386/azerty/fr.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz # copy over the layouts
-  > cd /tmp/layouts
-  > gunzip *.gz # unzip
-  > vim -d fr.map fr-latin1.map # compare fr with fr-latin1
-  > vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
-  ```
-
-  `fr` differs for several keys from a regular french keyboard. `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset while `fr-latin9` is following the [ISO-8859-15](https://en.wikipedia.org/wiki/ISO/IEC_8859-15) charset. The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
-
-  To persist the keyboard layout:
-
-  ```console
-  > vim /etc/vconsole.conf KEYMAP=fr-latin9
-  ```
-
-- Configure Network
-
-  - Define the hostname:
-
-  ```console
-  > vim /etc/hostname <hostname>
-  ```
-
-  - Create the `hosts` file via `vim /etc/hosts`
-
-    ```
-    127.0.0.1 localhost
-    ::1 localhost
-    127.0.1.1 <hostname>.localdomain <hostname>
-    ```
 
 - Set the root password
 
@@ -437,12 +274,12 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
           fwsetup
         }
 
-        menuentry "System shutdown" {
+        menuentry "Shutdown" {
           echo "System shutting down..."
           halt
         }
 
-        menuentry "System restart" {
+        menuentry "Restart" {
           echo "System rebooting..."
           reboot
         }
@@ -484,3 +321,170 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
   > exit # exit arch-chroot
   > shutdown -r now
   ```
+
+### Configure Arch Linux
+
+- Configure time and timezone
+
+  There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock) a physical clock powered by a battery. At boot time, the system clock initial value is set from the hardware clock.
+
+  We also want to make sure that we synchronize the clocks with [NTP servers](https://en.wikipedia.org/wiki/Network_Time_Protocol) (Network Time Protocol). By default, Linux connect to servers from the [NTP Pool Project](http://www.pool.ntp.org/) and calls are made at a regular intervals over UDP via port 123 (Check file `/etc/systemd/timesyncd.conf` for configuration).
+
+  ```console
+  > timedatectl set-ntp true # Synchronize clock with NTP server
+  > timedatectl set-timezone America/New_York # Set correct time zone. Equivalent to 'ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime'
+  > hwclock --systohc # Set the Hardware Clock to the current System Time.
+  > timedatectl status # Check date & time are correct
+                          Local time: Mon 2018-05-07 23:46:59 EDT
+                    Universal time: Tue 2018-05-08 03:46:59 UTC
+                          RTC time: Tue 2018-05-08 03:46:59
+                        Time zone: America/New_York (EDT, -0400)
+        System clock synchronized: yes
+  systemd-timesyncd.service active: yes
+                  RTC in local TZ: no
+  ```
+
+  It is recommended to keep the hardware clock in Coordinated Universal Time (UTC) rather than local time: i.e. Universal and RTC time should be equal. Most operating system considers the hardware clock to be UTC except Windows for [ridiculous compatibility reasons and supposedly to avoid confusing users when setting time via bios (!)](https://blogs.msdn.microsoft.com/oldnewthing/20040902-00/?p=37983).
+
+  The [Arch Linux wiki](https://wiki.archlinux.org/index.php/time#Time_standard) explains well the drawbacks of using local time for hardware clock:
+
+  > If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set to localtime, more than one operating system may adjust it after a DST change for example, thus resulting in an over-correction; problems may also arise when traveling between different time zones and using one of the operating systems to reset the system/hardware clock.
+
+  To have Windows consider the hardware clock as UTC, do the following:
+
+  - In the registry, under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, add a key `RealTimeIsUniversal` with a value `00000001` of type `dword`
+  - Disable Windows Time Service by running this command: `sc config w32time start= disabled`
+
+  See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
+
+* Upgrade the whole system:
+
+  [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
+
+  ```console
+  > pacman -Syu
+  ```
+
+  where:
+
+  - `S` or `sync`: operation to install packages.
+  - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
+  - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
+
+* Install Vim
+
+  We will use Vim later on to edit configuration files. It is a best practice to update the system before installing new packages to avoid incompatibilities.
+
+  We install `gvim` instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`). We will still use the `vim` command however.
+
+  ```console
+  > pacman -Syu gvim
+  ```
+
+* Configure the locale
+
+  Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code, "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code, and "codeset" is a character set or encoding identifier.
+
+  Here are the main characters sets:
+
+  - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
+  - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
+  - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
+
+  Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
+
+  ```console
+  > vim /etc/locale.gen # edit locale file
+  > /en_US + Enter # search for "en_US"
+  > n # go to next occurence until you find your entry
+  > i # enter in edit mode
+  > <Suppr> # uncomment line
+  ```
+
+  - Generate the locale
+
+  ```console
+  > locale-gen
+  ```
+
+  - Set the system locale
+
+  ```console
+  > vim /etc/locale.conf LANG=en_US.UTF-8
+  ```
+
+  - Configure the keyboard layout
+
+  To list all keyboard layouts related to French:
+
+  ```console
+  > localectl list-keymaps|grep fr #layout files can be listed using `ls /usr/share/kbd/keymaps/**/*.map.gz`
+  dvorak-ca-fr
+  dvorak-fr
+  fr
+  fr-bepo
+  fr-bepo-latin9
+  fr-latin1
+  fr-latin9
+  fr-pc
+  fr_CH
+  fr_CH-latin1
+  mac-fr
+  mac-fr_CH-latin1
+  sunt5-fr-latin1
+  ```
+
+  To try a keyboard layout:
+
+  ```console
+  > loadkeys fr-latin9
+  ```
+
+  To compare the layouts:
+
+  ```console
+  > mkdir /tmp/layouts # create temporary directory
+  > ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
+  /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz
+  /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz
+  /usr/share/kbd/keymaps/i386/azerty/fr.map.gz
+  /usr/share/kbd/keymaps/i386/azerty/fr-pc.map.gz
+  /usr/share/kbd/keymaps/i386/bepo/fr-bepo-latin9.map.gz
+  /usr/share/kbd/keymaps/i386/bepo/fr-bepo.map.gz
+  /usr/share/kbd/keymaps/i386/dvorak/dvorak-ca-fr.map.gz
+  /usr/share/kbd/keymaps/i386/dvorak/dvorak-fr.map.gz
+  /usr/share/kbd/keymaps/i386/qwertz/fr_CH-latin1.map.gz
+  /usr/share/kbd/keymaps/i386/qwertz/fr_CH.map.gz
+  /usr/share/kbd/keymaps/mac/all/mac-fr_CH-latin1.map.gz
+  /usr/share/kbd/keymaps/mac/all/mac-fr.map.gz
+  /usr/share/kbd/keymaps/sun/sunt5-fr-latin1.map.gz
+  > cp -t /tmp/layouts /usr/share/kbd/keymaps/i386/azerty/fr.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz # copy over the layouts
+  > cd /tmp/layouts
+  > gunzip *.gz # unzip
+  > vim -d fr.map fr-latin1.map # compare fr with fr-latin1
+  > vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
+  ```
+
+  `fr` differs for several keys from a regular french keyboard. `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset while `fr-latin9` is following the [ISO-8859-15](https://en.wikipedia.org/wiki/ISO/IEC_8859-15) charset. The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
+
+  To persist the keyboard layout:
+
+  ```console
+  > vim /etc/vconsole.conf KEYMAP=fr-latin9
+  ```
+
+* Configure Network
+
+  - Define the hostname:
+
+  ```console
+  > vim /etc/hostname <hostname>
+  ```
+
+  - Create the `hosts` file via `vim /etc/hosts`
+
+    ```
+    127.0.0.1 localhost
+    ::1 localhost
+    127.0.1.1 <hostname>.localdomain <hostname>
+    ```
