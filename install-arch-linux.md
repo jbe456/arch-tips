@@ -58,17 +58,17 @@ See [mkfs](https://linux.die.net/man/8/mkfs)
 The created Linux file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
 
 ```console
-> mkfs --type=ext4 /dev/md126p6
+> mkfs --type=ext4 /dev/<linux-partition>
 ```
 
-Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) partition, used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition.
+Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) partition, used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition. We prefer using a [swap file](https://wiki.archlinux.org/index.php/Swap#Swap_file).
 
 - Mount all relevant partitions:
 
   We use the output from `blkid` above to identify each partition:
 
-  - the Linux partition: "md126p6"
-  - the [ESP](https://en.wikipedia.org/wiki/EFI_system_partition) (EFI System partition): "md126p1"
+  - the Linux partition
+  - the [ESP](https://en.wikipedia.org/wiki/EFI_system_partition) (EFI System partition), usually identfied by `TYPE="vfat" PARTLABEL="EFI system partition"`
 
     What is an ESP?
 
@@ -76,14 +76,14 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
     >
     > \- Wikipedia
 
-  - the Windows partition: "md126p4"
+  - the Windows partition, usually identified by `LABEL="OS" TYPE="ntfs" PARTLABEL="Basic data partition"`
 
   ```console
-  > mount /dev/md126p6 /mnt # Mount the Linux partition
+  > mount /dev/<linux-partition> /mnt # Mount the Linux partition
   > mkdir /mnt/boot
-  > mount /dev/md126p1 /mnt/boot # Mount the ESP
+  > mount /dev/<esp> /mnt/boot # Mount the ESP
   > mkdir /mnt/windows
-  > mount /dev/md126p4 /mnt/windows # Mount the Windows partition
+  > mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
   ```
 
 ### Installation
