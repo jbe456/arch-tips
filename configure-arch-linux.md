@@ -76,6 +76,8 @@
   ```
 - pacaur -Syu slack-desktop
 - pacman -Syu python2 nodejs npm yarn
+- pacman -Syu feh gimp # image viewer + editor
+- pacman -Syu wget unzip # alternative to curl + unzip
 
 - sound:
 

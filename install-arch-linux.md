@@ -217,7 +217,7 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
     #fallback_options="-S autodetect"
     ```
 
-    Generate the initial ramdisk archive using `mkinitcpio -p linux`
+    Remove fallback archive `rm /boot/initramfs-linux-fallback.img` and generate the initial ramdisk archive `mkinitcpio -p linux`
 
   - Install GRUB
 
@@ -243,7 +243,38 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
         > grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
         ```
 
-    1.  Remove the "Advanced Options" submenu: edit `/etc/default/grub` and add `GRUB_DISABLE_SUBMENU=y`
+    1.  Edit `/etc/default/grub`:
+
+    - Remove the "Advanced Options" submenu: add `GRUB_DISABLE_SUBMENU=y`
+    - Setup the `arch-dark` theme: copy ./config/gub/dark-theme content into /boot/grub/themes and edit the grub config file as follow:
+      ```ini
+      GRUB_THEME="/boot/grub/themes/arch-dark/theme.txt"
+      # if one need to set a different resolution, use 'videoinfo' command in GRUB shell to get the list of supported GFX mode
+      #GRUB_GFXMODE=1920x1440x32,auto
+      #GRUB_GFXPAYLOAD_LINUX=keep
+      ```
+
+    1.  Rename GRUB menu entries:
+
+    By default, Arch Linux will appear as "Arch Linux, with Linux linux". To make it appears as "Arch Linux", update /etc/grub.d/10_linux:
+
+    ```diff
+    @@ -82,11 +82,11 @@ linux_entry ()
+      if [ x$type != xsimple ] ; then
+          case $type in
+              recovery)
+    -             title="$(gettext_printf "%s, with Linux %s (recovery mode)" "${os}" "${version}")" ;;
+    +             title="$(gettext_printf "%s (recovery mode)" "${os}")" ;;
+              fallback)
+    -             title="$(gettext_printf "%s, with Linux %s (fallback initramfs)" "${os}" "${version}")" ;;
+    +             title="$(gettext_printf "%s (fallback initramfs)" "${os}")" ;;
+              *)
+    -             title="$(gettext_printf "%s, with Linux %s" "${os}" "${version}")" ;;
+    +             title="$(gettext_printf "%s" "${os}")" ;;
+          esac
+          if [ x"$title" = x"$GRUB_ACTUAL_DEFAULT" ] || [ x"Previous Linux versions>$title" = x"$GRUB_ACTUAL_DEFAULT" ]; then
+              replacement_title="$(echo "Advanced options for ${OS}" | sed 's,>,>>,g')>$(echo "$title" | sed 's,>,>>,g')"
+    ```
 
     1.  Add additional entries to the GRUB menu:
 
@@ -259,33 +290,37 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
         - a restart
 
         ```bash
-        if [ "${grub_platform}" == "efi"]; then
-          menuentry "Microsoft Windows 10" {
-            insmod part_gpt
-            insmod fat
-            insmod search_fs_uuid
-            insmod chain
-            search --fs-uuid --set=root <ESP UUID>
-            chainloader /EFI/Microsoft/Boot/bootmgfw.efi
-          }
-        fi
+        menuentry "Microsoft Windows 10" --class windows --class os {
+          insmod part_gpt
+          insmod fat
+          insmod search_fs_uuid
+          insmod chain
+          search --fs-uuid --set=root <ESP UUID>
+          chainloader /EFI/Microsoft/Boot/bootmgfw.efi
+        }
 
-        menuentry "Firmware setup" {
+        menuentry "USB" --class usb {
+          set root=(hd1,1)
+          chainloader +1
+          boot
+        }
+
+        menuentry "Firmware setup" --class settings {
           fwsetup
         }
 
-        menuentry "Shutdown" {
+        menuentry "Shutdown" --class shutdown {
           echo "System shutting down..."
           halt
         }
 
-        menuentry "Restart" {
+        menuentry "Restart" --class restart {
           echo "System rebooting..."
           reboot
         }
         ```
 
-        Where `<ESP UUID>` is to replace with the UUID of the ESP obtained via `sudo blkid /dev/md126p1`
+        Where `<ESP UUID>` is to replace with the UUID of the ESP obtained via `sudo blkid /dev/<esp>`
 
     1.  Generate GRUB config:
 
@@ -295,19 +330,19 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 
         It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
 
-  - As this PC uses a firmware RAID, we need to make sure the initial ramdisk archive loads the `mdadm_udev` module, which is a utility to manage firmware/software RAID configurations.
+NB: If the PC uses a firmware RAID, we need to make sure the initial ramdisk archive loads the `mdadm_udev` module, which is a utility to manage firmware/software RAID configurations.
 
-    1.  Edit `/etc/mkinitcpio.conf` and add `mdadm_udev` to the list of HOOKS:
+1.  Edit `/etc/mkinitcpio.conf` and add `mdadm_udev` to the list of HOOKS:
 
-        ```bash
-        HOOKS=(base udev autodetect modconf block mdadm_udev filesystems keyboard fsck)
-        ```
+    ```bash
+    HOOKS=(base udev autodetect modconf block mdadm_udev filesystems keyboard fsck)
+    ```
 
-    1.  Regenerate the initial ramdisk archive using `mkinitcpio -p linux`
+1.  Regenerate the initial ramdisk archive using `mkinitcpio -p linux`
 
-    See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details
+See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details
 
-- install wifi tools
+- Install wifi tools
 
   In order for the new partition to be autonomous, we must make sure that we can connect to wifi before rebooting.
 
@@ -315,7 +350,7 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
   > pacman -Syu iw dialog wpa_supplicant wifi-menu
   ```
 
-- reboot the machine and make sure GRUB correctly displays with all the desired options
+- Reboot the machine and make sure GRUB correctly displays with all the desired options
 
   ```console
   > exit # exit arch-chroot
