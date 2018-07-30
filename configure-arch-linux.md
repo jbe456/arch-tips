@@ -29,8 +29,10 @@
   - uncomment "Color" option in /etc/pacman.conf
 - install zsh
   - make it default shell: chsh -s /bin/zsh
-  - https://github.com/zsh-users/zsh-autosuggestions + ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE
-  - theme zeta
+  - pacman -S zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions + ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE)
+  - pacaur -S oh-my-zsh-git
+  - theme https://github.com/skylerlee/zeta-zsh-theme
+    `sudo cp zeta.zsh.theme /usr/share/oh-my-zsh/custom/themes`
 - Install Xorg server
   - lspci|grep -i VGA
   - pacman -S xf86-video-intel
@@ -43,7 +45,7 @@
   - driver touchpad
   - to start: xinit
   - NB: Check [Xorg server won't start troubleshooting](./general-tips.md#xorg-server-wont-start) section for potential problems.
-- pacman -S i3
+- pacman -S i3 compton
   - https://github.com/CSaratakij/i3wm-desktop-config
   - cp xserverrc xinitrc, comment default add exec i3 -V >> ~/i3log-$(date +'%F-%k-%M-%S') 2>&1
   - pacman -S rxvt-unicode + export TERMINAL=urxvt + .Xdefaults
@@ -56,7 +58,7 @@
     - https://github.com/madhur/awesome-conky
     - https://github.com/zenzire/conkyrc
     - https://blog.desdelinux.net/dmenu-un-lanzador-de-aplicaciones-ultra-ligero/
-- ## chromium
+- chromium
   - choose font: ttf_liberation
   - choose: libx264
   - extensions: lastpass + ghostery
