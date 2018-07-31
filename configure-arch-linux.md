@@ -47,7 +47,9 @@
 - pacman -S i3 compton
   - https://github.com/CSaratakij/i3wm-desktop-config
   - cp xserverrc xinitrc
-  - pacman -S rxvt-unicode + export TERMINAL=urxvt + .Xdefaults
+  - pacman -S rxvt-unicode
+    - export TERMINAL=urxvt + .Xdefaults
+    - pacaur -Syu ttf-meslo
   - wallpaper feh
     `mkdir -p pictures/wallpapers`
     `cp backgrounds/* pictures/wallpapers`
