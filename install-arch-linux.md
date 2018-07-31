@@ -77,10 +77,10 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
   > :m 6 # move both lines to 6th line (i.e. at the top of mirror list)
   ```
 
-- Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) package using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)
+- Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) and [base-devel](https://www.archlinux.org/groups/x86_64/base-devel/) packages using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)
 
   ```console
-  > pacstrap /mnt base
+  > pacstrap /mnt base base-devel
   ```
 
 - Mount all relevant partitions:
