@@ -6,7 +6,6 @@
 - enable auto connect:
   - pacman -S wpa_actiond
   - systemctl enable netctl-auto@wlp2s0.service
-- pacman -S sudo
 - useradd -m -s /bin/bash jbe
   - passwd jbe
   - add user to sudoers: visudo, add user line, exit login again
@@ -47,9 +46,14 @@
   - NB: Check [Xorg server won't start troubleshooting](./general-tips.md#xorg-server-wont-start) section for potential problems.
 - pacman -S i3 compton
   - https://github.com/CSaratakij/i3wm-desktop-config
-  - cp xserverrc xinitrc, comment default add exec i3 -V >> ~/i3log-$(date +'%F-%k-%M-%S') 2>&1
+  - cp xserverrc xinitrc
   - pacman -S rxvt-unicode + export TERMINAL=urxvt + .Xdefaults
-  - wallpaper feh + exec --no-startup-id feh --bg-scale ~/Pictures/wallpaper/wallpaper.\*
+  - wallpaper feh
+    `mkdir -p pictures/wallpapers`
+    `cp backgrounds/* pictures/wallpapers`
+  - pacman -Syu xautolock
+  - pacman -R i3lock
+  - pacaur -S i3lock-color
   - rofi
   - pacman -S conky
     - own_window_transparent=true
@@ -61,6 +65,7 @@
 - chromium
   - choose font: ttf_liberation
   - choose: libx264
+  - update downloads folder to lower case: "downloads"
   - extensions: lastpass + ghostery
 - git
   - pacman -Syu openssh + https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
@@ -78,7 +83,7 @@
   ```
 - pacaur -Syu slack-desktop
 - pacman -Syu python2 nodejs npm yarn
-- pacman -Syu feh gimp # image viewer + editor
+- pacman -Syu feh gimp imagemagick # image viewer + editor + converter
 - pacman -Syu wget unzip # alternative to curl + unzip
 
 - sound:
