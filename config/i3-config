@@ -136,7 +136,7 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec --no-startup-id "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -173,9 +173,9 @@ bar {
 
 set $lock i3lock -i ~/pictures/wallpapers/arch-matrix-2560x1440.png
 
-bindsym $mod+l exec $lock
+bindsym $mod+l exec --no-startup-id $lock
 
 # --textcolor=ffffff00 --insidecolor=ffffff00 --ringcolor=ffffff3e --linecolor=ffffff00 --keyhlcolor=00000080 --ringvercolor=00000000 --separatorcolor=22222260 --insidevercolor=0000001c --ringwrongcolor=00000055 --insidewrongcolor=0000001c
-exec xautolock -detectsleep -time 5 -locker $lock
+exec --no-startup-id xautolock -detectsleep -time 5 -locker $lock
 exec --no-startup-id xrandr --output eDP1 --mode 2560x1440
 exec --no-startup-id feh --bg-scale ~/pictures/wallpapers/arch-metal-2560x1440.png
