@@ -34,5 +34,7 @@ fi
 
 export TERMINAL=urxvt
 
+xrandr --output eDP1 --mode 2560x1440
+
 exec compton &
 exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
