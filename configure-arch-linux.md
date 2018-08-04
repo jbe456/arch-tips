@@ -99,6 +99,8 @@
     options snd_hda_intel enable=1 index=0
     options snd_hda_intel enable=0 index=1
 
+- configure microphone + webcam
+
 - backlight
 
   - sudo tee /sys/class/backlight/intel_backlight/brightness <<< 50
@@ -109,3 +111,5 @@
 
   - https://wiki.archlinux.org/index.php/CUPS
   - https://wiki.archlinux.org/index.php/Avahi
+
+- detect usb keys
