@@ -83,7 +83,7 @@
     "javascript.validate.enable": false
   }
   ```
-- pacaur -Syu slack-desktop
+- pacaur -Syu slack-desktop skypeforlinux-stable-bin
 - pacman -Syu python2 nodejs npm yarn
 - pacman -Syu feh gimp imagemagick # image viewer + editor + converter
 - pacman -Syu wget unzip # alternative to curl + unzip
