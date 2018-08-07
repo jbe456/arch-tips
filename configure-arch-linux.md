@@ -109,7 +109,89 @@
 
 - printer
 
-  - https://wiki.archlinux.org/index.php/CUPS
-  - https://wiki.archlinux.org/index.php/Avahi
+  Install CUPS to manage printers
+
+  - pacman -S cups cups-pdf
+  - systemctl enable org.cups.cupsd.service
+  - systemctl start org.cups.cupsd.service
+
+  Install Avahi to detect netwrok printers
+
+  - pacman -S nss-mdns
+  - systemctl enable avahi-daemon.service
+  - systemctl start avahi-daemon.service
+  - sudo vim /etc/nsswitch.conf
+  - change the hosts line to include mdns_minimal [NOTFOUND=return] before resolve and dns
+
+  Create a printer queue:
+
+  - `sudo lpinfo -v`
+
+  ```
+  network beh
+  network lpd
+  file cups-pdf:/
+  network ipp
+  network http
+  network https
+  network ipps
+  network socket
+  network dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._ipp._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506
+  network dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._pdl-datastream._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506
+  network socket://192.168.1.10:9100
+  network ipp://HPD0BF9CE5A506.local:631/ipp/print
+  ```
+
+  - `lpinfo -m`
+
+  ```
+  lsb/usr/cupsfilters/Fuji_Xerox-DocuPrint_CM305_df-PDF.ppd Fuji Xerox
+  drv:///sample.drv/dymo.ppd Dymo Label Printer
+  drv:///sample.drv/epson9.ppd Epson 9-Pin Series
+  drv:///sample.drv/epson24.ppd Epson 24-Pin Series
+  drv:///generic-brf.drv/gen-brf.ppd Generic Braille embosser, 1.0
+  CUPS-PDF_noopt.ppd Generic CUPS-PDF Printer (no options)
+  CUPS-PDF_opt.ppd Generic CUPS-PDF Printer (w/ options)
+  drv:///cupsfilters.drv/pwgrast.ppd Generic IPP Everywhere Printer
+  drv:///sample.drv/generpcl.ppd Generic PCL Laser Printer
+  lsb/usr/cupsfilters/Generic-PDF_Printer-PDF.ppd Generic PDF Printer
+  drv:///sample.drv/generic.ppd Generic PostScript Printer
+  drv:///cupsfilters.drv/textonly.ppd Generic Text-Only Printer
+  drv:///generic-ubrl.drv/gen-ubrl.ppd Generic UBRL generator, 1.0
+  lsb/usr/cupsfilters/HP-Color_LaserJet_CM3530_MFP-PDF.ppd HP Color LaserJet CM3530 MFP PDF
+  lsb/usr/cupsfilters/pxlcolor.ppd HP Color LaserJet Series PCL 6 CUPS
+  drv:///cupsfilters.drv/dsgnjt600pcl.ppd HP DesignJet 600 pcl, 1.0
+  drv:///cupsfilters.drv/dsgnjt750cpcl.ppd HP DesignJet 750c pcl, 1.0
+  drv:///cupsfilters.drv/dsgnjt1050cpcl.ppd HP DesignJet 1050c pcl, 1.0
+  drv:///cupsfilters.drv/dsgnjt4000pcl.ppd HP DesignJet 4000 pcl, 1.0
+  drv:///cupsfilters.drv/dsgnjtt790pcl.ppd HP DesignJet T790 pcl, 1.0
+  drv:///cupsfilters.drv/dsgnjtt1100pcl.ppd HP DesignJet T1100 pcl, 1.0
+  drv:///sample.drv/deskjet.ppd HP DeskJet Series
+  driverless:ipp://HPD0BF9CE5A506.local:631/ipp/print HP ENVY 5640 series, driverless, cups-filters 1.20.4
+  drv:///sample.drv/laserjet.ppd HP LaserJet Series PCL 4/5
+  lsb/usr/cupsfilters/pxlmono.ppd HP LaserJet Series PCL 6 CUPS
+  drv:///indexv3.drv/i4waves3.ppd Index 4-Waves PRO, 1.0
+  drv:///indexv3.drv/i4x4pro3.ppd Index 4x4 PRO V3, 1.0
+  drv:///indexv3.drv/ibasicd3.ppd Index Basic-D V3, 1.0
+  drv:///indexv4.drv/ibasicd4.ppd Index Basic-D V4/V5, 1.0
+  drv:///indexv3.drv/ibasics3.ppd Index Basic-S V3, 1.0
+  drv:///indexv4.drv/ibasics4.ppd Index Basic-S V4/V5, 1.0
+  drv:///indexv4.drv/ibrlbox4.ppd Index Braille Box V4/V5, 1.0
+  drv:///indexv3.drv/ieveres3.ppd Index Everest-D V3, 1.0
+  drv:///indexv4.drv/ieveres4.ppd Index Everest-D V4/V5, 1.0
+  drv:///sample.drv/intelbar.ppd Intellitech IntelliBar Label Printer, 2.1
+  drv:///sample.drv/okidata9.ppd Oki 9-Pin Series
+  drv:///sample.drv/okidat24.ppd Oki 24-Pin Series
+  raw Raw Queue
+  lsb/usr/cupsfilters/Ricoh-PDF_Printer-PDF.ppd Ricoh PDF Printer
+  drv:///sample.drv/zebracpl.ppd Zebra CPCL Label Printer
+  drv:///sample.drv/zebraep1.ppd Zebra EPL1 Label Printer
+  drv:///sample.drv/zebraep2.ppd Zebra EPL2 Label Printer
+  drv:///sample.drv/zebra.ppd Zebra ZPL Label Printer
+  everywhere IPP Everywhere
+  ```
+
+  - `sudo lpadmin -p hp-envy-5640 -E -v "dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._ipp._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506" -m "driverless:ipp://HPD0BF9CE5A506.local:631/ipp/print"`
+  - check list of queues: `lpstat -a | cut -f1 -d ' '`
 
 - detect usb keys
