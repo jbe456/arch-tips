@@ -107,6 +107,10 @@
 
 - GRUB themes: https://github.com/shvchk/poly-dark
 
+- remote desktop:
+
+  - pacman -Syu remmina freerdp
+
 - printer
 
   Install CUPS to manage printers
