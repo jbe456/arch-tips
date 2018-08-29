@@ -4,6 +4,11 @@ HISTSIZE=1000
 SAVEHIST=1000
 bindkey -e
 # End of lines configured by zsh-newuser-install
+
+# Restore arrow forward/backward on console
+bindkey '^[Oc' forward-word
+bindkey '^[Od' backward-word
+
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/jbe/.zshrc'
 
