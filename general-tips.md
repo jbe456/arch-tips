@@ -297,3 +297,15 @@ If your partition is not listed by `blkid` or `lsblk`, analyzing the boot logs u
 ## Xorg server won't start
 
 If starting Xorg server triggers the following error `parse_vt_settings: Cannot open /dev/tty0 (Permission denied)` and only works as root: edit /etc/x11/Xwrapper.config and add `needs_root_rights=yes`.
+
+## Internet does not work
+
+For WiFi:
+
+- Make sure DHCP is disabled: `sudo systemctl stop dhcpcd.service` and `sudo systemctl disable dhcpcd.service`
+- Shutdown all profiles `sudo netctl stop-all`
+- Activate the desired profiles `sudo netctl start <profile>`
+
+For Ethernet:
+
+- Make sure DHCP is enabled: `sudo systemctl enable dhcpcd.service` and `sudo systemctl start dhcpcd.service`
