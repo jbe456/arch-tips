@@ -129,24 +129,40 @@
 
   Create a printer queue:
 
-  - `sudo lpinfo -v`
+  - List the devices: `sudo lpinfo -v`
 
-  ```
-  network beh
-  network lpd
-  file cups-pdf:/
-  network ipp
-  network http
-  network https
-  network ipps
-  network socket
-  network dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._ipp._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506
-  network dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._pdl-datastream._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506
-  network socket://192.168.1.10:9100
-  network ipp://HPD0BF9CE5A506.local:631/ipp/print
-  ```
+    From [Using Network Printers - CUPS.org](https://www.cups.org/doc/network.html):
 
-  - `lpinfo -m`
+    > Most network printers support a protocol known as Bonjour, which is a combination of zero-configuration networking ("ZeroConf"), multicast DNS (mDNS), and DNS service discovery (DNS-SD) standards published by the Internet Engineering Task Force (IETF)
+    > A printer that supports Bonjour can be found automatically using the dnssd backend
+
+    DNS-SD or DNS-Based Service Discovery is a protocol that allows clients to find services on their local network like networked printers, without needing a central directory or any manual configuration.
+
+    There are different network protocols which provide more or less control over the printer, including:
+
+    - `socket`: The AppSocket protocol or JetDirect protocol is the simplest, fastest, and generally the most reliable network protocol used for printers. AppSocket printing normally happens over port 9100 and uses the socket backend.
+    - `ipp`: Internet Printing Protocol. IPP is the only protocol that CUPS supports natively and is supported by most network printers and print servers. IPP supports encryption and other security features over port 631 and uses the http (Windows), ipp, and ipps backends.
+
+    Example of output with one HP network printer supporting both `socket` and `ipp` protocols (each is listed twice, via the dnssd and its resolved address):
+
+    ```
+    network beh
+    network lpd
+    file cups-pdf:/
+    network ipp
+    network http
+    network https
+    network ipps
+    network socket
+    network dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._ipp._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506
+    network dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._pdl-datastream._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506
+    network socket://192.168.1.10:9100
+    network ipp://HPD0BF9CE5A506.local:631/ipp/print
+    ```
+
+  - List the models: `lpinfo -m`
+
+  List available PostScript Printer Definition (PPD) files/drivers.
 
   ```
   lsb/usr/cupsfilters/Fuji_Xerox-DocuPrint_CM305_df-PDF.ppd Fuji Xerox
@@ -195,7 +211,7 @@
   everywhere IPP Everywhere
   ```
 
-  - `sudo lpadmin -p hp-envy-5640 -E -v "dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._ipp._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506" -m "driverless:ipp://HPD0BF9CE5A506.local:631/ipp/print"`
+  - Adda new queue: `sudo lpadmin -p hp-envy-5640 -E -v "dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._ipp._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506" -m "driverless:ipp://HPD0BF9CE5A506.local:631/ipp/print"`
   - check list of queues: `lpstat -a | cut -f1 -d ' '`
 
 - detect usb keys
