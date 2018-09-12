@@ -303,6 +303,7 @@ If starting Xorg server triggers the following error `parse_vt_settings: Cannot 
 For WiFi:
 
 - Make sure DHCP is disabled: `sudo systemctl stop dhcpcd.service` and `sudo systemctl disable dhcpcd.service`
+- Make sure the interface status is down: `sudo ip link set <interface> down`
 - Shutdown all profiles `sudo netctl stop-all`
 - Activate the desired profiles `sudo netctl start <profile>`
 
