@@ -23,9 +23,11 @@
   - dmidecode|less
 - check hardware recommendations
   - https://wiki.debian.org/InstallingDebianOn/Asus/UX301LA
+- setup pacman
+  - uncomment "Color" option in /etc/pacman.conf
+  - uncomment "multilib" section in /etc/pacman.conf
 - setup AUR: from https://gist.github.com/Tadly/0e65d30f279a34c33e9b
   - `curl -Ls https://goo.gl/cF2iJy | bash`
-  - uncomment "Color" option in /etc/pacman.conf
 - install zsh
   - make it default shell: chsh -s /bin/zsh
   - pacman -S zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions + ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE)
