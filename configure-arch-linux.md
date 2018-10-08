@@ -87,8 +87,9 @@
   ```
 - pacaur -Syu slack-desktop skypeforlinux-stable-bin
 - pacman -Syu python2 nodejs npm yarn
-- pacman -Syu feh gimp imagemagick # image viewer + editor + converter
+- pacman -Syu feh gimp imagemagick + peek # image viewer + editor + converter + gif maker
 - pacman -Syu wget unzip # alternative to curl + unzip
+- pacman -Syu youtube-dl # video converter
 
 - sound:
 
