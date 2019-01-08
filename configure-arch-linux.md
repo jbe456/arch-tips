@@ -217,4 +217,6 @@
   - Adda new queue: `sudo lpadmin -p hp-envy-5640 -E -v "dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._ipp._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506" -m "driverless:ipp://HPD0BF9CE5A506.local:631/ipp/print"`
   - check list of queues: `lpstat -a | cut -f1 -d ' '`
 
+- setup backlight: pacman -S upower python-dbus
+  `dbus-send --system --type=method_call --dest="org.freedesktop.UPower" "/org/freedesktop/UPower/KbdBacklight" "org.freedesktop.UPower.KbdBacklight.SetBrightness" int32:100`
 - detect usb keys
