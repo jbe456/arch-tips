@@ -300,13 +300,20 @@ If starting Xorg server triggers the following error `parse_vt_settings: Cannot 
 
 ## Internet does not work
 
-For WiFi:
+### For WiFi:
 
 - Make sure DHCP is disabled: `sudo systemctl stop dhcpcd.service` and `sudo systemctl disable dhcpcd.service`
 - Make sure the interface status is down: `sudo ip link set <interface> down`
 - Shutdown all profiles `sudo netctl stop-all`
 - Activate the desired profiles `sudo netctl start <profile>`
 
-For Ethernet:
+To enable automatic connection to WiFi: `systemctl enable netctl-auto@<interface>.service`
+
+### For Ethernet:
 
 - Make sure DHCP is enabled: `sudo systemctl enable dhcpcd.service` and `sudo systemctl start dhcpcd.service`
+
+## Sound does not work
+
+- Check ALSA: Open `alsamixer` and make sure no channels are muted.
+- Restart PulseAudio: `pulseaudio --kill` and/or `pkill pulseaudio` then `pulseaudio --start`

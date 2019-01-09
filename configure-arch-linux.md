@@ -97,7 +97,6 @@
   - gpasswd -a jbe audio + logout/login to take group changes into effect
   - pacman -Syu pulseaudio pavucontrol
   - cp default.pa ./.config/pulse/default.pa
-  - if problem `pulseaudio --kill` then `pulseaudio --start`
   - vim /etc/modprobe.d/alsa-base.conf
     options snd_hda_intel enable=1 index=0
     options snd_hda_intel enable=0 index=1
