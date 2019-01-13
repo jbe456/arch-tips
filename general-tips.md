@@ -25,6 +25,11 @@ See [How to enter BIOS configuration?](https://www.asus.com/support/faq/1013015/
   - https://askubuntu.com/questions/616811/gnu-grub-terminal-instead-of-ubuntu-login-screen
   - https://www.linux.com/learn/how-rescue-non-booting-grub-2-linux%20
 
+## Mount NTFS file system with read/write access
+
+- Install ntfs-3g: `pacman -S ntfs-3g`
+- Mount file system: `mount -t ntfs-3g <drive> <location>` where location is the folder to mount the drive to.
+
 ## Get info about RAID
 
 ```console
