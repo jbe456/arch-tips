@@ -312,7 +312,10 @@ If starting Xorg server triggers the following error `parse_vt_settings: Cannot 
 - Shutdown all profiles `sudo netctl stop-all`
 - Activate the desired profiles `sudo netctl start <profile>`
 
-To enable automatic connection to WiFi: `systemctl enable netctl-auto@<interface>.service`
+To enable automatic connection to WiFi, execute as root:
+
+- `systemctl enable netctl-auto@<interface>.service`
+- `systemctl restart netctl-auto@<interface>.service`
 
 ### For Ethernet:
 
