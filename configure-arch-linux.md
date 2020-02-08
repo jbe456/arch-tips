@@ -58,6 +58,7 @@
   - pacman -Syu xautolock
   - pacman -R i3lock
   - pacaur -S i3lock-color
+  - pacaur -S i3-battery-popup-git
   - rofi
   - pacman -S conky
     - own_window_transparent=true
