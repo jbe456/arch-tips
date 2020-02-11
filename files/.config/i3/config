@@ -172,12 +172,14 @@ bar {
 }
 
 set $lock i3lock -i ~/pictures/wallpapers/arch-matrix-2560x1440.png
+set $reset_screen xrandr --output eDP1 --mode 1920x1080&feh --bg-scale ~/pictures/wallpapers/arch-metal-2560x1440.png
 
 bindsym $mod+l exec --no-startup-id $lock
+bindsym $mod+x exec --no-startup-id $reset_screen
 
 # --textcolor=ffffff00 --insidecolor=ffffff00 --ringcolor=ffffff3e --linecolor=ffffff00 --keyhlcolor=00000080 --ringvercolor=00000000 --separatorcolor=22222260 --insidevercolor=0000001c --ringwrongcolor=00000055 --insidewrongcolor=0000001c
-exec --no-startup-id "xautolock -detectsleep -time 5 -locker $lock"
-exec --no-startup-id "xrandr --output eDP1 --mode 2560x1440"
+exec --no-startup-id "xautolock -detectsleep -time 5 -locker '$lock'"
+exec --no-startup-id "xrandr --output eDP1 --mode 1920x1080"
 exec --no-startup-id "feh --bg-scale ~/pictures/wallpapers/arch-metal-2560x1440.png"
 exec --no-startup-id "i3-battery-popup -L 15 -t 60s"
 
