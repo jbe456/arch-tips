@@ -95,14 +95,19 @@
 - sound:
 
   - pacman -S alsa-utils
-  - gpasswd -a jbe audio + logout/login to take group changes into effect
+  - gpasswd -a jbe audio #logout/login to take group changes into effect
   - pacman -Syu pulseaudio pavucontrol
   - cp default.pa ./.config/pulse/default.pa
   - vim /etc/modprobe.d/alsa-base.conf
     options snd_hda_intel enable=1 index=0
     options snd_hda_intel enable=0 index=1
 
-- configure microphone + webcam
+- webcam
+
+  - check `uvcvideo` is loaded with `lsmod|grep uvc`
+  - check available devices `v4l2-ctl --list-devices`
+  - pacman -S zvbi #for vlc
+  - usermod -aG video jbe #logout/login to take group changes into effect
 
 - backlight
 
