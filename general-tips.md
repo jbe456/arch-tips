@@ -325,3 +325,8 @@ To enable automatic connection to WiFi, execute as root:
 
 - Check ALSA: Open `alsamixer` and make sure no channels are muted.
 - Restart PulseAudio: `pulseaudio --kill` and/or `pkill pulseaudio` then `pulseaudio --start`
+
+## Disk is full
+
+- Remove any files older than 90 days on a specific folder: `sudo find ~/.cache -type f -atime +90 -delete`
+- Clean up pacman cache: `sudo pacman -Sc`
