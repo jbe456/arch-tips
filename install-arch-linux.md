@@ -6,26 +6,15 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 1.  Insert USB key
 1.  Enter [UEFI/BIOS configuration](./general-tips.md#enter-uefibios-configuration)
-1.  Boot on the USB. Depending on the UEFI configuration you can:
-
-    - select the USB media to boot from
-    - or change the boot sequence to place the USB media first
-
-    Exit and save.
-
-1.  Select "Arch Linux archiso_x86_64 UEFI CD"
+1.  Boot on the USB: select the USB media to boot from or change the boot sequence to place the USB media first
+1.  Exit and save.
+1.  Upon restart, select the "Arch Linux" entry.
 
 ### Setup USB
 
-- Configure the keyboard to the correct layout:
+- (Optional) Configure the keyboard layout. Example for french AZERTY: `loadkeys fr`. See [Keyboard configuration in console](https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console)
 
-  - For french AZERTY: `loadkeys fr`
-
-  See [Keyboard configuration in console](https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console)
-
-- Connect to the Wifi
-
-  See [Wireless network configuration](https://wiki.archlinux.org/index.php/Wireless_network_configuration)
+- (Optional) Connect to the internet with Ethernet or Wifi. See [Wireless network configuration](https://wiki.archlinux.org/title/Network_configuration/Wireless)
 
   ```console
   > iw dev # Get the interface name
@@ -42,28 +31,29 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 
 ### Prepare partition
 
-- Identify the partition to format...
 
-  ...using [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid). See [understand lsblk and blkid output](./general-tips.md#lsblk-and-blkid-output).
-
-  Be careful to identify the correct partition as all its data will be erased once formatted.
-
-  NB:
+- Identify disk and partitions using [fdisk](https://linux.die.net/man/8/fdisk), [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid). See [understand lsblk and blkid output](./general-tips.md#lsblk-and-blkid-output).
 
   - If you have a RAID, see [how to get more info about it](./general-tips.md#get-info-about-raid).
   - If your partition is not listed by `blkid` or `lsblk`, see [how to troubleshoot missing partition](./general-tips.md#partitiondisk-not-visible).
 
-- Format the partition
+- Create partitions with `fdisk`. Example:
 
-See [mkfs](https://linux.die.net/man/8/mkfs)
+  - EFI system partition, 512M: `/dev/efi_system_partition`
+  - Linux swap, 1G `/dev/swap_partition`
+  - Linux x86-64 root, remaining `/dev/root_partition`
 
-The created Linux file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
+    What is an [ESP](https://en.wikipedia.org/wiki/EFI_system_partition)?
 
-```console
-> mkfs --type=ext4 /dev/<linux-partition>
-```
+    > When a computer is booted, UEFI firmware loads files stored on the ESP to start installed operating systems and various utilities. An ESP contains the boot loaders or kernel images for all installed operating systems (which are contained in other partitions), device driver files for hardware devices present in a computer and used by the firmware at boot time, system utility programs that are intended to be run before an operating system is booted, and data files such as error logs.
+    >
+    > \- Wikipedia
 
-Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) partition, used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition. We prefer using a [swap file](https://wiki.archlinux.org/index.php/Swap#Swap_file).
+- Format the partition with `mkfs.vfat` for the EFI partition, `mkswap` for the swap partition and `mkfs.ext4` for the root partition. See [mkfs](https://linux.die.net/man/8/mkfs)
+
+The created Linux root partition file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
+
+The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition.
 
 ### Install Arch Linux
 
@@ -80,31 +70,20 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 - Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) and [base-devel](https://www.archlinux.org/groups/x86_64/base-devel/) packages using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)
 
   ```console
-  > pacstrap /mnt base base-devel
+  > pacstrap /mnt base base-devel linux linux-firmware
   ```
 
-- Mount all relevant partitions:
-
-  We use the output from `blkid` above to identify each partition:
-
-  - the Linux partition
-  - the [ESP](https://en.wikipedia.org/wiki/EFI_system_partition) (EFI System partition), usually identfied by `TYPE="vfat" PARTLABEL="EFI system partition"`
-
-    What is an ESP?
-
-    > When a computer is booted, UEFI firmware loads files stored on the ESP to start installed operating systems and various utilities. An ESP contains the boot loaders or kernel images for all installed operating systems (which are contained in other partitions), device driver files for hardware devices present in a computer and used by the firmware at boot time, system utility programs that are intended to be run before an operating system is booted, and data files such as error logs.
-    >
-    > \- Wikipedia
-
-  - the Windows partition, usually identified by `LABEL="OS" TYPE="ntfs" PARTLABEL="Basic data partition"`
+- Mount all relevant partitions with `mount`
 
   ```console
   > mount /dev/<linux-partition> /mnt # Mount the Linux partition
-  > mkdir /mnt/boot
-  > mount /dev/<esp> /mnt/boot # Mount the ESP
+  > mkdir /mnt/efi
+  > mount /dev/<esp> /mnt/efi # Mount the ESP
   > mkdir /mnt/windows
   > mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
   ```
+  
+- Enable swap with `swapon`
 
 - Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 
@@ -146,78 +125,18 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
 
 - Configure the bootloader
 
-  - Backup the ESP (EFI System partition):
-
-    Before doing any modifications, we backup the ESP in case we need to restore its initial state.
-
-    See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
+  - Backup the ESP (EFI System partition). See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
 
     ```console
     > mkdir /esp-backup
-    > tar cfz /esp-backup/esp-backup.tar.gz /boot/
+    > tar cfz /esp-backup/esp-backup.tar.gz /efi/
     ```
-
-  - Check there is enough space to install Linux on the ESP.
-
-    In this current configuration `/boot` is about 100M and the available space is not enough to install both default and fallback Linux image (see next paragraph).
-
-    We first use `df` to get the percentage of available space. Then we use, `du` to determine which element takes space. As a note, one can also install and use `ncdu` (Ncurses Disk Usage, see https://en.wikipedia.org/wiki/Ncurses).
-
-    The output below are the one after installing GRUB and Arch Linux.
-
-    ```console
-    > df -h /boot # Disk Free, `h` for human readable
-    Filesystem      Size  Used Avail Use% Mounted on
-    /dev/md126p1     96M   75M   22M  78% /boot
-    > du -chd1 /boot/* # Disk Usage, `h` for human readable, `c` for total, `d1` for max depth one
-    1.0K	/boot/BOOTSECT.BAK
-    25M	/boot/EFI/Microsoft
-    1.3M	/boot/EFI/Boot
-    318K	/boot/EFI/ASUS
-    120K	/boot/EFI/grub
-    27M	/boot/EFI
-    2.8M	/boot/grub/x86_64-efi
-    3.9M	/boot/grub/locale
-    2.8M	/boot/grub/themes
-    2.3M	/boot/grub/fonts
-    12M	/boot/grub
-    7.6M	/boot/initramfs-linux.img
-    1.6M	/boot/intel-ucode.img
-    23M	/boot/snapshots
-    2.0K	/boot/System Volume Information
-    5.1M	/boot/vmlinuz-linux
-    75M	total
-    ```
-
-  - Reduce Linux image installation size:
-
-    If there is not enough available space, one solution is to reduce the size of the images that will be generated installing the Linux boot files.
+    
+  - (Optional) Regenerate the initial ramdisk archive `mkinitcpio -p linux`
 
     The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"): each "initial ramdisk" is generated as an image file available on the ESP when loading Linux. `cpio` is similar to `tar`: it creates an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the `.img` extension.
 
-    By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start. When Linux does not start, we can always repair the system by booting on a USB stick. It is therefore acceptable to remove the "fallback" option.
-
-    Edit `/etc/mkinitcpio.d/linux.preset` and comment the fallback options:
-
-    ```bash
-    # mkinitcpio preset file for the 'linux' package
-
-    ALL_config="/etc/mkinitcpio.conf"
-    ALL_kver="/boot/vmlinuz-linux"
-
-    #PRESETS=('default' 'fallback')
-    PRESETS=('default')
-
-    #default_config="/etc/mkinitcpio.conf"
-    default_image="/boot/initramfs-linux.img"
-    #default_options=""
-
-    #fallback_config="/etc/mkinitcpio.conf"
-    #fallback_image="/boot/initramfs-linux-fallback.img"
-    #fallback_options="-S autodetect"
-    ```
-
-    Remove fallback archive `rm /boot/initramfs-linux-fallback.img` and generate the initial ramdisk archive `mkinitcpio -p linux`
+    By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start. 
 
   - Install GRUB
 
@@ -237,10 +156,10 @@ Optionally, you can create a [swap](https://wiki.archlinux.org/index.php/swap) p
         > pacman -Syu grub efibootmgr intel-ucode
         ```
 
-    1.  Execute the following command to install the GRUB UEFI application `grubx64.efi` to `/boot/grub` and install its modules to `/boot/grub/x86_64-efi/`.
+    1.  Execute the following command to install the GRUB UEFI application `grubx64.efi` to `/efi/grub` and install its modules to `/boot/grub/x86_64-efi/`.
 
         ```console
-        > grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
+        > grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=grub
         ```
 
     1.  Edit `/etc/default/grub`:
@@ -342,12 +261,12 @@ NB: If the PC uses a firmware RAID, we need to make sure the initial ramdisk arc
 
 See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details
 
-- Install wifi tools
+- Install wifi/ethernet tools
 
   In order for the new partition to be autonomous, we must make sure that we can connect to wifi before rebooting.
 
   ```console
-  > pacman -Syu iw dialog wpa_supplicant wifi-menu
+  > pacman -Syu iw dialog wpa_supplicant wifi-menu dhcpcd
   ```
 
 - Reboot the machine and make sure GRUB correctly displays with all the desired options
