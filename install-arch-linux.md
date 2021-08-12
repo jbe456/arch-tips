@@ -37,11 +37,11 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   - If you have a RAID, see [how to get more info about it](./general-tips.md#get-info-about-raid).
   - If your partition is not listed by `blkid` or `lsblk`, see [how to troubleshoot missing partition](./general-tips.md#partitiondisk-not-visible).
 
-- Create partitions with `fdisk`. Example:
+- Create partitions with `fdisk /dev/sdX`. Create a new empty `GPT` partition table. Review your partitions with 'p' and persist changes with 'w'.
 
-  - EFI system partition, 512M: `/dev/efi_system_partition`
-  - Linux swap, 1G `/dev/swap_partition`
-  - Linux x86-64 root, remaining `/dev/root_partition`
+  - EFI system partition, 100M: `/dev/sdXX`
+  - boot partition, 250M: `/dev/sdXY`
+  - Linux x86-64 root, remaining `/dev/sdXZ`
 
     What is an [ESP](https://en.wikipedia.org/wiki/EFI_system_partition)?
 
@@ -49,13 +49,58 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     >
     > \- Wikipedia
 
-- Format the partition with `mkfs.vfat` for the EFI partition, `mkswap` for the swap partition and `mkfs.ext4` for the root partition. See [mkfs](https://linux.die.net/man/8/mkfs)
+- Format the partitions:
+
+  ```console
+  > mkfs.vfat /dev/sdXX
+  > mkfs.ext4 /dev/sdXY
+  ```
+-  
+-    with `mkfs.vfat` for the EFI partition, `mkswap` for the swap partition and `mkfs.ext4` for the root partition. See [mkfs](https://linux.die.net/man/8/mkfs)
 
 The created Linux root partition file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
 
+- Encrypt the root partition and create swap & root sub partitions
+
+```console
+> cryptsetup -c aes-xts-plain64 -h sha512 -s 512 --use-random luksFormat /dev/sdXZ
+> cryptsetup luksOpen /dev/sdX3 luks
+> pvcreate /dev/mapper/luks
+> vgcreate arch /dev/mapper/luks
+> lvcreate -L +8G arch -n swap
+> lvcreate -l +100%FREE arch -n root
+```
+
+- Format the root & swap partitions:
+
+  ```console
+  > mkfs.ext4 /dev/mapper/arch-root
+  > mkswap /dev/mapper/arch-swap
+  ```
+
 The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition.
 
+- Mount all relevant partitions with `mount`
+
+  ```console
+  > mount /dev/mapper/arch-root /mnt
+  > swapon /dev/mapper/arch-swap
+  > mkdir /mnt/boot
+  > mount /dev/sdXY /mnt/boot
+  > mkdir /mnt/boot/efi
+  > mount /dev/sdXX /mnt/boot/efi
+  > mkdir /mnt/windows
+  > mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
+  ```
+
 ### Install Arch Linux
+
+- Install required packages
+
+  ```console
+  > pacstrap /mnt base base-devel linux linux-firmware
+  > pacstrap /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode iw dialog wpa_supplicant dhcpcd netctl lvm2 gvim
+  ```
 
 - Select the mirror closest to your location (United State in this case)
 
@@ -67,23 +112,6 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   > :m 6 # move both lines to 6th line (i.e. at the top of mirror list)
   ```
 
-- Install Arch Linux [base](https://www.archlinux.org/groups/x86_64/base/) and [base-devel](https://www.archlinux.org/groups/x86_64/base-devel/) packages using the [pacstrap script](https://git.archlinux.org/arch-install-scripts.git/tree/pacstrap.in)
-
-  ```console
-  > pacstrap /mnt base base-devel linux linux-firmware
-  ```
-
-- Mount all relevant partitions with `mount`
-
-  ```console
-  > mount /dev/<linux-partition> /mnt # Mount the Linux partition
-  > mkdir /mnt/efi
-  > mount /dev/<esp> /mnt/efi # Mount the ESP
-  > mkdir /mnt/windows
-  > mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
-  ```
-  
-- Enable swap with `swapon`
 
 - Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 
