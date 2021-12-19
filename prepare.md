@@ -1,4 +1,18 @@
-# Prepare Windows 10
+# Prepare
+
+## For UEFI
+
+1.  Disable "Secure Boot Control"
+
+    With UEFI comes the "Secure Boot Control" options that ensures your PC only uses signed firmware that is trusted by the manufacturer. While it prevents malicious firmware to be installed, this could also potentially prevents you from installing Linux drivers. Note that it is still possible to [install Arch Linux with "Secure Boot Control" enabled](https://wiki.archlinux.org/index.php/Secure_Boot).
+
+    - Enter [UEFI/BIOS configuration](./general-tips.md#enter-uefibios-configuration)
+
+    - Disable "Secure Boot Control". Where the option is depends on the UEFI configuration screen:
+
+      - Aptio Setup Utility - American Megatrends: under the "Security" tab, set "Secure Boot Control" to disabled: https://www.asus.com/support/FAQ/1013017/
+
+## For Windows OS
 
 1.  Double check the PC motherboard firmware "BIOS mode" is [UEFI](https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface). This should be the case with Windows 10.
 
@@ -23,16 +37,6 @@
     - Uncheck "Turn on fast start-up"
 
     See [Why disable Fast Boot on Windows 8 when having dual booting?](https://askubuntu.com/questions/452071/why-disable-fast-boot-on-windows-8-when-having-dual-booting) for more details.
-
-1.  Disable "Secure Boot Control"
-
-    With UEFI comes the "Secure Boot Control" options that ensures your PC only uses signed firmware that is trusted by the manufacturer. While it prevents malicious firmware to be installed, this could also potentially prevents you from installing Linux drivers. Note that it is still possible to [install Arch Linux with "Secure Boot Control" enabled](https://wiki.archlinux.org/index.php/Secure_Boot).
-
-    - Enter [UEFI/BIOS configuration](./general-tips.md#enter-uefibios-configuration)
-
-    - Disable "Secure Boot Control". Where the option is depends on the UEFI configuration screen:
-
-      - Aptio Setup Utility - American Megatrends: under the "Security" tab, set "Secure Boot Control" to disabled: https://www.asus.com/support/FAQ/1013017/
 
         <img src="./images/american-megatrends-uefi-secure-boot.png" alt="UEFI Secure Boot American Megatrends" height="300px"/>
 
