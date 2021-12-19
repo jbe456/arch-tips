@@ -1,4 +1,25 @@
-# Create an Arch Linux installer USB drive from Windows
+# Create an Arch Linux installer USB drive 
+
+## From MacOS
+
+1.  Convert the `.iso` file to `.img` using the `convert` option of `hdiutil`:
+
+    ```console
+    hdiutil convert -format UDRW -o /path/to/target.img /path/to/source.iso
+    ```
+
+1.  Make sure the USB device is unmounted and execute:
+
+    ```console
+    sudo dd if=/path/to/target.img of=/dev/rdiskN bs=1m
+    ```
+1.  Run:
+
+    ```console
+    diskutil eject /dev/diskN
+    ```
+
+## From Windows
 
 1.  Download Rufus from http://rufus.akeo.ie
 1.  Download Arch Linux `iso` from https://www.archlinux.org/download/
