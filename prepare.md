@@ -12,6 +12,9 @@
 
       - Aptio Setup Utility - American Megatrends: under the "Security" tab, set "Secure Boot Control" to disabled: https://www.asus.com/support/FAQ/1013017/
 
+
+1.  Edit the boot order to place the USB at the top of the list
+
 ## For Windows OS
 
 1.  Double check the PC motherboard firmware "BIOS mode" is [UEFI](https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface). This should be the case with Windows 10.
