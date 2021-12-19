@@ -11,7 +11,7 @@ Tested on the following PC:
 
 Instructions:
 
-1.  [Prepare Windows](./prepare-windows.md)
+1.  [Prepare](./prepare.md)
 1.  [Create an Arch Linux installer USB drive](./create-bootable-usb.md)
 1.  [Create a partition for Linux](./create-linux-partition.md)
 1.  [Install Arch Linux](./install-arch-linux.md)
