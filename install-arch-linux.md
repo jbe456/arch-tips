@@ -17,15 +17,12 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
 - (Optional) Connect to the internet with Ethernet or Wifi. See [Wireless network configuration](https://wiki.archlinux.org/title/Network_configuration/Wireless)
 
   ```console
-  > iw dev # Get the interface name
-  phy#0
-    Interface <wifi_interface_name>
-      ifindex 2
-      wdev 0x1
-      addr <xx:xx:xx:xx:xx:xx>
-      type managed
-
-  > wifi-menu <wifi_interface_name> # Open Wifi panel, select network and enter password if necessary
+  > iwctl # For wifi
+  > [iwd] device list # Get the interface name
+  > [iwd] station wlanX scan
+  > [iwd] station wlanX get-networks
+  > [iwd] station wlanX connect SSID
+  > [iwd] exit
   > ping google.com # check internet
   ```
 
