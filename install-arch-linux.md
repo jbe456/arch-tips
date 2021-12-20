@@ -165,7 +165,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 
 ### Configure the bootloader
 
-- Backup the ESP (EFI System partition) if needed. See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
+- (Optional) Backup the ESP (EFI System partition). See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
 
   ```console
   > mkdir /esp-backup
@@ -196,7 +196,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 
 - Edit `/etc/default/grub`:
 
-  - Edit the following line for encryption: `GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"`
+  - Enable encryption: `GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"`
 
 - Generate GRUB config. It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
 
@@ -370,7 +370,6 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
 
 - More GRUB config:
-  - Remove the "Advanced Options" submenu: add `GRUB_DISABLE_SUBMENU=y`
     - Setup the `arch-dark` theme: copy ./config/gub/dark-theme content into /boot/grub/themes and edit the grub config file as follow:
       ```ini
       GRUB_THEME="/boot/grub/themes/arch-dark/theme.txt"
@@ -378,28 +377,6 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
       #GRUB_GFXMODE=1920x1440x32,auto
       #GRUB_GFXPAYLOAD_LINUX=keep
       ```
-
-    1.  Rename GRUB menu entries:
-
-    By default, Arch Linux will appear as "Arch Linux, with Linux linux". To make it appears as "Arch Linux", update /etc/grub.d/10_linux:
-
-    ```diff
-    @@ -82,11 +82,11 @@ linux_entry ()
-      if [ x$type != xsimple ] ; then
-          case $type in
-              recovery)
-    -             title="$(gettext_printf "%s, with Linux %s (recovery mode)" "${os}" "${version}")" ;;
-    +             title="$(gettext_printf "%s (recovery mode)" "${os}")" ;;
-              fallback)
-    -             title="$(gettext_printf "%s, with Linux %s (fallback initramfs)" "${os}" "${version}")" ;;
-    +             title="$(gettext_printf "%s (fallback initramfs)" "${os}")" ;;
-              *)
-    -             title="$(gettext_printf "%s, with Linux %s" "${os}" "${version}")" ;;
-    +             title="$(gettext_printf "%s" "${os}")" ;;
-          esac
-          if [ x"$title" = x"$GRUB_ACTUAL_DEFAULT" ] || [ x"Previous Linux versions>$title" = x"$GRUB_ACTUAL_DEFAULT" ]; then
-              replacement_title="$(echo "Advanced options for ${OS}" | sed 's,>,>>,g')>$(echo "$title" | sed 's,>,>>,g')"
-    ```
 
     1.  Add additional entries to the GRUB menu:
 
@@ -410,7 +387,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
         And insert the content below to have the following entries:
 
         - a windows startup
-        - a UEFI
+        - a USB
         - a shutdown
         - a restart
 
@@ -420,6 +397,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
           insmod fat
           insmod search_fs_uuid
           insmod chain
+          # Replace `<ESP UUID>` with the UUID of the ESP obtained via `sudo blkid /dev/<esp>`
           search --fs-uuid --set=root <ESP UUID>
           chainloader /EFI/Microsoft/Boot/bootmgfw.efi
         }
@@ -428,10 +406,6 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
           set root=(hd1,1)
           chainloader +1
           boot
-        }
-
-        menuentry "Firmware setup" --class settings {
-          fwsetup
         }
 
         menuentry "Shutdown" --class shutdown {
@@ -444,5 +418,3 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
           reboot
         }
         ```
-
-        Where `<ESP UUID>` is to replace with the UUID of the ESP obtained via `sudo blkid /dev/<esp>`
