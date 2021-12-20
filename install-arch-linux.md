@@ -160,6 +160,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   ```console
   > useradd -m -G wheel -s /bin/bash MyUserName
   > passwd MyUserName
+  > EDITOR=vim visudo # Uncomment %wheel      ALL=(ALL) ALL
   ```
 
 ### Configure the bootloader
@@ -267,16 +268,11 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   > <Suppr> # uncomment line
   ```
 
-  - Generate the locale
+  - Set the system locale & Generate the locale
 
   ```console
+  > vim /etc/locale.conf # Content: LANG=en_US.UTF-8
   > locale-gen
-  ```
-
-  - Set the system locale
-
-  ```console
-  > vim /etc/locale.conf LANG=en_US.UTF-8
   ```
 
   - Configure the keyboard layout
@@ -336,7 +332,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   To persist the keyboard layout:
 
   ```console
-  > vim /etc/vconsole.conf KEYMAP=fr-latin9
+  > vim /etc/vconsole.conf # Content: KEYMAP=fr-latin9
   ```
 
 ### Configure Network
@@ -344,16 +340,18 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 - Define the hostname:
 
 ```console
-> vim /etc/hostname <hostname>
+> vim /etc/hostname # Content: <hostname>
 ```
 
-- Create the `hosts` file via `vim /etc/hosts`
+- Start/Enable the NetworkManager & connect to a wifi
 
-  ```
-  127.0.0.1 localhost
-  ::1 localhost
-  127.0.1.1 <hostname>.localdomain <hostname>
-  ```
+```console
+# As a root
+> systemctl enable NetworkManager.service
+> systemctl start NetworkManager.service
+# Connect to a wifi
+> nmcli device wifi connect SSID_or_BSSID password password
+```
 
 ### Others
 
