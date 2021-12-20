@@ -1,6 +1,6 @@
 ## Install Arch Linux
 
-These steps are mainly inspired from [Arch Linux Installation Guide](https://wiki.archlinux.org/index.php/Installation_guide)
+These steps are inspired from [Arch Linux Installation Guide](https://wiki.archlinux.org/index.php/Installation_guide) and [Efficient Encrypted UEFI-Booting Arch Installation](https://gist.github.com/HardenedArray/31915e3d73a4ae45adc0efa9ba458b07)
 
 ### Boot from USB
 
@@ -27,7 +27,6 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
   ```
 
 ### Prepare partition
-
 
 - Identify disk and partitions using [fdisk](https://linux.die.net/man/8/fdisk), [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid). See [understand lsblk and blkid output](./general-tips.md#lsblk-and-blkid-output).
 
@@ -64,14 +63,12 @@ These steps are mainly inspired from [Arch Linux Installation Guide](https://wik
     >
     > \- Wikipedia
 
-- Format the partitions:
+- Format the partitions with `mkfs.vfat` for the EFI partition, `mkswap` for the swap partition and `mkfs.ext4` for the root partition. See [mkfs](https://linux.die.net/man/8/mkfs)
 
   ```console
   > mkfs.vfat /dev/sdXX
   > mkfs.ext4 /dev/sdXY
   ```
-
--    with `mkfs.vfat` for the EFI partition, `mkswap` for the swap partition and `mkfs.ext4` for the root partition. See [mkfs](https://linux.die.net/man/8/mkfs)
 
 The created Linux root partition file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
 
@@ -111,7 +108,6 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 
 ### Install Arch Linux
 
-
 - Select the mirror closest to your location (United State in this case)
 
   ```console
@@ -132,6 +128,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   - `efibootmgr`: manipulates the boot manager and creates bootable .efi stub entries used by the GRUB installation script.
   - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
   - `networkmanager`: for network configuration over `netctl`, `dhcpcd` or `iwd`
+  - `gvim`: instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`).
 
 - Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 
@@ -142,8 +139,6 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   > cat /mnt/etc/fstab # check it has been correctly generated
   ```
 
-### Minimalist installation
-
 - Change root using the [arch-chroot script](https://git.archlinux.org/arch-install-scripts.git/tree/arch-chroot.in)
 
   [Chroot](https://wiki.archlinux.org/index.php/change_root) (Change Root) is an operation that changes the apparent root directory for the current running process and their children.
@@ -151,6 +146,8 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   ```
   arch-chroot /mnt
   ```
+
+### Setup users
 
 - Set the root password
 
@@ -165,50 +162,48 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   > passwd MyUserName
   ```
 
-- Configure the bootloader
+### Configure the bootloader
 
-  - Backup the ESP (EFI System partition) if needed. See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
+- Backup the ESP (EFI System partition) if needed. See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
 
-    ```console
-    > mkdir /esp-backup
-    > tar cfz /esp-backup/esp-backup.tar.gz /mnt/boot/efi/
-    ```
-    
-  - Edit `/etc/mkinitcpio.conf` and add to the list of HOOKS:
-     -  `keymap encrypt lvm2 resume` if encryption has been setup.
-     -  `mdadm_udev` if the PC uses a firmware RAID (module to manage firmware/software RAID configurations). See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details.
+  ```console
+  > mkdir /esp-backup
+  > tar cfz /esp-backup/esp-backup.tar.gz /mnt/boot/efi/
+  ```
+  
+- Edit `/etc/mkinitcpio.conf` and add to the list of HOOKS:
+   -  `keymap encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf block keymap encrypt lvm2 resume filesystems keyboard fsck)`
+   -  `mdadm_udev` if the PC uses a firmware RAID (module to manage firmware/software RAID configurations). See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details.
 
-    `HOOKS=(base udev autodetect modconf block keymap encrypt lvm2 resume filesystems keyboard fsck)`
+- Regenerate the initial ramdisk archive `mkinitcpio -p linux`
 
-  - Regenerate the initial ramdisk archive `mkinitcpio -p linux`
+  The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"): each "initial ramdisk" is generated as an image file available on the ESP when loading Linux. `cpio` is similar to `tar`: it creates an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the `.img` extension.
 
-    The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"): each "initial ramdisk" is generated as an image file available on the ESP when loading Linux. `cpio` is similar to `tar`: it creates an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the `.img` extension.
+  By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start. 
 
-    By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start. 
+- Setup GRUB to install the GRUB UEFI application `grubx64.efi` to `/boot/efi/EFI/grub` and install its modules to `/boot/grub/x86_64-efi/`.
+  
+  ```console
+  >grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub
+  ```
+ 
+  [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader.
 
-  - Setup GRUB
+  > A boot loader is the first program that runs when a computer starts. It is responsible for selecting, loading and transferring control to an operating system kernel. The kernel, in turn, initializes the rest of the operating system.
+  >
+  > - Arch Linux Wiki
 
-    [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader.
+- Edit `/etc/default/grub`:
 
-    > A boot loader is the first program that runs when a computer starts. It is responsible for selecting, loading and transferring control to an operating system kernel. The kernel, in turn, initializes the rest of the operating system.
-    >
-    > - Arch Linux Wiki
+  - Edit the following line for encryption: `GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"`
 
-    1.  Execute the following command to install the GRUB UEFI application `grubx64.efi` to `/boot/efi/EFI/grub` and install its modules to `/boot/grub/x86_64-efi/`.
+- Generate GRUB config. It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
 
-        ```console
-        >grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub
-        ```
+  ```console
+  > grub-mkconfig -o /boot/grub/grub.cfg
+  ```
 
-    1.  Edit `/etc/default/grub`:
-
-        - Edit the following line for encryption: `GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"`
-
-    1.  Generate GRUB config. It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
-
-        ```console
-        > grub-mkconfig -o /boot/grub/grub.cfg
-        ```
+### Reboot
 
 - Reboot the machine and make sure GRUB correctly displays with all the desired options
 
@@ -219,9 +214,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   > reboot
   ```
 
-### Configure Arch Linux
-
-- Configure time and timezone
+### Configure time and timezone
 
   There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock) a physical clock powered by a battery. At boot time, the system clock initial value is set from the hardware clock.
 
@@ -254,31 +247,7 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 
   See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
 
-* Upgrade the whole system:
-
-  [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
-
-  ```console
-  > pacman -Syu
-  ```
-
-  where:
-
-  - `S` or `sync`: operation to install packages.
-  - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
-  - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
-
-* Install Vim
-
-  We will use Vim later on to edit configuration files. It is a best practice to update the system before installing new packages to avoid incompatibilities.
-
-  We install `gvim` instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`). We will still use the `vim` command however.
-
-  ```console
-  > pacman -Syu gvim
-  ```
-
-* Configure the locale
+### Configure locale
 
   Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code, "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code, and "codeset" is a character set or encoding identifier.
 
@@ -370,23 +339,39 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
   > vim /etc/vconsole.conf KEYMAP=fr-latin9
   ```
 
-* Configure Network
+### Configure Network
 
-  - Define the hostname:
+- Define the hostname:
 
-  ```console
-  > vim /etc/hostname <hostname>
+```console
+> vim /etc/hostname <hostname>
+```
+
+- Create the `hosts` file via `vim /etc/hosts`
+
+  ```
+  127.0.0.1 localhost
+  ::1 localhost
+  127.0.1.1 <hostname>.localdomain <hostname>
   ```
 
-  - Create the `hosts` file via `vim /etc/hosts`
+### Others
 
-    ```
-    127.0.0.1 localhost
-    ::1 localhost
-    127.0.1.1 <hostname>.localdomain <hostname>
-    ```
+- Upgrade the whole system:
 
-* More GRUB config:
+  [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
+
+  ```console
+  > pacman -Syu
+  ```
+
+  where:
+
+  - `S` or `sync`: operation to install packages.
+  - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
+  - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
+
+- More GRUB config:
   - Remove the "Advanced Options" submenu: add `GRUB_DISABLE_SUBMENU=y`
     - Setup the `arch-dark` theme: copy ./config/gub/dark-theme content into /boot/grub/themes and edit the grub config file as follow:
       ```ini
