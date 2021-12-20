@@ -1,5 +1,19 @@
 ## Configure Arch Linux
 
+- Upgrade the whole system:
+
+  [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
+
+  ```console
+  > pacman -Syu
+  ```
+
+  where:
+
+  - `S` or `sync`: operation to install packages.
+  - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
+  - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
+
 - login root + password
 - vim /etc/pacman.d/mirrorlist move US at the top, France 2nd
 - connect to wifi
