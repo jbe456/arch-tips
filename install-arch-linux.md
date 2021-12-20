@@ -197,22 +197,48 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 - Edit `/etc/default/grub`:
 
   - Enable encryption: `GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"`
+  - Update `GRUBTIMEOUT=10`
+
+- Add additional entries to the GRUB menu:
+
+  ```console
+  > vim /boot/grub/custom.cfg
+  ```
+
+  And insert the content below to have the following entries:
+
+  ```bash
+  menuentry "Microsoft Windows 10" --class windows --class os {
+    insmod part_gpt
+    insmod fat
+    insmod search_fs_uuid
+    insmod chain
+    # Replace `<ESP UUID>` with the UUID of the ESP obtained via `sudo blkid /dev/<esp>`
+    search --fs-uuid --set=root <ESP UUID>
+    chainloader /EFI/Microsoft/Boot/bootmgfw.efi
+  }
+
+  menuentry "USB" --class usb {
+    set root=(hd1,1)
+    chainloader +1
+    boot
+  }
+
+  menuentry "Shutdown" --class shutdown {
+    echo "System shutting down..."
+    halt
+  }
+
+  menuentry "Restart" --class restart {
+    echo "System rebooting..."
+    reboot
+  }
+  ```
 
 - Generate GRUB config. It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
 
   ```console
   > grub-mkconfig -o /boot/grub/grub.cfg
-  ```
-
-### Reboot
-
-- Reboot the machine and make sure GRUB correctly displays with all the desired options
-
-  ```console
-  > exit # exit arch-chroot
-  > umount -R /mnt
-  > swapoff -a
-  > reboot
   ```
 
 ### Configure time and timezone
@@ -353,68 +379,13 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 > nmcli device wifi connect SSID_or_BSSID password password
 ```
 
-### Others
+### Reboot
 
-- Upgrade the whole system:
-
-  [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
+- Reboot the machine and make sure GRUB correctly displays with all the desired options
 
   ```console
-  > pacman -Syu
+  > exit # exit arch-chroot
+  > umount -R /mnt
+  > swapoff -a
+  > reboot
   ```
-
-  where:
-
-  - `S` or `sync`: operation to install packages.
-  - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
-  - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
-
-- More GRUB config:
-    - Setup the `arch-dark` theme: copy ./config/gub/dark-theme content into /boot/grub/themes and edit the grub config file as follow:
-      ```ini
-      GRUB_THEME="/boot/grub/themes/arch-dark/theme.txt"
-      # if one need to set a different resolution, use 'videoinfo' command in GRUB shell to get the list of supported GFX mode
-      #GRUB_GFXMODE=1920x1440x32,auto
-      #GRUB_GFXPAYLOAD_LINUX=keep
-      ```
-
-    1.  Add additional entries to the GRUB menu:
-
-        ```console
-        > vim /boot/grub/custom.cfg
-        ```
-
-        And insert the content below to have the following entries:
-
-        - a windows startup
-        - a USB
-        - a shutdown
-        - a restart
-
-        ```bash
-        menuentry "Microsoft Windows 10" --class windows --class os {
-          insmod part_gpt
-          insmod fat
-          insmod search_fs_uuid
-          insmod chain
-          # Replace `<ESP UUID>` with the UUID of the ESP obtained via `sudo blkid /dev/<esp>`
-          search --fs-uuid --set=root <ESP UUID>
-          chainloader /EFI/Microsoft/Boot/bootmgfw.efi
-        }
-
-        menuentry "USB" --class usb {
-          set root=(hd1,1)
-          chainloader +1
-          boot
-        }
-
-        menuentry "Shutdown" --class shutdown {
-          echo "System shutting down..."
-          halt
-        }
-
-        menuentry "Restart" --class restart {
-          echo "System rebooting..."
-          reboot
-        }
-        ```
