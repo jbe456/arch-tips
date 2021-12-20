@@ -14,15 +14,10 @@
   - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
   - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
 
-- login root + password
-- vim /etc/pacman.d/mirrorlist move US at the top, France 2nd
-- connect to wifi
+- Install GRUB theme from https://github.com/vandalsoul/darkmatter-grub2-theme/
 - enable auto connect:
   - pacman -S wpa_actiond
   - systemctl enable netctl-auto@wlp2s0.service
-- useradd -m -s /bin/bash jbe
-  - passwd jbe
-  - add user to sudoers: visudo, add user line, exit login again
 - check boot errors:journalctl -b -p 4
   - ENERGY_PERF_BIAS: Set to 'normal', was 'performance'
   - ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)
