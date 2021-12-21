@@ -1,40 +1,42 @@
 ## Configure Arch Linux
 
-- Upgrade the whole system:
+### pacman
 
-  [pacman](https://www.archlinux.org/pacman/pacman.8.html) is Arch Linux package manager, configured via `/etc/pacman.conf`. There is only one command needed to update the whole system:
+```bash
+# Upgrade the whole system with pacman, Arch Linux package manager
+# - `S` or `sync`: operation to install packages
+# - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf
+# - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date
+# See https://www.archlinux.org/pacman/pacman.8.html
+pacman -Syu
 
-  ```console
-  > pacman -Syu
-  ```
+# Configure pacman via `/etc/pacman.conf`
+# - uncomment "Color" option
+# - uncomment "multilib" section for 32 bit applications support
+```
 
-  where:
+### GRUB
 
-  - `S` or `sync`: operation to install packages.
-  - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf.
-  - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date.
+```bash
+# Install GRUB theme from https://github.com/vandalsoul/darkmatter-grub2-theme/
+cd /tmp
+git clone --depth 1 https://github.com/vandalsoul/darkmatter-grub2-theme.git
+cd darkmatter-grub2-theme
+sudo python3 install.py
 
-- Install GRUB theme from https://github.com/vandalsoul/darkmatter-grub2-theme/
-- enable auto connect:
-  - pacman -S wpa_actiond
-  - systemctl enable netctl-auto@wlp2s0.service
-- check boot errors:journalctl -b -p 4
-  - ENERGY_PERF_BIAS: Set to 'normal', was 'performance'
-  - ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)
-  - https://itpeernetwork.intel.com/how-to-maximise-cpu-performance-for-the-oracle-database-on-linux/
-  - pacman -S x86_energy_perf_policy
-  - x86_energy_perf_policy -v performance did not work
-  - pacman -S cpupower
-  - cpupower frequency-info
-  - cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-- get laptop model:
-  - pacman -S dmidecode
-  - dmidecode|less
-- check hardware recommendations
-  - https://wiki.debian.org/InstallingDebianOn/Asus/UX301LA
-- setup pacman
-  - uncomment "Color" option in /etc/pacman.conf
-  - uncomment "multilib" section in /etc/pacman.conf
+# Add missing grub icons
+cd /boot/grub/theme/dark-theme/icons
+cp help.png usb.png
+
+# Add missing class `--class efi` next to `menuentry`
+vim /etc/grub.d/30_uefi-firmware
+
+# Ensure theme is correctly setup by rebooting
+reboot
+```
+
+### Others
+
 - setup AUR: from https://gist.github.com/Tadly/0e65d30f279a34c33e9b
   - `curl -Ls https://goo.gl/cF2iJy | bash`
 - install zsh
