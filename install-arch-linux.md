@@ -73,185 +73,125 @@ t <Enter> 23 # Set type to Linux root (x86-64)
 
 p # Review partition table
 w # Persist changes
+
+# Format the partitions:
+# - `mkfs.vfat` for the EFI partition
+# - `mkswap` for the swap partition
+# - `mkfs.ext4` for the root partition
+# The created Linux root partition file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem).
+# It is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
+# See https://linux.die.net/man/8/mkfs
+mkfs.vfat /dev/sdXX
+mkfs.ext4 /dev/sdXY
+
+# Encrypt the root partition and create swap & root sub partitions
+cryptsetup -c aes-xts-plain64 -h sha512 -s 512 --use-random luksFormat /dev/sdXZ
+cryptsetup luksOpen /dev/sdX3 luks
+pvcreate /dev/mapper/luks
+vgcreate arch /dev/mapper/luks
+lvcreate -L +8G arch -n swap
+lvcreate -l +100%FREE arch -n root
+
+# Format the root & swap partitions
+# The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the operating system as a "hard disk extension" of the RAM
+# (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses
+# are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in 
+# and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to
+# physical memory while the others would be moved to the swap partition.
+mkfs.ext4 /dev/mapper/arch-root
+mkswap /dev/mapper/arch-swap
+
+# Mount all relevant partitions with `mount`
+mount /dev/mapper/arch-root /mnt
+swapon /dev/mapper/arch-swap
+mkdir /mnt/boot
+mount /dev/sdXY /mnt/boot
+mkdir /mnt/boot/efi
+mount /dev/sdXX /mnt/boot/efi
+# if dual boot
+mkdir /mnt/windows
+mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
 ```
-
-- Format the partitions with `mkfs.vfat` for the EFI partition, `mkswap` for the swap partition and `mkfs.ext4` for the root partition. See [mkfs](https://linux.die.net/man/8/mkfs)
-
-  ```console
-  > mkfs.vfat /dev/sdXX
-  > mkfs.ext4 /dev/sdXY
-  ```
-
-The created Linux root partition file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem): it is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
-
-- Encrypt the root partition and create swap & root sub partitions
-
-```console
-> cryptsetup -c aes-xts-plain64 -h sha512 -s 512 --use-random luksFormat /dev/sdXZ
-> cryptsetup luksOpen /dev/sdX3 luks
-> pvcreate /dev/mapper/luks
-> vgcreate arch /dev/mapper/luks
-> lvcreate -L +8G arch -n swap
-> lvcreate -l +100%FREE arch -n root
-```
-
-- Format the root & swap partitions:
-
-  ```console
-  > mkfs.ext4 /dev/mapper/arch-root
-  > mkswap /dev/mapper/arch-swap
-  ```
-
-The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the operating system as a "hard disk extension" of the RAM (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to physical memory while the others would be moved to the swap partition.
-
-- Mount all relevant partitions with `mount`
-
-  ```console
-  > mount /dev/mapper/arch-root /mnt
-  > swapon /dev/mapper/arch-swap
-  > mkdir /mnt/boot
-  > mount /dev/sdXY /mnt/boot
-  > mkdir /mnt/boot/efi
-  > mount /dev/sdXX /mnt/boot/efi
-  # if dual boot
-  > mkdir /mnt/windows
-  > mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
-  ```
 
 ### Install Arch Linux
 
-- Select the mirror closest to your location (United State in this case)
+```bash
+# Select the mirror closest to your location (United State in this case)
+vim /etc/pacman.d/mirrorlist # edit mirror list
+/United + Enter # search for "United"
+Shit + v # select whole line
+<Down arrow> # select line below
+:m 6 # move both lines to 6th line (i.e. at the top of mirror list)
 
-  ```console
-  > vim /etc/pacman.d/mirrorlist # edit mirror list
-  > /United + Enter # search for "United"
-  > Shit + v # select whole line
-  > <Down arrow> # select line below
-  > :m 6 # move both lines to 6th line (i.e. at the top of mirror list)
-  ```
+# Install required packages
+# - `grub`: the multiboot boot loader.
+# - `efibootmgr`: manipulates the boot manager and creates bootable .efi stub entries used by the GRUB installation script.
+# - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
+# - `networkmanager`: for network configuration over `netctl`, `dhcpcd` or `iwd`
+# - `gvim`: instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`).
+pacstrap /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim
 
-- Install required packages. For network configuration, we pick `networkmanager` over `netctl`, `dhcpcd` or `iwd`
+# Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
+# The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
+genfstab -U /mnt >> /mnt/etc/fstab # persist mounted partitions
+cat /mnt/etc/fstab # check it has been correctly generated
 
-  ```console
-  > pacstrap /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim
-  ```
-
-  - `grub`: the multiboot boot loader.
-  - `efibootmgr`: manipulates the boot manager and creates bootable .efi stub entries used by the GRUB installation script.
-  - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
-  - `networkmanager`: for network configuration over `netctl`, `dhcpcd` or `iwd`
-  - `gvim`: instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`).
-
-- Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
-
-  The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
-
-  ```console
-  > genfstab -U /mnt >> /mnt/etc/fstab # persist mounted partitions
-  > cat /mnt/etc/fstab # check it has been correctly generated
-  ```
-
-- Change root using the [arch-chroot script](https://git.archlinux.org/arch-install-scripts.git/tree/arch-chroot.in)
-
-  [Chroot](https://wiki.archlinux.org/index.php/change_root) (Change Root) is an operation that changes the apparent root directory for the current running process and their children.
-
-  ```
-  arch-chroot /mnt
-  ```
+# Change root using the [arch-chroot script](https://git.archlinux.org/arch-install-scripts.git/tree/arch-chroot.in)
+# [Chroot](https://wiki.archlinux.org/index.php/change_root) (Change Root) is an operation that changes the apparent root directory for the current running process and their children.
+arch-chroot /mnt
+```
 
 ### Setup users
 
-- Set the root password
-
-  ```console
-  > passwd
-  ```
-  
-- Add a new user
-
-  ```console
-  > useradd -m -G wheel -s /bin/bash MyUserName
-  > passwd MyUserName
-  > EDITOR=vim visudo # Uncomment %wheel      ALL=(ALL) ALL
-  ```
+```bash
+# Set the root password
+passwd
+# Enable wheel group
+EDITOR=vim visudo # Uncomment %wheel      ALL=(ALL) ALL
+# Add a new user
+useradd -m -G wheel -s /bin/bash MyUserName
+passwd MyUserName
+```
 
 ### Configure the bootloader
 
-- (Optional) Backup the ESP (EFI System partition). See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
-
-  ```console
-  > mkdir /esp-backup
-  > tar cfz /esp-backup/esp-backup.tar.gz /mnt/boot/efi/
-  ```
+```bash
+# (Optional) Backup the ESP (EFI System partition). See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
+mkdir /esp-backup
+tar cfz /esp-backup/esp-backup.tar.gz /mnt/boot/efi/
   
-- Edit `/etc/mkinitcpio.conf` and add to the list of HOOKS:
-   -  `keymap encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf block keymap encrypt lvm2 resume filesystems keyboard fsck)`
-   -  `mdadm_udev` if the PC uses a firmware RAID (module to manage firmware/software RAID configurations). See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details.
+# Edit `/etc/mkinitcpio.conf` and add to the list of HOOKS:
+# -  `keymap encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf block keymap encrypt lvm2 resume filesystems keyboard fsck)`
+# -  `mdadm_udev` if the PC uses a firmware RAID (module to manage firmware/software RAID configurations). See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details.
+vim /etc/mkinitcpio.conf
 
-- Regenerate the initial ramdisk archive `mkinitcpio -p linux`
+# Regenerate the initial ramdisk archive
+# The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"): 
+# each "initial ramdisk" is generated as an image file available on the ESP when loading Linux. `cpio` is similar to `tar`: it creates
+# an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the
+# `.img` extension.
+# By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start. 
+mkinitcpio -p linux
 
-  The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"): each "initial ramdisk" is generated as an image file available on the ESP when loading Linux. `cpio` is similar to `tar`: it creates an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the `.img` extension.
+# Setup GRUB to install the GRUB UEFI application `grubx64.efi` to `/boot/efi/EFI/grub` and install its modules to `/boot/grub/x86_64-efi/`.
+# [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader.
+# > A boot loader is the first program that runs when a computer starts. It is responsible for selecting, loading and transferring control
+# > to an operating system kernel. The kernel, in turn, initializes the rest of the operating system.
+# > - Arch Linux Wiki
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub
 
-  By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start. 
+# Edit `/etc/default/grub`:
+# - Enable encryption: `GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"`
+# - Update `GRUBTIMEOUT=10`
+vim /etc/default/grub
 
-- Setup GRUB to install the GRUB UEFI application `grubx64.efi` to `/boot/efi/EFI/grub` and install its modules to `/boot/grub/x86_64-efi/`.
-  
-  ```console
-  >grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub
-  ```
- 
-  [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader.
+# Add additional entries to the GRUB menu
+# Copy content from file ./files/grub/custom.cfg
+vim /boot/grub/custom.cfg
 
-  > A boot loader is the first program that runs when a computer starts. It is responsible for selecting, loading and transferring control to an operating system kernel. The kernel, in turn, initializes the rest of the operating system.
-  >
-  > - Arch Linux Wiki
-
-- Edit `/etc/default/grub`:
-
-  - Enable encryption: `GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"`
-  - Update `GRUBTIMEOUT=10`
-
-- Add additional entries to the GRUB menu:
-
-  ```console
-  > vim /boot/grub/custom.cfg
-  ```
-
-  And insert the content below to have the following entries:
-
-  ```bash
-  menuentry "Microsoft Windows 10" --class windows --class os {
-    insmod part_gpt
-    insmod fat
-    insmod search_fs_uuid
-    insmod chain
-    # Replace `<ESP UUID>` with the UUID of the ESP obtained via `sudo blkid /dev/<esp>`
-    search --fs-uuid --set=root <ESP UUID>
-    chainloader /EFI/Microsoft/Boot/bootmgfw.efi
-  }
-
-  menuentry "USB" --class usb {
-    set root=(hd1,1)
-    chainloader +1
-    boot
-  }
-
-  menuentry "Shutdown" --class shutdown {
-    echo "System shutting down..."
-    halt
-  }
-
-  menuentry "Restart" --class restart {
-    echo "System rebooting..."
-    reboot
-  }
-  ```
-
-- Generate GRUB config. It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
-
-  ```console
-  > grub-mkconfig -o /boot/grub/grub.cfg
-  ```
+# Generate GRUB config. It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
+grub-mkconfig -o /boot/grub/grub.cfg
+```
 
 ### Configure time and timezone
 
@@ -259,19 +199,12 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 
   We also want to make sure that we synchronize the clocks with [NTP servers](https://en.wikipedia.org/wiki/Network_Time_Protocol) (Network Time Protocol). By default, Linux connect to servers from the [NTP Pool Project](http://www.pool.ntp.org/) and calls are made at a regular intervals over UDP via port 123 (Check file `/etc/systemd/timesyncd.conf` for configuration).
 
-  ```console
-  > timedatectl set-ntp true # Synchronize clock with NTP server
-  > timedatectl set-timezone America/New_York # Set correct time zone. Equivalent to 'ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime'
-  > hwclock --systohc # Set the Hardware Clock to the current System Time.
-  > timedatectl status # Check date & time are correct
-                          Local time: Mon 2018-05-07 23:46:59 EDT
-                    Universal time: Tue 2018-05-08 03:46:59 UTC
-                          RTC time: Tue 2018-05-08 03:46:59
-                        Time zone: America/New_York (EDT, -0400)
-        System clock synchronized: yes
-  systemd-timesyncd.service active: yes
-                  RTC in local TZ: no
-  ```
+```bash
+timedatectl set-ntp true # Synchronize clock with NTP server
+timedatectl set-timezone America/New_York # Set correct time zone. Equivalent to 'ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime'
+hwclock --systohc # Set the Hardware Clock to the current System Time.
+timedatectl status # Check date & time are correct
+```
 
   It is recommended to keep the hardware clock in Coordinated Universal Time (UTC) rather than local time: i.e. Universal and RTC time should be equal. Most operating system considers the hardware clock to be UTC except Windows for [ridiculous compatibility reasons and supposedly to avoid confusing users when setting time via bios (!)](https://blogs.msdn.microsoft.com/oldnewthing/20040902-00/?p=37983).
 
@@ -375,29 +308,24 @@ The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the 
 
 ### Configure Network
 
-- Define the hostname:
-
-```console
+```bash
+# Define the hostname
 > vim /etc/hostname # Content: <hostname>
-```
 
-- Start/Enable the NetworkManager & connect to a wifi
-
-```console
+# Start/Enable the NetworkManager & connect to a wifi
 # As a root
-> systemctl enable NetworkManager.service
-> systemctl start NetworkManager.service
+systemctl enable NetworkManager.service
+systemctl start NetworkManager.service
 # Connect to a wifi
-> nmcli device wifi connect SSID_or_BSSID password password
+nmcli device wifi connect SSID_or_BSSID password password
 ```
 
 ### Reboot
 
-- Reboot the machine and make sure GRUB correctly displays with all the desired options
-
-  ```console
-  > exit # exit arch-chroot
-  > umount -R /mnt
-  > swapoff -a
-  > reboot
-  ```
+```bash
+# Reboot the machine and make sure GRUB correctly displays with all the desired options
+exit # exit arch-chroot
+umount -R /mnt
+swapoff -a
+reboot
+```
