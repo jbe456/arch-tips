@@ -12,56 +12,68 @@ These steps are inspired from [Arch Linux Installation Guide](https://wiki.archl
 
 ### Setup USB
 
-- (Optional) Configure the keyboard layout. Example for french AZERTY: `loadkeys fr`. See [Keyboard configuration in console](https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console)
+```bash
+# (Optional) Configure the keyboard layout
+# See https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console
+# Example for french AZERTY: 
+loadkeys fr
 
-- (Optional) Connect to the internet with Ethernet or Wifi. See [Wireless network configuration](https://wiki.archlinux.org/title/Network_configuration/Wireless)
-
-  ```console
-  > iwctl # For wifi
-  > [iwd] device list # Get the interface name
-  > [iwd] station wlanX scan
-  > [iwd] station wlanX get-networks
-  > [iwd] station wlanX connect SSID
-  > [iwd] exit
-  > ping google.com # check internet
-  ```
+# (Optional) Connect to the internet with Ethernet or Wifi
+# See https://wiki.archlinux.org/title/Network_configuration/Wireless
+# For wifi
+iwctl
+# Get the interface name
+[iwd] device list
+[iwd] station wlanX scan
+[iwd] station wlanX get-networks
+[iwd] station wlanX connect SSID
+[iwd] exit
+# check internet
+ping google.com
+```
 
 ### Prepare partition
 
-- Identify disk and partitions using [fdisk](https://linux.die.net/man/8/fdisk), [lsblk](https://linux.die.net/man/8/lsblk) and [blkid](https://linux.die.net/man/8/blkid). See [understand lsblk and blkid output](./general-tips.md#lsblk-and-blkid-output).
+```bash
+# Identify disk and partitions using fdisk, lsblk or blkid
+# See https://linux.die.net/man/8/fdisk
+# See https://linux.die.net/man/8/lsblk
+# See https://linux.die.net/man/8/blkid
+# See [understand lsblk and blkid output](./general-tips.md#lsblk-and-blkid-output)
 
-  - If you have a RAID, see [how to get more info about it](./general-tips.md#get-info-about-raid).
-  - If your partition is not listed by `blkid` or `lsblk`, see [how to troubleshoot missing partition](./general-tips.md#partitiondisk-not-visible).
+# If you have a RAID, see [how to get more info about it](./general-tips.md#get-info-about-raid)
+# If your partition is not listed by `blkid` or `lsblk`, see [how to troubleshoot missing partition](./general-tips.md#partitiondisk-not-visible)
 
-- Create partitions with `fdisk /dev/sdX`.
+# Create partitions
+# - EFI system partition, 100M: `/dev/sdXX`
+# - BIOS boot partition, 250M: `/dev/sdXY`
+# - Linux x86-64 root, remaining `/dev/sdXZ`
+#
+# What is an [ESP](https://en.wikipedia.org/wiki/EFI_system_partition)?
+# > When a computer is booted, UEFI firmware loads files stored on the ESP to start installed operating systems
+# > and various utilities. An ESP contains the boot loaders or kernel images for all installed operating systems
+# > (which are contained in other partitions), device driver files for hardware devices present in a computer
+# > and used by the firmware at boot time, system utility programs that are intended to be run before an
+# > operating system is booted, and data files such as error logs.
+# > - Wikipedia
+fdisk /dev/sdX
 
-  Example for creating a new partition table (suitable for single boot):
-  ```console
-  p # Review partition table
-  g # Create new empty GPT partition table
-  
-  n <Enter> <Enter> +100M # Add a new partition
-  t 1 # Set type to EFI System
-  
-  n <Enter> <Enter> +250M # Add a new partition
-  t <Enter> 4 # Set type to BIOS Boot
-  
-  n <Enter> <Enter> <Enter> # Add a new partition
-  t <Enter> 23 # Set type to Linux root (x86-64)
-  
-  p # Review partition table
-  w # Persist changes
-  ```
+# Example for creating a new partition table (suitable for single boot):
+p # Review partition table
+g # Create new empty GPT partition table
 
-  - EFI system partition, 100M: `/dev/sdXX`
-  - BIOS boot partition, 250M: `/dev/sdXY`
-  - Linux x86-64 root, remaining `/dev/sdXZ`
+n <Enter> <Enter> +100M # Add a new partition
+t 1 # Set type to EFI System
 
-    What is an [ESP](https://en.wikipedia.org/wiki/EFI_system_partition)?
+n <Enter> <Enter> +250M # Add a new partition
+t <Enter> 4 # Set type to BIOS Boot
 
-    > When a computer is booted, UEFI firmware loads files stored on the ESP to start installed operating systems and various utilities. An ESP contains the boot loaders or kernel images for all installed operating systems (which are contained in other partitions), device driver files for hardware devices present in a computer and used by the firmware at boot time, system utility programs that are intended to be run before an operating system is booted, and data files such as error logs.
-    >
-    > \- Wikipedia
+n <Enter> <Enter> <Enter> # Add a new partition
+t <Enter> 23 # Set type to Linux root (x86-64)
+
+p # Review partition table
+w # Persist changes
+```
 
 - Format the partitions with `mkfs.vfat` for the EFI partition, `mkswap` for the swap partition and `mkfs.ext4` for the root partition. See [mkfs](https://linux.die.net/man/8/mkfs)
 
