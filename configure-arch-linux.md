@@ -49,11 +49,32 @@ makepkg -si
 
 ```bash
 pacman -S zsh
-chsh -s /usr/bin/zsh # make it default shell
+
+# make it default shell
+chsh -s /usr/bin/zsh
+
+# install oh-my-zsh
+yay -S oh-my-zsh-git
+/usr/share/oh-my-zsh/tools/install.sh
+
+# https://github.com/zsh-users/zsh-autosuggestions
+pacman -S zsh-autosuggestions
+sudo ln -s /usr/share/zsh/plugins/zsh-autosuggestions .oh-my-zsh/custom/plugins/
+
+# https://github.com/zsh-users/zsh-syntax-highlighting
+pacman -S zsh-syntax-highlighting
+sudo ln -s /usr/share/zsh/plugins/zsh-syntax-highlighting .oh-my-zsh/custom/plugins/
+
+# edit .zshrc & add the following plugins
+# plugins=(
+#	  git
+#	  zsh-syntax-highlighting
+#	  zsh-autosuggestions
+# )
+vim .zshrc
+source .zshrc
 ```
 
-- pacman -S zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions + ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE)
-- pacaur -S oh-my-zsh-git
 - theme https://github.com/skylerlee/zeta-zsh-theme
   `sudo cp zeta.zsh.theme /usr/share/oh-my-zsh/custom/themes`
 
