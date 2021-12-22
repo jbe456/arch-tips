@@ -195,116 +195,83 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 ### Configure time and timezone
 
-  There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock) a physical clock powered by a battery. At boot time, the system clock initial value is set from the hardware clock.
-
-  We also want to make sure that we synchronize the clocks with [NTP servers](https://en.wikipedia.org/wiki/Network_Time_Protocol) (Network Time Protocol). By default, Linux connect to servers from the [NTP Pool Project](http://www.pool.ntp.org/) and calls are made at a regular intervals over UDP via port 123 (Check file `/etc/systemd/timesyncd.conf` for configuration).
-
 ```bash
+# There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock)
+# a physical clock powered by a battery. At boot time, the system clock initial value is set from the hardware clock.
+#
+# We also want to make sure that we synchronize the clocks with [NTP servers](https://en.wikipedia.org/wiki/Network_Time_Protocol) (Network Time Protocol).
+# By default, Linux connect to servers from the [NTP Pool Project](http://www.pool.ntp.org/) and calls are made at a regular intervals over UDP via port 123
+# (Check file `/etc/systemd/timesyncd.conf` for configuration).
+#
+# It is recommended to keep the hardware clock in Coordinated Universal Time (UTC) rather than local time: i.e. Universal and RTC time should be equal.
+# Most operating system considers the hardware clock to be UTC except Windows for [ridiculous compatibility reasons and supposedly to avoid confusing 
+# users when setting time via bios (!)](https://blogs.msdn.microsoft.com/oldnewthing/20040902-00/?p=37983).
+#
+# The [Arch Linux wiki](https://wiki.archlinux.org/index.php/time#Time_standard) explains well the drawbacks of using local time for hardware clock:
+# > If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended 
+# > to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set 
+# > to localtime, more than one operating system may adjust it after a DST change for example, thus resulting in an over-correction; problems may also
+# > arise when traveling between different time zones and using one of the operating systems to reset the system/hardware clock.
+#
+# To have Windows consider the hardware clock as UTC, do the following:
+# - In the registry, under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, add a key `RealTimeIsUniversal` with a value `00000001` of type `dword`
+# - Disable Windows Time Service by running this command: `sc config w32time start= disabled`
+#
+# See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
 timedatectl set-ntp true # Synchronize clock with NTP server
 timedatectl set-timezone America/New_York # Set correct time zone. Equivalent to 'ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime'
 hwclock --systohc # Set the Hardware Clock to the current System Time.
 timedatectl status # Check date & time are correct
 ```
 
-  It is recommended to keep the hardware clock in Coordinated Universal Time (UTC) rather than local time: i.e. Universal and RTC time should be equal. Most operating system considers the hardware clock to be UTC except Windows for [ridiculous compatibility reasons and supposedly to avoid confusing users when setting time via bios (!)](https://blogs.msdn.microsoft.com/oldnewthing/20040902-00/?p=37983).
-
-  The [Arch Linux wiki](https://wiki.archlinux.org/index.php/time#Time_standard) explains well the drawbacks of using local time for hardware clock:
-
-  > If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set to localtime, more than one operating system may adjust it after a DST change for example, thus resulting in an over-correction; problems may also arise when traveling between different time zones and using one of the operating systems to reset the system/hardware clock.
-
-  To have Windows consider the hardware clock as UTC, do the following:
-
-  - In the registry, under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation`, add a key `RealTimeIsUniversal` with a value `00000001` of type `dword`
-  - Disable Windows Time Service by running this command: `sc config w32time start= disabled`
-
-  See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
-
 ### Configure locale
 
-  Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code, "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code, and "codeset" is a character set or encoding identifier.
+```bash
+# Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where:
+# - "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code
+# - "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code,
+# - "codeset" is a character set or encoding identifier.
+#
+# Here are the main characters sets:
+# - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
+# - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
+# - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
+#
+# Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
+vim /etc/locale.gen # edit locale file
+/en_US + Enter # search for "en_US"
+n # go to next occurence until you find your entry
+i # enter in edit mode
+<Suppr> # uncomment line
 
-  Here are the main characters sets:
+# Set the system locale & Generate the locale
+vim /etc/locale.conf # Content: LANG=en_US.UTF-8
+locale-gen
 
-  - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
-  - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
-  - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
+# Configure the keyboard layout
+# To list all keyboard layouts related to French:
+localectl list-keymaps|grep fr
 
-  Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
+# To try a keyboard layout:
+loadkeys fr-latin9
 
-  ```console
-  > vim /etc/locale.gen # edit locale file
-  > /en_US + Enter # search for "en_US"
-  > n # go to next occurence until you find your entry
-  > i # enter in edit mode
-  > <Suppr> # uncomment line
-  ```
+# To compare the layouts:
+mkdir /tmp/layouts # create temporary directory
+ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
+cp -t /tmp/layouts /usr/share/kbd/keymaps/i386/azerty/fr.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz # copy over the layouts
+cd /tmp/layouts
+gunzip *.gz # unzip
+vim -d fr.map fr-latin1.map # compare fr with fr-latin1
+vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
 
-  - Set the system locale & Generate the locale
-
-  ```console
-  > vim /etc/locale.conf # Content: LANG=en_US.UTF-8
-  > locale-gen
-  ```
-
-  - Configure the keyboard layout
-
-  To list all keyboard layouts related to French:
-
-  ```console
-  > localectl list-keymaps|grep fr #layout files can be listed using `ls /usr/share/kbd/keymaps/**/*.map.gz`
-  dvorak-ca-fr
-  dvorak-fr
-  fr
-  fr-bepo
-  fr-bepo-latin9
-  fr-latin1
-  fr-latin9
-  fr-pc
-  fr_CH
-  fr_CH-latin1
-  mac-fr
-  mac-fr_CH-latin1
-  sunt5-fr-latin1
-  ```
-
-  To try a keyboard layout:
-
-  ```console
-  > loadkeys fr-latin9
-  ```
-
-  To compare the layouts:
-
-  ```console
-  > mkdir /tmp/layouts # create temporary directory
-  > ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
-  /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz
-  /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz
-  /usr/share/kbd/keymaps/i386/azerty/fr.map.gz
-  /usr/share/kbd/keymaps/i386/azerty/fr-pc.map.gz
-  /usr/share/kbd/keymaps/i386/bepo/fr-bepo-latin9.map.gz
-  /usr/share/kbd/keymaps/i386/bepo/fr-bepo.map.gz
-  /usr/share/kbd/keymaps/i386/dvorak/dvorak-ca-fr.map.gz
-  /usr/share/kbd/keymaps/i386/dvorak/dvorak-fr.map.gz
-  /usr/share/kbd/keymaps/i386/qwertz/fr_CH-latin1.map.gz
-  /usr/share/kbd/keymaps/i386/qwertz/fr_CH.map.gz
-  /usr/share/kbd/keymaps/mac/all/mac-fr_CH-latin1.map.gz
-  /usr/share/kbd/keymaps/mac/all/mac-fr.map.gz
-  /usr/share/kbd/keymaps/sun/sunt5-fr-latin1.map.gz
-  > cp -t /tmp/layouts /usr/share/kbd/keymaps/i386/azerty/fr.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz # copy over the layouts
-  > cd /tmp/layouts
-  > gunzip *.gz # unzip
-  > vim -d fr.map fr-latin1.map # compare fr with fr-latin1
-  > vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
-  ```
-
-  `fr` differs for several keys from a regular french keyboard. `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset while `fr-latin9` is following the [ISO-8859-15](https://en.wikipedia.org/wiki/ISO/IEC_8859-15) charset. The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
-
-  To persist the keyboard layout:
-
-  ```console
-  > vim /etc/vconsole.conf # Content: KEYMAP=fr-latin9
-  ```
+# `fr` differs for several keys from a regular french keyboard.
+# `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset 
+# `fr-latin9` is following the [ISO-8859-15](https://en.wikipedia.org/wiki/ISO/IEC_8859-15) charset
+# The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
+#
+# To persist the keyboard layout:
+vim /etc/vconsole.conf # Content: KEYMAP=fr-latin9
+```
 
 ### Configure Network
 
