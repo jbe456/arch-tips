@@ -35,16 +35,30 @@ vim /etc/grub.d/30_uefi-firmware
 reboot
 ```
 
+## Setup AUR: Yay
+
+```bash
+# Install Yay https://github.com/Jguer/yay
+cd /tmp
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
+```
+
+### Setup shell: Zsh
+
+```bash
+pacman -S zsh
+chsh -s /usr/bin/zsh # make it default shell
+```
+
+- pacman -S zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions + ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE)
+- pacaur -S oh-my-zsh-git
+- theme https://github.com/skylerlee/zeta-zsh-theme
+  `sudo cp zeta.zsh.theme /usr/share/oh-my-zsh/custom/themes`
+
 ### Others
 
-- setup AUR: from https://gist.github.com/Tadly/0e65d30f279a34c33e9b
-  - `curl -Ls https://goo.gl/cF2iJy | bash`
-- install zsh
-  - make it default shell: chsh -s /bin/zsh
-  - pacman -S zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions + ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE)
-  - pacaur -S oh-my-zsh-git
-  - theme https://github.com/skylerlee/zeta-zsh-theme
-    `sudo cp zeta.zsh.theme /usr/share/oh-my-zsh/custom/themes`
 - Install Xorg server
   - lspci|grep -i VGA
   - pacman -S xf86-video-intel
@@ -97,7 +111,7 @@ reboot
     "javascript.validate.enable": false
   }
   ```
-- pacaur -Syu slack-desktop skypeforlinux-stable-bin
+- pacaur -Syu slack-desktop
 - pacman -Syu python2 nodejs npm yarn
 - pacman -Syu feh gimp imagemagick + peek # image viewer + editor + converter + gif maker
 - pacman -Syu wget unzip # alternative to curl + unzip
@@ -123,8 +137,6 @@ reboot
 - backlight
 
   - sudo tee /sys/class/backlight/intel_backlight/brightness <<< 50
-
-- GRUB themes: https://github.com/shvchk/poly-dark
 
 - remote desktop:
 
