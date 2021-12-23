@@ -57,13 +57,13 @@ chsh -s /usr/bin/zsh
 yay -S oh-my-zsh-git
 /usr/share/oh-my-zsh/tools/install.sh
 
-# https://github.com/zsh-users/zsh-autosuggestions
+# Add plugin https://github.com/zsh-users/zsh-autosuggestions
 pacman -S zsh-autosuggestions
-sudo ln -s /usr/share/zsh/plugins/zsh-autosuggestions .oh-my-zsh/custom/plugins/
+ln -s /usr/share/zsh/plugins/zsh-autosuggestions .oh-my-zsh/custom/plugins/
 
-# https://github.com/zsh-users/zsh-syntax-highlighting
+# Add plugin https://github.com/zsh-users/zsh-syntax-highlighting
 pacman -S zsh-syntax-highlighting
-sudo ln -s /usr/share/zsh/plugins/zsh-syntax-highlighting .oh-my-zsh/custom/plugins/
+ln -s /usr/share/zsh/plugins/zsh-syntax-highlighting .oh-my-zsh/custom/plugins/
 
 # edit .zshrc & add the following plugins
 # plugins=(
@@ -72,11 +72,17 @@ sudo ln -s /usr/share/zsh/plugins/zsh-syntax-highlighting .oh-my-zsh/custom/plug
 #	  zsh-autosuggestions
 # )
 vim .zshrc
+
+# theme https://github.com/romkatv/powerlevel10k
+pacman -S zsh-theme-powerlevel10k
+ln -s /usr/share/zsh-theme-powerlevel10k .oh-my-zsh/custom/themes/
+
+# edit .zshrc & add the following theme
+# ZSH_THEME="zsh-theme-powerlevel10k/powerlevel10k"
+vim .zshrc
+
 source .zshrc
 ```
-
-- theme https://github.com/skylerlee/zeta-zsh-theme
-  `sudo cp zeta.zsh.theme /usr/share/oh-my-zsh/custom/themes`
 
 ### Others
 
