@@ -67,11 +67,15 @@ ln -s /usr/share/zsh/plugins/zsh-syntax-highlighting .oh-my-zsh/custom/plugins/
 
 # edit .zshrc & add the following plugins
 # plugins=(
-#	  git
-#	  zsh-syntax-highlighting
+#   git
+#	  sudo
 #	  zsh-autosuggestions
+#	  zsh-syntax-highlighting
 # )
 vim .zshrc
+
+# Add additional site functions completion https://github.com/zsh-users/zsh-completions
+pacman -S zsh-completions
 
 # theme https://github.com/romkatv/powerlevel10k
 pacman -S zsh-theme-powerlevel10k
@@ -82,6 +86,35 @@ ln -s /usr/share/zsh-theme-powerlevel10k .oh-my-zsh/custom/themes/
 vim .zshrc
 
 source .zshrc
+```
+
+## Spice up shell
+
+```bash
+# install https://github.com/nvbn/thefuck
+pacman -S thefuck
+# edit .zshrc & add the following
+# eval $(thefuck --alias)
+vim .zshrc
+
+# install https://github.com/rupa/z
+pacman -S z
+# edit .zshrc & add the following
+# [[ -r "/usr/share/z/z.sh" ]] && source /usr/share/z/z.sh
+vim .zshrc
+
+# install https://github.com/sharkdp/bat
+pacman -S bat
+```
+
+### Setup terminal emulator: Kitty
+
+```bash
+# add font
+yay -S ttf-meslo-nerd-font-powerlevel10k
+
+# re-run powerlevel10k config
+p10k config
 ```
 
 ### Others
