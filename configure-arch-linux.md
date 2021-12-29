@@ -68,9 +68,9 @@ ln -s /usr/share/zsh/plugins/zsh-syntax-highlighting .oh-my-zsh/custom/plugins/
 # edit .zshrc & add the following plugins
 # plugins=(
 #   git
-#	  sudo
-#	  zsh-autosuggestions
-#	  zsh-syntax-highlighting
+#   sudo
+#   zsh-autosuggestions
+#   zsh-syntax-highlighting
 # )
 vim .zshrc
 
@@ -86,6 +86,9 @@ ln -s /usr/share/zsh-theme-powerlevel10k .oh-my-zsh/custom/themes/
 vim .zshrc
 
 source .zshrc
+
+# configure p10k if not already done
+p10k configure
 ```
 
 ## Spice up shell
@@ -173,14 +176,31 @@ vim .xserverrc
 pacman -S kitty
 # create template config file by hitting ctrl+shift+f2
 
-# re-run powerlevel10k config
+# move current p10k config
+mv .p10k.zsh .p10k-tty.zsh
+# re-run powerlevel10k config & pick the `pure` style
 p10k config
+# edit .zshrc and replace `[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh` with:
+# if [[ $TERM == linux ]]; then
+#  POWERLEVEL9K_CONFIG_FILE=~/.p10k-tty.zsh
+# else
+#  POWERLEVEL9K_CONFIG_FILE=~/.p10k.zsh
+# fi
+#
+# [[ ! -f $POWERLEVEL9K_CONFIG_FILE ]] || source $POWERLEVEL9K_CONFIG_FILE
+vim .zshrc
 
 # add font
 yay -S ttf-meslo-nerd-font-powerlevel10k
 
 # configure kitty font and add the following line to it:
+# inspired from https://github.com/connorholyday/kitty-snazzy/blob/master/snazzy.conf
+# final look & feel should match https://github.com/sindresorhus/pure (zsh + powerline10k pure style + kitty snazzy theme + font meslo)
 # font_family MesloLGS NF
+# cursor                #97979B
+# cursor_text_color     #282A36
+# foreground            #eff0eb
+# background            #282a36
 vim ~/.config/kitty/kitty.conf
 ```
 
