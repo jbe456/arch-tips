@@ -124,6 +124,12 @@ pacman -S xorg-server xorg-xinit
 # allow rootless Xorg by editing/creating the following file & content
 # needs_root_rights = no
 vim /etc/X11/Xwrapper.config
+
+# autostart Xorg on login for tty1
+# if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
+#   exec startx
+# fi
+vim ~/.zprofile
 ```
 
 - Install Xorg server
