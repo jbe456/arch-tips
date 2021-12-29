@@ -107,36 +107,50 @@ vim .zshrc
 pacman -S bat
 ```
 
-### Setup terminal emulator: Kitty
+### Setup Xorg
 
 ```bash
-# add font
-yay -S ttf-meslo-nerd-font-powerlevel10k
+# check graphic card
+lspci|grep -i VGA
 
-# re-run powerlevel10k config
-p10k config
+# install relevant driver. ex for intel:
+pacman -S xf86-video-intel
+
+# install Xorg
+pacman -S xorg-server xorg-xinit
+# allow rootless Xorg by editing/creating the following file & content
+# needs_root_rights = no
+vim /etc/X11/Xwrapper.config
 ```
 
-### Others
-
 - Install Xorg server
-  - lspci|grep -i VGA
-  - pacman -S xf86-video-intel
-  - pacman - xorg-server xorg-xinit
   - https://wiki.archlinux.org/index.php/Keyboard_configuration_in_Xorg
     - fr / latin9 / asus_laptop / caps:shiftlock
     - fix delete return ~ + nice console shortcuts? https://www.linuxquestions.org/questions/linux-general-1/insert-and-delete-key-returns-~-in-a-terminal-876401/
   - dpi 120
   - xrandr --output <output> --mode <mode>
   - driver touchpad
-  - to start: xinit
-  - NB: Check [Xorg server won't start troubleshooting](./general-tips.md#xorg-server-wont-start) section for potential problems.
-- pacman -S i3 compton
+  
+### Setup i3
+
+```bash
+# install i3 with gaps + compositor for transparency
+pacman -S i3-gaps picom
+
+# Copy xinitrc template
+cp /etc/X11/xinit/xinitrc ~/.xinitrc
+# Replace "start some nice programs here" section with the following:
+# exec i3 -V >> /tmp/i3log-$(date + '%F-%k-%M-%S') 2>&1
+vim .xinitrc
+
+# Copy xserverrc template
+cp /etc/X11/xinit/xserverrc ~/.xserverrc
+# Replace the main exec line with:
+# exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
+vim .xserverrc
+```
+
   - https://github.com/CSaratakij/i3wm-desktop-config
-  - cp xserverrc xinitrc
-  - pacman -S rxvt-unicode
-    - export TERMINAL=urxvt + .Xdefaults
-    - pacaur -Syu ttf-meslo
   - wallpaper feh
     `mkdir -p pictures/wallpapers`
     `cp backgrounds/* pictures/wallpapers`
@@ -152,6 +166,26 @@ p10k config
     - https://github.com/madhur/awesome-conky
     - https://github.com/zenzire/conkyrc
     - https://blog.desdelinux.net/dmenu-un-lanzador-de-aplicaciones-ultra-ligero/
+  
+### Setup terminal emulator: Kitty
+
+```bash
+pacman -S kitty
+# create template config file by hitting ctrl+shift+f2
+
+# re-run powerlevel10k config
+p10k config
+
+# add font
+yay -S ttf-meslo-nerd-font-powerlevel10k
+
+# configure kitty font and add the following line to it:
+# font_family MesloLGS NF
+vim ~/.config/kitty/kitty.conf
+```
+
+### Others
+
 - chromium
   - choose font: ttf_liberation
   - choose: libx264
