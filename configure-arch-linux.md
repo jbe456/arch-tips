@@ -119,8 +119,8 @@ lspci|grep -i VGA
 # install relevant driver. ex for intel:
 pacman -S xf86-video-intel
 
-# install Xorg
-pacman -S xorg-server xorg-xinit
+# install Xorg server, xinit & xrandr
+pacman -S xorg-server xorg-xinit xorg-xrandr
 # allow rootless Xorg by editing/creating the following file & content
 # needs_root_rights = no
 vim /etc/X11/Xwrapper.config
@@ -143,12 +143,23 @@ vim ~/.zprofile
 ### Setup i3
 
 ```bash
-# install i3 with gaps + compositor for transparency
+# install i3 with gaps + picom compositor for transparency
 pacman -S i3-gaps picom
+# edit config
+# cleanup unwanted lines
+# for_window [class=".*"] border pixel 0
+# gaps inner 0
+vim .config/i3/config
+
+# create wallpaper directory and move image from repository
+mkdir .wallpapers
+pacman -S feh
 
 # Copy xinitrc template
 cp /etc/X11/xinit/xinitrc ~/.xinitrc
-# Replace "start some nice programs here" section with the following:
+# In the "start some nice programs here" section, under the xinitrc.d part, replace with:
+# picom &
+# feh --bg-scale ~/.wallpapers/arch.png &
 # exec i3 -V >> /tmp/i3log-$(date + '%F-%k-%M-%S') 2>&1
 vim .xinitrc
 
@@ -157,12 +168,22 @@ cp /etc/X11/xinit/xserverrc ~/.xserverrc
 # Replace the main exec line with:
 # exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
 vim .xserverrc
+  
+# configure picom
+mkdir ~/.config/picom
+cp /etc/xdg/picom.conf ~/.config/picom/picom.conf
+# Add the following opacity rule
+# opacity-rule = [
+#   "80:class_g = 'kitty' && focused",
+#   "60:class_g = 'kitty' && !focused"
+# ];
+vim ~/.config/picom/picom.conf
+
+pacman -S rofi
+yay -S polybar betterlockscreen
 ```
 
   - https://github.com/CSaratakij/i3wm-desktop-config
-  - wallpaper feh
-    `mkdir -p pictures/wallpapers`
-    `cp backgrounds/* pictures/wallpapers`
   - pacman -Syu xautolock
   - pacman -R i3lock
   - pacaur -S i3lock-color
@@ -210,13 +231,20 @@ yay -S ttf-meslo-nerd-font-powerlevel10k
 vim ~/.config/kitty/kitty.conf
 ```
 
-### Others
+### Extra libs
+
+```bash
+pacman -S chromium
+```
 
 - chromium
   - choose font: ttf_liberation
   - choose: libx264
   - update downloads folder to lower case: "downloads"
   - extensions: lastpass + ghostery
+  
+### Others
+
 - git
   - pacman -Syu openssh + https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
   - add key github
