@@ -160,7 +160,7 @@ cp /etc/X11/xinit/xinitrc ~/.xinitrc
 # In the "start some nice programs here" section, under the xinitrc.d part, replace with:
 # picom &
 # feh --bg-scale ~/.wallpapers/arch.png &
-# exec i3 -V >> /tmp/i3log-$(date + '%F-%k-%M-%S') 2>&1
+# exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
 vim .xinitrc
 
 # Copy xserverrc template
