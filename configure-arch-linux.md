@@ -140,36 +140,38 @@ vim ~/.zprofile
   - xrandr --output <output> --mode <mode>
   - driver touchpad
   
+  
+### Setup sound
+
+```bash
+# logout/login to take group changes into effect
+gpasswd -a jbe audio
+pacman -S alsa-utils pulseaudio
+# unmute master
+alsamixer
+```
+
+- sound:
+
+  - pacman -Syu pulseaudio pavucontrol
+  - cp default.pa ./.config/pulse/default.pa
+  - vim /etc/modprobe.d/alsa-base.conf
+    options snd_hda_intel enable=1 index=0
+    options snd_hda_intel enable=0 index=1
+  
 ### Setup i3
 
 ```bash
-# install i3 with gaps + picom compositor for transparency
-pacman -S i3-gaps picom
-# edit config
+# install i3 with gaps
+pacman -S i3-gaps
+# edit i3 config
 # cleanup unwanted lines
 # for_window [class=".*"] border pixel 0
 # gaps inner 0
 vim .config/i3/config
-
-# create wallpaper directory and move image from repository
-mkdir .wallpapers
-pacman -S feh
-
-# Copy xinitrc template
-cp /etc/X11/xinit/xinitrc ~/.xinitrc
-# In the "start some nice programs here" section, under the xinitrc.d part, replace with:
-# picom &
-# feh --bg-scale ~/.wallpapers/arch.png &
-# exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
-vim .xinitrc
-
-# Copy xserverrc template
-cp /etc/X11/xinit/xserverrc ~/.xserverrc
-# Replace the main exec line with:
-# exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
-vim .xserverrc
   
-# configure picom
+# install picom compositor for transparency
+pacman -S picom
 mkdir ~/.config/picom
 cp /etc/xdg/picom.conf ~/.config/picom/picom.conf
 # Add the following opacity rule
@@ -179,8 +181,44 @@ cp /etc/xdg/picom.conf ~/.config/picom/picom.conf
 # ];
 vim ~/.config/picom/picom.conf
 
+# create wallpaper directory and copy image from repository
+mkdir -p .wallpapers/background
+mkdir -p .wallpapers/lockscreen
+pacman -S feh
+
+yay -S betterlockscreen
+# enable betterlockscreen on system suspend
+systemctl enable betterlockscreen@$user
+# update cache
+betterlockscreen -u .wallpapers/lockscreen
+# edit i3 config
+# bindsym $mod+l exec --no-startup-id betterlockscreen -l --off 10
+vim .config/i3/config
+
+# install xidlehook
+yay -S xidlehook
+  
+# Copy xinitrc template
+cp /etc/X11/xinit/xinitrc ~/.xinitrc
+# In the "start some nice programs here" section, under the xinitrc.d part, replace with:
+# # transparency
+# picom &
+# # background
+# feh --bg-scale ~/.wallpapers/background/arch.png &
+# # auto lock
+# xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10' '' &
+# launch i3
+# exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
+vim .xinitrc
+
+# Copy xserverrc template
+cp /etc/X11/xinit/xserverrc ~/.xserverrc
+# Replace the main exec line with:
+# exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
+vim .xserverrc
+
 pacman -S rofi
-yay -S polybar betterlockscreen
+yay -S polybar
 ```
 
   - https://github.com/CSaratakij/i3wm-desktop-config
@@ -264,16 +302,6 @@ pacman -S chromium
 - pacman -Syu feh gimp imagemagick + peek # image viewer + editor + converter + gif maker
 - pacman -Syu wget unzip # alternative to curl + unzip
 - pacman -Syu youtube-dl # video converter
-
-- sound:
-
-  - pacman -S alsa-utils
-  - gpasswd -a jbe audio #logout/login to take group changes into effect
-  - pacman -Syu pulseaudio pavucontrol
-  - cp default.pa ./.config/pulse/default.pa
-  - vim /etc/modprobe.d/alsa-base.conf
-    options snd_hda_intel enable=1 index=0
-    options snd_hda_intel enable=0 index=1
 
 - webcam
 
