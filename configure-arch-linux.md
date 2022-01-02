@@ -207,10 +207,10 @@ yay -S betterlockscreen
 # enable betterlockscreen on system suspend
 systemctl enable betterlockscreen@$user
 # update cache
-betterlockscreen -u .wallpapers/lockscreen
+betterlockscreen -u ~/.wallpapers/lockscreen
 # edit i3 config
 ###########
-# bindsym $mod+l exec --no-startup-id betterlockscreen -l --off 10
+# bindsym $mod+l exec --no-startup-id betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen
 ###########
 vim .config/i3/config
 
@@ -226,7 +226,7 @@ cp /etc/X11/xinit/xinitrc ~/.xinitrc
 # # background
 # feh --bg-scale ~/.wallpapers/background/arch.png &
 # # auto lock
-# xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10' '' &
+# xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen' '' &
 # # launch i3
 # exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
 ###########
@@ -242,6 +242,10 @@ vim .xserverrc
 
 pacman -S rofi
 yay -S polybar
+
+cd /tmp/
+git clone --depth=1 https://github.com/adi1090x/polybar-themes.git
+./setup.sh
 ```
 
   - https://github.com/CSaratakij/i3wm-desktop-config
