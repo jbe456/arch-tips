@@ -13,6 +13,7 @@ pacman -Syu
 # Configure pacman via `/etc/pacman.conf`
 # - uncomment "Color" option
 # - uncomment "multilib" section for 32 bit applications support
+vim /etc/pacman.conf
 ```
 
 ### GRUB
@@ -66,12 +67,14 @@ pacman -S zsh-syntax-highlighting
 ln -s /usr/share/zsh/plugins/zsh-syntax-highlighting .oh-my-zsh/custom/plugins/
 
 # edit .zshrc & add the following plugins
+###########
 # plugins=(
 #   git
 #   sudo
 #   zsh-autosuggestions
 #   zsh-syntax-highlighting
 # )
+###########
 vim .zshrc
 
 # Add additional site functions completion https://github.com/zsh-users/zsh-completions
@@ -82,7 +85,9 @@ pacman -S zsh-theme-powerlevel10k
 ln -s /usr/share/zsh-theme-powerlevel10k .oh-my-zsh/custom/themes/
 
 # edit .zshrc & add the following theme
+###########
 # ZSH_THEME="zsh-theme-powerlevel10k/powerlevel10k"
+###########
 vim .zshrc
 
 source .zshrc
@@ -97,13 +102,17 @@ p10k configure
 # install https://github.com/nvbn/thefuck
 pacman -S thefuck
 # edit .zshrc & add the following
+###########
 # eval $(thefuck --alias)
+###########
 vim .zshrc
 
 # install https://github.com/rupa/z
 pacman -S z
 # edit .zshrc & add the following
+###########
 # [[ -r "/usr/share/z/z.sh" ]] && source /usr/share/z/z.sh
+###########
 vim .zshrc
 
 # install https://github.com/sharkdp/bat
@@ -122,13 +131,17 @@ pacman -S xf86-video-intel
 # install Xorg server, xinit & xrandr
 pacman -S xorg-server xorg-xinit xorg-xrandr
 # allow rootless Xorg by editing/creating the following file & content
+###########
 # needs_root_rights = no
+###########
 vim /etc/X11/Xwrapper.config
 
 # autostart Xorg on login for tty1
+###########
 # if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
 #   exec startx
 # fi
+###########
 vim ~/.zprofile
 ```
 
@@ -139,20 +152,20 @@ vim ~/.zprofile
   - dpi 120
   - xrandr --output <output> --mode <mode>
   - driver touchpad
-  
-  
+
 ### Setup sound
 
 ```bash
 # logout/login to take group changes into effect
 gpasswd -a jbe audio
+
 pacman -S alsa-utils pulseaudio
+
 # unmute master
 alsamixer
 ```
 
 - sound:
-
   - pacman -Syu pulseaudio pavucontrol
   - cp default.pa ./.config/pulse/default.pa
   - vim /etc/modprobe.d/alsa-base.conf
@@ -165,9 +178,11 @@ alsamixer
 # install i3 with gaps
 pacman -S i3-gaps
 # edit i3 config
-# cleanup unwanted lines
+# - cleanup unwanted lines
+###########
 # for_window [class=".*"] border pixel 0
 # gaps inner 0
+###########
 vim .config/i3/config
   
 # install picom compositor for transparency
@@ -175,10 +190,12 @@ pacman -S picom
 mkdir ~/.config/picom
 cp /etc/xdg/picom.conf ~/.config/picom/picom.conf
 # Add the following opacity rule
+###########
 # opacity-rule = [
 #   "80:class_g = 'kitty' && focused",
 #   "60:class_g = 'kitty' && !focused"
 # ];
+###########
 vim ~/.config/picom/picom.conf
 
 # create wallpaper directory and copy image from repository
@@ -192,7 +209,9 @@ systemctl enable betterlockscreen@$user
 # update cache
 betterlockscreen -u .wallpapers/lockscreen
 # edit i3 config
+###########
 # bindsym $mod+l exec --no-startup-id betterlockscreen -l --off 10
+###########
 vim .config/i3/config
 
 # install xidlehook
@@ -201,20 +220,24 @@ yay -S xidlehook
 # Copy xinitrc template
 cp /etc/X11/xinit/xinitrc ~/.xinitrc
 # In the "start some nice programs here" section, under the xinitrc.d part, replace with:
+###########
 # # transparency
 # picom &
 # # background
 # feh --bg-scale ~/.wallpapers/background/arch.png &
 # # auto lock
 # xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10' '' &
-# launch i3
+# # launch i3
 # exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
+###########
 vim .xinitrc
 
 # Copy xserverrc template
 cp /etc/X11/xinit/xserverrc ~/.xserverrc
 # Replace the main exec line with:
+###########
 # exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
+###########
 vim .xserverrc
 
 pacman -S rofi
@@ -246,6 +269,7 @@ mv .p10k.zsh .p10k-tty.zsh
 # re-run powerlevel10k config & pick the `pure` style
 p10k config
 # edit .zshrc and replace `[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh` with:
+###########
 # if [[ $TERM == linux ]]; then
 #  POWERLEVEL9K_CONFIG_FILE=~/.p10k-tty.zsh
 # else
@@ -253,6 +277,7 @@ p10k config
 # fi
 #
 # [[ ! -f $POWERLEVEL9K_CONFIG_FILE ]] || source $POWERLEVEL9K_CONFIG_FILE
+###########
 vim .zshrc
 
 # add font
@@ -261,11 +286,13 @@ yay -S ttf-meslo-nerd-font-powerlevel10k
 # configure kitty font and add the following line to it:
 # inspired from https://github.com/connorholyday/kitty-snazzy/blob/master/snazzy.conf
 # final look & feel should match https://github.com/sindresorhus/pure (zsh + powerline10k pure style + kitty snazzy theme + font meslo)
+###########
 # font_family MesloLGS NF
 # cursor                #97979B
 # cursor_text_color     #282A36
 # foreground            #eff0eb
 # background            #282a36
+###########
 vim ~/.config/kitty/kitty.conf
 ```
 
