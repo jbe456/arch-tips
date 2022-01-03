@@ -241,26 +241,26 @@ cp /etc/X11/xinit/xserverrc ~/.xserverrc
 vim .xserverrc
 
 pacman -S rofi
+
+yay -S networkmanager-dmenu-git
+cp /usr/share/doc/networkmanager-dmenu-git/config.ini.example .config/networkmanager-dmenu/config.ini
+# configure it
+###########
+# dmenu_command = rofi -no-config -no-lazy-grab -show drun -modi drun -theme ~/.config/polybar/forest/scripts/rofi/launcher.rasi
+# rofi_highlight = True
+# compact = True
+###########
+vim .config/networkmanager-dmenu/config.ini
+
 yay -S polybar
 
 cd /tmp/
 git clone --depth=1 https://github.com/adi1090x/polybar-themes.git
 ./setup.sh
+# configure theme
+vim .config/polybar/forest/modules.ini
+vim .config/polybar/forest/config.ini
 ```
-
-  - https://github.com/CSaratakij/i3wm-desktop-config
-  - pacman -Syu xautolock
-  - pacman -R i3lock
-  - pacaur -S i3lock-color
-  - pacaur -S i3-battery-popup-git
-  - rofi
-  - pacman -S conky
-    - own_window_transparent=true
-    - own_window = true,
-    - own_window_type = 'override',
-    - https://github.com/madhur/awesome-conky
-    - https://github.com/zenzire/conkyrc
-    - https://blog.desdelinux.net/dmenu-un-lanzador-de-aplicaciones-ultra-ligero/
   
 ### Setup terminal emulator: Kitty
 
@@ -304,6 +304,7 @@ vim ~/.config/kitty/kitty.conf
 
 ```bash
 pacman -S chromium
+yay -S spotify
 ```
 
 - chromium
