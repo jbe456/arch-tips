@@ -166,7 +166,7 @@ alsamixer
 ```
 
 - sound:
-  - pacman -Syu pulseaudio pavucontrol
+  - pacman -Syu pavucontrol
   - cp default.pa ./.config/pulse/default.pa
   - vim /etc/modprobe.d/alsa-base.conf
     options snd_hda_intel enable=1 index=0
@@ -241,6 +241,14 @@ cp /etc/X11/xinit/xserverrc ~/.xserverrc
 vim .xserverrc
 
 pacman -S rofi
+yay -S polybar
+
+cd /tmp/
+git clone --depth=1 https://github.com/adi1090x/polybar-themes.git
+./setup.sh
+# configure theme
+vim .config/polybar/forest/modules.ini
+vim .config/polybar/forest/config.ini
 
 yay -S networkmanager-dmenu-git
 cp /usr/share/doc/networkmanager-dmenu-git/config.ini.example .config/networkmanager-dmenu/config.ini
@@ -252,16 +260,10 @@ cp /usr/share/doc/networkmanager-dmenu-git/config.ini.example .config/networkman
 ###########
 vim .config/networkmanager-dmenu/config.ini
 
-yay -S polybar
-
-cd /tmp/
-git clone --depth=1 https://github.com/adi1090x/polybar-themes.git
-./setup.sh
-# configure theme
-vim .config/polybar/forest/modules.ini
-vim .config/polybar/forest/config.ini
+# TODO start polybar on init + autorename/icons + spotify
+~/.config/polybar/launch.sh --forest
 ```
-  
+
 ### Setup terminal emulator: Kitty
 
 ```bash
@@ -303,15 +305,16 @@ vim ~/.config/kitty/kitty.conf
 ### Extra libs
 
 ```bash
+# install Chromium + extensions: lastpass, ghostery
 pacman -S chromium
-yay -S spotify
+
+yay -S spotify slack-desktop
 ```
 
 - chromium
   - choose font: ttf_liberation
   - choose: libx264
   - update downloads folder to lower case: "downloads"
-  - extensions: lastpass + ghostery
   
 ### Others
 
@@ -329,7 +332,6 @@ yay -S spotify
     "javascript.validate.enable": false
   }
   ```
-- pacaur -Syu slack-desktop
 - pacman -Syu python2 nodejs npm yarn
 - pacman -Syu feh gimp imagemagick + peek # image viewer + editor + converter + gif maker
 - pacman -Syu wget unzip # alternative to curl + unzip
