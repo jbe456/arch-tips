@@ -159,15 +159,17 @@ vim ~/.zprofile
 # logout/login to take group changes into effect
 gpasswd -a jbe audio
 
-pacman -S alsa-utils pulseaudio
+# install console & GUI to control sounds
+pacman -S alsa-utils pulseaudio pavucontrol
 
 # unmute master
 alsamixer
+
+# add auto switch module
+cp default.pa ~/.config/pulse/default.pa
 ```
 
 - sound:
-  - pacman -Syu pavucontrol
-  - cp default.pa ./.config/pulse/default.pa
   - vim /etc/modprobe.d/alsa-base.conf
     options snd_hda_intel enable=1 index=0
     options snd_hda_intel enable=0 index=1
