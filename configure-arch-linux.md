@@ -58,6 +58,12 @@ chsh -s /usr/bin/zsh
 yay -S oh-my-zsh-git
 /usr/share/oh-my-zsh/tools/install.sh
 
+# edit .zshrc & disable auto updates
+###########
+# zstyle ':omz:update' mode disable
+###########
+vim .zshrc
+
 # Add plugin https://github.com/zsh-users/zsh-autosuggestions
 pacman -S zsh-autosuggestions
 ln -s /usr/share/zsh/plugins/zsh-autosuggestions .oh-my-zsh/custom/plugins/
@@ -213,6 +219,14 @@ betterlockscreen -u ~/.wallpapers/lockscreen
 # edit i3 config
 ###########
 # bindsym $mod+l exec --no-startup-id betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen
+###########
+vim .config/i3/config
+
+# edit i3 config and add brightness control
+pacman -S xorg-xbacklight
+###########
+# bindsym XF86MonBrightnessUp exec xbacklight -inc 10
+# bindsym XF86MonBrightnessDown exec xbacklight -dec 10
 ###########
 vim .config/i3/config
 
