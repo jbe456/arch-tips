@@ -266,8 +266,7 @@ pacman -S python-i3ipc
 yay -S python-fontawesome
 # run script on i3 start up
 ###########
-# bindsym $mod+d exec --no-startup-id ~/.config/polybar/forest/scripts/launcher.sh &
-# bindsym $mod+Shift+e exec --no-startup-id ~/.config/polybar/forest/scripts/powermenu.sh &
+# exec_always ~/.config/i3/i3scripts/autoname_workspaces.py &
 ###########
 vim .config/i3/config
 
