@@ -260,11 +260,16 @@ cp /usr/share/doc/networkmanager-dmenu-git/config.ini.example .config/networkman
 vim .config/networkmanager-dmenu/config.ini
 
 # install i3 autoname https://github.com/justbuchanan/i3scripts
-cd /tmp
+cd ~/.config/i3
 git clone https://github.com/justbuchanan/i3scripts
-cp i3scripts/autoname_workspaces.py ~/.config/i3/
 pacman -S python-i3ipc
 yay -S python-fontawesome
+# run script on i3 start up
+###########
+# bindsym $mod+d exec --no-startup-id ~/.config/polybar/forest/scripts/launcher.sh &
+# bindsym $mod+Shift+e exec --no-startup-id ~/.config/polybar/forest/scripts/powermenu.sh &
+###########
+vim .config/i3/config
 
 # install xidlehook
 yay -S xidlehook
@@ -294,7 +299,7 @@ cp /etc/X11/xinit/xserverrc ~/.xserverrc
 ###########
 vim .xserverrc
 
-# TODO autorename/icons + spotify polybar
+# TODO spotify polybar
 ```
 
 ### Setup terminal emulator: Kitty
