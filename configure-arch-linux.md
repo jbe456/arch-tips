@@ -259,6 +259,13 @@ cp /usr/share/doc/networkmanager-dmenu-git/config.ini.example .config/networkman
 ###########
 vim .config/networkmanager-dmenu/config.ini
 
+# install i3 autoname https://github.com/justbuchanan/i3scripts
+cd /tmp
+git clone https://github.com/justbuchanan/i3scripts
+cp i3scripts/autoname_workspaces.py ~/.config/i3/
+pacman -S python-i3ipc
+yay -S python-fontawesome
+
 # install xidlehook
 yay -S xidlehook
 
