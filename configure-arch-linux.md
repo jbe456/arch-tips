@@ -173,6 +173,8 @@ alsamixer
 
 # add auto switch module
 cp default.pa ~/.config/pulse/default.pa
+
+# TODO sound headset
 ```
 
 - sound:
@@ -230,9 +232,6 @@ pacman -S xorg-xbacklight
 ###########
 vim .config/i3/config
 
-# install xidlehook
-yay -S xidlehook
-
 pacman -S rofi
 yay -S polybar
 
@@ -243,6 +242,13 @@ git clone --depth=1 https://github.com/adi1090x/polybar-themes.git
 vim .config/polybar/forest/modules.ini
 vim .config/polybar/forest/config.ini
 
+# edit i3 config
+###########
+# bindsym $mod+d exec --no-startup-id ~/.config/polybar/forest/scripts/launcher.sh &
+# bindsym $mod+Shift+e exec --no-startup-id ~/.config/polybar/forest/scripts/powermenu.sh &
+###########
+vim .config/i3/config
+
 yay -S networkmanager-dmenu-git
 cp /usr/share/doc/networkmanager-dmenu-git/config.ini.example .config/networkmanager-dmenu/config.ini
 # configure it
@@ -252,6 +258,9 @@ cp /usr/share/doc/networkmanager-dmenu-git/config.ini.example .config/networkman
 # compact = True
 ###########
 vim .config/networkmanager-dmenu/config.ini
+
+# install xidlehook
+yay -S xidlehook
 
 # Copy xinitrc template
 cp /etc/X11/xinit/xinitrc ~/.xinitrc
@@ -278,7 +287,7 @@ cp /etc/X11/xinit/xserverrc ~/.xserverrc
 ###########
 vim .xserverrc
 
-# TODO autorename/icons + spotify + i3 menus app + sys
+# TODO autorename/icons + spotify polybar
 ```
 
 ### Setup terminal emulator: Kitty
