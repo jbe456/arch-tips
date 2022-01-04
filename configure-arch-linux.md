@@ -232,29 +232,6 @@ vim .config/i3/config
 
 # install xidlehook
 yay -S xidlehook
-  
-# Copy xinitrc template
-cp /etc/X11/xinit/xinitrc ~/.xinitrc
-# In the "start some nice programs here" section, under the xinitrc.d part, replace with:
-###########
-# # transparency
-# picom &
-# # background
-# feh --bg-scale ~/.wallpapers/background/arch.png &
-# # auto lock
-# xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen' '' &
-# # launch i3
-# exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
-###########
-vim .xinitrc
-
-# Copy xserverrc template
-cp /etc/X11/xinit/xserverrc ~/.xserverrc
-# Replace the main exec line with:
-###########
-# exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
-###########
-vim .xserverrc
 
 pacman -S rofi
 yay -S polybar
@@ -276,8 +253,32 @@ cp /usr/share/doc/networkmanager-dmenu-git/config.ini.example .config/networkman
 ###########
 vim .config/networkmanager-dmenu/config.ini
 
-# TODO start polybar on init + autorename/icons + spotify
-~/.config/polybar/launch.sh --forest
+# Copy xinitrc template
+cp /etc/X11/xinit/xinitrc ~/.xinitrc
+# In the "start some nice programs here" section, under the xinitrc.d part, replace with:
+###########
+# # transparency
+# picom &
+# # background
+# feh --bg-scale ~/.wallpapers/background/arch.png &
+# # auto lock
+# xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen' '' &
+# # launch polybar
+# ~/.config/polybar/launch.sh --forest &
+# # launch i3
+# exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
+###########
+vim .xinitrc
+
+# Copy xserverrc template
+cp /etc/X11/xinit/xserverrc ~/.xserverrc
+# Replace the main exec line with:
+###########
+# exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
+###########
+vim .xserverrc
+
+# TODO autorename/icons + spotify + i3 menus app + sys
 ```
 
 ### Setup terminal emulator: Kitty
