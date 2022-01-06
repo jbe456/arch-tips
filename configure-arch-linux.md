@@ -204,6 +204,7 @@ pacman -S i3-gaps
 # - cleanup unwanted lines
 ###########
 # for_window [class=".*"] border pixel 0
+# for_window [class="zoom"] floating enable
 # gaps inner 0
 ###########
 vim .config/i3/config
@@ -212,12 +213,20 @@ vim .config/i3/config
 pacman -S picom
 mkdir ~/.config/picom
 cp /etc/xdg/picom.conf ~/.config/picom/picom.conf
-# Add the following opacity rule
+# Add the following rules
 ###########
 # opacity-rule = [
 #   "80:class_g = 'kitty' && focused",
 #   "60:class_g = 'kitty' && !focused"
 # ];
+#
+# shadow-exclude = [
+#  ...
+#  # remove zoom screen sharing shadow
+#  "name = 'cpt_frame_window'",
+#  "class_g *?= 'zoom'",
+#   ...
+# ]
 ###########
 vim ~/.config/picom/picom.conf
 
