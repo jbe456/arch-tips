@@ -32,9 +32,13 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
-export TERMINAL=urxvt
-
-xrandr --output eDP1 --mode 2560x1440
-
-exec compton &
+# transparency
+picom &
+# background
+feh --bg-scale ~/.wallpapers/background/arch.png &
+# auto lock
+xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen' '' &
+# launch polybar
+~/.config/polybar/launch.sh --forest &
+# launch i3
 exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
