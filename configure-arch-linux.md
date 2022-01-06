@@ -365,9 +365,10 @@ pacman -S chromium
 # - unzip
 # - Slack
 # - Spotify
+# - Zoom
 # Additional: imagemagick (converter), peek (gif maker)
 pacman -S gimp youtube-dl wget unzip vlc
-yay -S spotify slack-desktop
+yay -S spotify slack-desktop zoom
 ```
 
 - chromium
