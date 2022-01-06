@@ -15,7 +15,7 @@ These steps are inspired from [Arch Linux Installation Guide](https://wiki.archl
 ```bash
 # (Optional) Configure the keyboard layout
 # See https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console
-# Example for french AZERTY: 
+# Example for french AZERTY:
 loadkeys fr
 
 # (Optional) Connect to the internet with Ethernet or Wifi
@@ -95,7 +95,7 @@ lvcreate -l +100%FREE arch -n root
 # Format the root & swap partitions
 # The [swap](https://wiki.archlinux.org/index.php/swap) partition, is used by the operating system as a "hard disk extension" of the RAM
 # (Random Access Memory) to optimize memory management. Indeed, thanks to [paging](https://en.wikipedia.org/wiki/Paging), memory addresses
-# are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in 
+# are mapped to memory pages, instead of being translated directly to physical memory. This allows the operating system to swap pages in
 # and out of physical RAM in order to handle more memory than what is physically available and to only keep actively used pages mapped to
 # physical memory while the others would be moved to the swap partition.
 mkfs.ext4 /dev/mapper/arch-root
@@ -159,18 +159,18 @@ passwd MyUserName
 # (Optional) Backup the ESP (EFI System partition). See [tar](https://linux.die.net/man/1/tar) with the options to create `c` a gzipped archive `z`:
 mkdir /esp-backup
 tar cfz /esp-backup/esp-backup.tar.gz /mnt/boot/efi/
-  
+
 # Edit `/etc/mkinitcpio.conf` and add to the list of HOOKS:
 # -  `keymap encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf block keymap encrypt lvm2 resume filesystems keyboard fsck)`
 # -  `mdadm_udev` if the PC uses a firmware RAID (module to manage firmware/software RAID configurations). See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details.
 vim /etc/mkinitcpio.conf
 
 # Regenerate the initial ramdisk archive
-# The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"): 
+# The command to create the initial ramdisk environment for booting the linux kernel is called `mkinitcpio` (for "Make Initial CPIO"):
 # each "initial ramdisk" is generated as an image file available on the ESP when loading Linux. `cpio` is similar to `tar`: it creates
 # an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the
 # `.img` extension.
-# By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start. 
+# By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start.
 mkinitcpio -p linux
 
 # Setup GRUB to install the GRUB UEFI application `grubx64.efi` to `/boot/efi/EFI/grub` and install its modules to `/boot/grub/x86_64-efi/`.
@@ -204,12 +204,12 @@ grub-mkconfig -o /boot/grub/grub.cfg
 # (Check file `/etc/systemd/timesyncd.conf` for configuration).
 #
 # It is recommended to keep the hardware clock in Coordinated Universal Time (UTC) rather than local time: i.e. Universal and RTC time should be equal.
-# Most operating system considers the hardware clock to be UTC except Windows for [ridiculous compatibility reasons and supposedly to avoid confusing 
+# Most operating system considers the hardware clock to be UTC except Windows for [ridiculous compatibility reasons and supposedly to avoid confusing
 # users when setting time via bios (!)](https://blogs.msdn.microsoft.com/oldnewthing/20040902-00/?p=37983).
 #
 # The [Arch Linux wiki](https://wiki.archlinux.org/index.php/time#Time_standard) explains well the drawbacks of using local time for hardware clock:
-# > If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended 
-# > to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set 
+# > If multiple operating systems are installed on a machine, they will all derive the current time from the same hardware clock: it is recommended
+# > to adopt a unique standard for the hardware clock to avoid conflicts across systems and set it to UTC. Otherwise, if the hardware clock is set
 # > to localtime, more than one operating system may adjust it after a DST change for example, thus resulting in an over-correction; problems may also
 # > arise when traveling between different time zones and using one of the operating systems to reset the system/hardware clock.
 #
@@ -265,7 +265,7 @@ vim -d fr.map fr-latin1.map # compare fr with fr-latin1
 vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
 
 # `fr` differs for several keys from a regular french keyboard.
-# `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset 
+# `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset
 # `fr-latin9` is following the [ISO-8859-15](https://en.wikipedia.org/wiki/ISO/IEC_8859-15) charset
 # The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
 #

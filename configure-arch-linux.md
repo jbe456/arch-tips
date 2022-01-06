@@ -207,7 +207,7 @@ pacman -S i3-gaps
 # gaps inner 0
 ###########
 vim .config/i3/config
-  
+
 # install picom compositor for transparency
 pacman -S picom
 mkdir ~/.config/picom
@@ -356,6 +356,7 @@ vim ~/.config/kitty/kitty.conf
 
 ```bash
 # install Chromium + extensions: lastpass, ghostery
+# TODO choose font: ttf_liberation + update downloads folder to lower case: "downloads"
 pacman -S chromium
 
 # setup Git auth
@@ -365,6 +366,18 @@ ssh-keygen -t ed25519 -C "your_email@example.com"
 # TODO use ssh agent? https://docs.github.com/en/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases
 # Add the SSH key to your account on GitHub: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
 git clone git@github.com:your-repo.git
+
+# install vs code + extension Prettier
+# update settings
+###########
+# {
+#   "workbench.colorTheme": "Default Dark+",
+#   "editor.formatOnSave": true,
+#   "workbench.editor.enablePreview": false,
+#   "javascript.validate.enable": false
+# }
+###########
+yay -S visual-studio-code-bin
 
 # - gimp: image editor
 # - youtube-dl: video converter
@@ -379,22 +392,8 @@ pacman -S gimp youtube-dl wget unzip vlc
 yay -S spotify slack-desktop zoom
 ```
 
-- chromium
-  - choose font: ttf_liberation
-  - update downloads folder to lower case: "downloads"
-  
 ### Others
 
-- pacaur -Syu visual-studio-code-bin
-  - extensions: prettier + gitlens
-  - settings:
-  ```json
-  {
-    "editor.formatOnSave": true,
-    "workbench.editor.enablePreview": false,
-    "javascript.validate.enable": false
-  }
-  ```
 - pacman -Syu python2 nodejs npm yarn
 
 - detect usb keys

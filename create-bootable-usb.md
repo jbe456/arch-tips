@@ -1,4 +1,4 @@
-# Create an Arch Linux installer USB drive 
+# Create an Arch Linux installer USB drive
 
 ## From MacOS
 
@@ -13,6 +13,7 @@
     ```console
     sudo dd if=/path/to/target.img of=/dev/rdiskN bs=1m
     ```
+
 1.  Run:
 
     ```console
@@ -31,7 +32,6 @@
     - Partition scheme: "GPT partition scheme for UEFI"
 
       MBR (Master Boot Record) and GPT (GUID Partition Table) are two different ways of storing the partitioning information on a drive. This information includes where partitions start and begin, so your operating system knows which sectors belong to each partition and which partition is bootable. GPT is MBR's improved successor and is the one used in this tutorial. For more details, see [What’s the Difference Between GPT and MBR When Partitioning a Drive?](https://www.linkedin.com/pulse/whats-difference-between-gpt-mbr-when-partitioning-drive-tiwari)
-
 
     * File system: "FAT32"
 
@@ -57,9 +57,9 @@
 
     For more details see:
 
-      * [ISO Image Mode vs DD Image Mode](https://github.com/pbatard/rufus/issues/843)
-      * [Why Is Creating a Bootable USB Drive More Complex Than Creating Bootable CDs?](https://www.howtogeek.com/291484/why-is-creating-a-bootable-usb-drive-more-complex-than-creating-bootable-cds/)
-      * [How to build from Linux an ISO hybrid image bootable from BIOS or UEFI](https://github.com/patatetom/isohybrid-bios-uefi)
-      * [Creating a bootable USB drive from an ISO image](https://www.turnkeylinux.org/blog/iso2usb)
+    - [ISO Image Mode vs DD Image Mode](https://github.com/pbatard/rufus/issues/843)
+    - [Why Is Creating a Bootable USB Drive More Complex Than Creating Bootable CDs?](https://www.howtogeek.com/291484/why-is-creating-a-bootable-usb-drive-more-complex-than-creating-bootable-cds/)
+    - [How to build from Linux an ISO hybrid image bootable from BIOS or UEFI](https://github.com/patatetom/isohybrid-bios-uefi)
+    - [Creating a bootable USB drive from an ISO image](https://www.turnkeylinux.org/blog/iso2usb)
 
 For more information check out [How to Create Bootable Arch Linux on USB Drive](https://linoxide.com/linux-how-to/create-bootable-arch-linux-usb-drive/) and the Arch Linux wiki on [USB flash installation media](https://wiki.archlinux.org/index.php/USB_flash_installation_media#Using_Rufus).
