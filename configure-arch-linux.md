@@ -153,7 +153,6 @@ vim /etc/X11/Xwrapper.config
 vim ~/.zprofile
 
 # TODO add pinch zoom to touchpad + swipe workspace (libinput-gestures?)
-# TODO autorandr?
 ```
 
 ### Setup sound
@@ -364,6 +363,11 @@ vim ~/.config/kitty/kitty.conf
 ### Extra libs
 
 ```bash
+# setup autorandr https://github.com/phillipberndt/autorandr
+pacman -S autorandr
+# configure your screen and save config with
+autorandr --save laptop
+
 # install Chromium + extensions: lastpass, ghostery
 # TODO choose font: ttf_liberation + update downloads folder to lower case: "downloads"
 pacman -S chromium
