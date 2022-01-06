@@ -359,13 +359,17 @@ vim ~/.config/kitty/kitty.conf
 # TODO choose font: ttf_liberation + update downloads folder to lower case: "downloads"
 pacman -S chromium
 
-# setup Git auth
+# setup Git
+git config --global core.editor vim
 # https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
 pacman -S openssh
 ssh-keygen -t ed25519 -C "your_email@example.com"
 # TODO use ssh agent? https://docs.github.com/en/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases
 # Add the SSH key to your account on GitHub: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
 git clone git@github.com:your-repo.git
+cd your-repo
+git config user.email "your-email@users.noreply.github.com"
+git config user.name "Your Name"
 
 # install vs code + extension Prettier
 # update settings
