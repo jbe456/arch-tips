@@ -358,6 +358,14 @@ vim ~/.config/kitty/kitty.conf
 # install Chromium + extensions: lastpass, ghostery
 pacman -S chromium
 
+# setup Git auth
+# https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+pacman -S openssh
+ssh-keygen -t ed25519 -C "your_email@example.com"
+# TODO use ssh agent? https://docs.github.com/en/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases
+# Add the SSH key to your account on GitHub: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
+git clone git@github.com:your-repo.git
+
 # - gimp: image editor
 # - youtube-dl: video converter
 # - wget: curl alternative
@@ -377,10 +385,6 @@ yay -S spotify slack-desktop zoom
   
 ### Others
 
-- git
-  - pacman -Syu openssh + https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
-  - add key github
-  - git clone git@...
 - pacaur -Syu visual-studio-code-bin
   - extensions: prettier + gitlens
   - settings:
