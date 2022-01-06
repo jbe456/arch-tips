@@ -135,7 +135,9 @@ lspci|grep -i VGA
 pacman -S xf86-video-intel
 
 # install Xorg server, xinit & xrandr
+# Configure keyboard if needed https://wiki.archlinux.org/index.php/Keyboard_configuration_in_Xorg
 pacman -S xorg-server xorg-xinit xorg-xrandr
+
 # allow rootless Xorg by editing/creating the following file & content
 ###########
 # needs_root_rights = no
@@ -149,20 +151,16 @@ vim /etc/X11/Xwrapper.config
 # fi
 ###########
 vim ~/.zprofile
-```
 
-- Install Xorg server
-  - https://wiki.archlinux.org/index.php/Keyboard_configuration_in_Xorg
-    - fr / latin9 / asus_laptop / caps:shiftlock
-    - fix delete return ~ + nice console shortcuts? https://www.linuxquestions.org/questions/linux-general-1/insert-and-delete-key-returns-~-in-a-terminal-876401/
-  - dpi 120
-  - xrandr --output <output> --mode <mode>
-  - driver touchpad
+# TODO add pinch zoom to touchpad + swipe workspace (libinput-gestures?)
+# TODO autorandr?
+```
 
 ### Setup sound
 
 ```bash
 # logout/login to take group changes into effect
+# run `groups` to check groups the user belong to
 gpasswd -a jbe audio
 
 # install console & GUI to control sounds
@@ -172,16 +170,31 @@ pacman -S alsa-utils pulseaudio pavucontrol
 alsamixer
 
 # add auto switch module
+###########
+# .include /etc/pulse/default.pa
+#
+# # automatically switch to newly-connected devices
+# load-module module-switch-on-connect
+###########
 cp default.pa ~/.config/pulse/default.pa
-
-# TODO sound headset
 ```
 
-- sound:
-  - vim /etc/modprobe.d/alsa-base.conf
-    options snd_hda_intel enable=1 index=0
-    options snd_hda_intel enable=0 index=1
-  
+### Setup webcam
+
+```bash
+# check `uvcvideo` is loaded
+lsmod|grep uvc
+
+# check available devices
+v4l2-ctl --list-devices
+
+# logout/login to take group changes into effect
+# run `groups` to check groups the user belong to
+gpasswd -a jbe video
+
+# TODO pacman -S zvbi #for vlc
+```
+
 ### Setup i3
 
 ```bash
@@ -244,8 +257,8 @@ vim .config/polybar/forest/config.ini
 
 # edit i3 config
 ###########
-# bindsym $mod+d exec --no-startup-id ~/.config/polybar/forest/scripts/launcher.sh &
-# bindsym $mod+Shift+e exec --no-startup-id ~/.config/polybar/forest/scripts/powermenu.sh &
+# bindsym $mod+d exec --no-startup-id ~/.config/polybar/forest/scripts/launcher.sh
+# bindsym $mod+Shift+e exec --no-startup-id ~/.config/polybar/forest/scripts/powermenu.sh
 ###########
 vim .config/i3/config
 
@@ -266,7 +279,7 @@ pacman -S python-i3ipc
 yay -S python-fontawesome
 # run script on i3 start up
 ###########
-# exec_always ~/.config/i3/i3scripts/autoname_workspaces.py &
+# exec_always ~/.config/i3/i3scripts/autoname_workspaces.py
 ###########
 vim .config/i3/config
 
@@ -345,12 +358,20 @@ vim ~/.config/kitty/kitty.conf
 # install Chromium + extensions: lastpass, ghostery
 pacman -S chromium
 
+# - gimp: image editor
+# - youtube-dl: video converter
+# - wget: curl alternative
+# - remmina: remote desktop
+# - unzip
+# - Slack
+# - Spotify
+# Additional: imagemagick (converter), peek (gif maker)
+pacman -S gimp youtube-dl wget unzip vlc
 yay -S spotify slack-desktop
 ```
 
 - chromium
   - choose font: ttf_liberation
-  - choose: libx264
   - update downloads folder to lower case: "downloads"
   
 ### Others
@@ -370,24 +391,8 @@ yay -S spotify slack-desktop
   }
   ```
 - pacman -Syu python2 nodejs npm yarn
-- pacman -Syu feh gimp imagemagick + peek # image viewer + editor + converter + gif maker
-- pacman -Syu wget unzip # alternative to curl + unzip
-- pacman -Syu youtube-dl # video converter
 
-- webcam
-
-  - check `uvcvideo` is loaded with `lsmod|grep uvc`
-  - check available devices `v4l2-ctl --list-devices`
-  - pacman -S zvbi #for vlc
-  - usermod -aG video jbe #logout/login to take group changes into effect
-
-- backlight
-
-  - sudo tee /sys/class/backlight/intel_backlight/brightness <<< 50
-
-- remote desktop:
-
-  - pacman -Syu remmina freerdp
+- detect usb keys
 
 - printer
 
@@ -491,7 +496,3 @@ yay -S spotify slack-desktop
 
   - Adda new queue: `sudo lpadmin -p hp-envy-5640 -E -v "dnssd://HP%20ENVY%205640%20series%20%5BE5A506%5D._ipp._tcp.local/?uuid=1c852a4d-b800-1f08-abcd-d0bf9ce5a506" -m "driverless:ipp://HPD0BF9CE5A506.local:631/ipp/print"`
   - check list of queues: `lpstat -a | cut -f1 -d ' '`
-
-- setup backlight: pacman -S upower python-dbus
-  `dbus-send --system --type=method_call --dest="org.freedesktop.UPower" "/org/freedesktop/UPower/KbdBacklight" "org.freedesktop.UPower.KbdBacklight.SetBrightness" int32:100`
-- detect usb keys
