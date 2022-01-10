@@ -411,6 +411,13 @@ yay -S spotify slack-desktop zoom
 
 ### Others
 
+- TODO frequency scaling
+
+  - scaling governor/energy perf policy https://wiki.archlinux.org/title/CPU_frequency_scaling
+  - ACPID event https://wiki.archlinux.org/title/Acpid
+
+- graphic card performance https://wiki.archlinux.org/title/improving_performance#Graphics
+
 - pacman -Syu python2 nodejs npm yarn
 
 - detect usb keys
