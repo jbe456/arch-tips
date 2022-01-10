@@ -147,7 +147,10 @@ arch-chroot /mnt
 # Set the root password
 passwd
 # Enable wheel group
-EDITOR=vim visudo # Uncomment %wheel      ALL=(ALL) ALL
+###########
+# %wheel      ALL=(ALL) ALL
+###########
+EDITOR=vim visudo
 # Add a new user
 useradd -m -G wheel -s /bin/bash MyUserName
 passwd MyUserName
@@ -180,9 +183,15 @@ mkinitcpio -p linux
 # > - Arch Linux Wiki
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub
 
+# Setup GRUB theme https://github.com/vandalsoul/darkmatter-grub2-theme
+cp -r dark-matter /boot/grub/themes
+
 # Edit `/etc/default/grub`:
-# - Enable encryption: `GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"`
-# - Update `GRUBTIMEOUT=10`
+###########
+# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"
+# GRUBTIMEOUT=10
+# GRUB_THEME="/boot/grub/themes/dark-matter/theme.txt"
+###########
 vim /etc/default/grub
 
 # Add additional entries to the GRUB menu
@@ -247,7 +256,10 @@ i # enter in edit mode
 <Suppr> # uncomment line
 
 # Set the system locale & Generate the locale
-vim /etc/locale.conf # Content: LANG=en_US.UTF-8
+###########
+# LANG=en_US.UTF-8
+###########
+vim /etc/locale.conf
 locale-gen
 
 # Configure the keyboard layout
@@ -272,14 +284,20 @@ vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
 # The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
 #
 # To persist the keyboard layout:
-vim /etc/vconsole.conf # Content: KEYMAP=fr-latin9
+###########
+# KEYMAP=fr-latin9
+###########
+vim /etc/vconsole.conf
 ```
 
 ### Configure Network
 
 ```bash
 # Define the hostname
-> vim /etc/hostname # Content: <hostname>
+###########
+# <hostname>
+###########
+> vim /etc/hostname
 
 # Start/Enable the NetworkManager & connect to a wifi
 # As a root
