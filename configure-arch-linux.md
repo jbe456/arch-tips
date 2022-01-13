@@ -418,6 +418,19 @@ pacman -S gimp youtube-dl wget unzip vlc
 yay -S spotify slack-desktop zoom
 ```
 
+### Update firmwares
+
+```bash
+# install https://wiki.archlinux.org/title/Fwupd
+pacman -S udisks2 fwupd
+# check ESP is detected & available updates
+fwupdmgr get-devices
+fwupdmgr refresh
+fwupdmgr get-updates
+# update firmwares
+fwupdmgr update
+```
+
 ### Others
 
 - TODO frequency scaling
