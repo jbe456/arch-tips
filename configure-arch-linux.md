@@ -253,6 +253,15 @@ pacman -S xorg-xbacklight
 ###########
 vim .config/i3/config
 
+
+
+# edit i3 config and add print screen control
+pacman -S scrot
+###########
+# bindsym Print exec sleep 0.2 && scrot -s ~/Downloads/screenshots-$(date '+%Y%m%d-%H%M%S').png
+###########
+vim .config/i3/config
+
 pacman -S rofi
 yay -S polybar
 
