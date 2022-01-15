@@ -253,8 +253,6 @@ pacman -S xorg-xbacklight
 ###########
 vim .config/i3/config
 
-
-
 # edit i3 config and add print screen control
 pacman -S scrot
 ###########
@@ -376,6 +374,10 @@ vim ~/.config/kitty/kitty.conf
 pacman -S autorandr
 # configure your screen and save config with
 autorandr --save laptop
+###########
+# bindsym $mod+x exec --no-startup-id autorandr -c
+###########
+vim .config/i3/config
 
 # install Chromium + extensions: lastpass, ghostery
 # TODO choose font: ttf_liberation + update downloads folder to lower case: "downloads"
