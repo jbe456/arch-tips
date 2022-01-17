@@ -188,8 +188,8 @@ bindsym $mod+d exec --no-startup-id ~/.config/polybar/forest/scripts/launcher.sh
 bindsym $mod+Shift+e exec --no-startup-id ~/.config/polybar/forest/scripts/powermenu.sh
 bindsym $mod+x exec --no-startup-id autorandr -c
 
-bindsym XF86MonBrightnessUp exec xbacklight -inc 10
-bindsym XF86MonBrightnessDown exec xbacklight -dec 10
+bindsym XF86MonBrightnessUp exec brightnessctl set +10%
+bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
 bindsym Print exec sleep 0.2 && scrot -s ~/Downloads/screenshots-$(date '+%Y%m%d-%H%M%S').png
 

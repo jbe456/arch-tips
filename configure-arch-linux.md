@@ -131,8 +131,16 @@ pacman -S bat
 # check graphic card
 lspci|grep -i VGA
 
-# install relevant driver. ex for intel:
-pacman -S xf86-video-intel
+# pick "modesetting" driver. there is nothing to install
+# do not install xf86-video-intel as there are some bugs
+
+# enable vulkan
+# use vulkaninfo to confirm
+pacman -S vulkan-icd-loader vulkan-intel vulkan-tools
+
+# enable Video Hardware Acceleration
+# use intel_gpu_top to confirm
+pacman -S intel-media-driver intel-gpu-tools
 
 # install Xorg server, xinit & xrandr
 # Configure keyboard if needed https://wiki.archlinux.org/index.php/Keyboard_configuration_in_Xorg
@@ -151,6 +159,11 @@ vim /etc/X11/Xwrapper.config
 # fi
 ###########
 vim ~/.zprofile
+
+# check graphic performances
+yay -S glmark2
+# run benchmark
+glmark2
 
 # TODO add pinch zoom to touchpad + swipe workspace (libinput-gestures?)
 ```
@@ -246,10 +259,10 @@ betterlockscreen -u ~/.wallpapers/lockscreen
 vim .config/i3/config
 
 # edit i3 config and add brightness control
-pacman -S xorg-xbacklight
+pacman -S brightnessctl
 ###########
-# bindsym XF86MonBrightnessUp exec xbacklight -inc 10
-# bindsym XF86MonBrightnessDown exec xbacklight -dec 10
+# bindsym XF86MonBrightnessUp exec brightnessctl set +10%
+# bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 ###########
 vim .config/i3/config
 
