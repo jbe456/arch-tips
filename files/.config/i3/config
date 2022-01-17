@@ -191,7 +191,7 @@ bindsym $mod+x exec --no-startup-id autorandr -c
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
-bindsym Print exec sleep 0.2 && scrot -s ~/Downloads/screenshots-$(date '+%Y%m%d-%H%M%S').png
+bindsym Print exec sleep 0.2 && scrot -s ~/downloads/screenshots-$(date '+%Y%m%d-%H%M%S').png -e 'xclip -selection clipboard -target image/png -i $f'
 
 exec_always --no-startup-id ~/.config/i3/i3scripts/autoname_workspaces.py
 

@@ -265,9 +265,9 @@ pacman -S brightnessctl
 vim .config/i3/config
 
 # edit i3 config and add print screen control
-pacman -S scrot
+pacman -S scrot xclip
 ###########
-# bindsym Print exec sleep 0.2 && scrot -s ~/Downloads/screenshots-$(date '+%Y%m%d-%H%M%S').png
+# bindsym Print exec sleep 0.2 && scrot -s ~/downloads/screenshots-$(date '+%Y%m%d-%H%M%S').png -e 'xclip -selection clipboard -target image/png -i $f'
 ###########
 vim .config/i3/config
 
