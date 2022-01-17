@@ -457,7 +457,10 @@ fwupdmgr update
 
 - pacman -Syu python2 nodejs npm yarn
 
-- detect usb keys
+- TODO detect usb keys
+
+  - https://wiki.archlinux.org/title/Udisks
+  - https://wiki.archlinux.org/title/List_of_applications/Utilities#Mount_tools
 
 - printer
 
