@@ -138,7 +138,7 @@ lspci|grep -i VGA
 # use vulkaninfo to confirm
 pacman -S vulkan-icd-loader vulkan-intel vulkan-tools
 
-# enable Video Hardware Acceleration
+# enable Hardware Video Acceleration
 # use intel_gpu_top to confirm
 pacman -S intel-media-driver intel-gpu-tools
 
@@ -203,8 +203,6 @@ v4l2-ctl --list-devices
 # logout/login to take group changes into effect
 # run `groups` to check groups the user belong to
 gpasswd -a jbe video
-
-# TODO pacman -S zvbi #for vlc
 ```
 
 ### Setup i3
@@ -392,9 +390,12 @@ autorandr --save laptop
 ###########
 vim .config/i3/config
 
-# install Chromium + extensions: lastpass, ghostery
-# TODO choose font: ttf_liberation + update downloads folder to lower case: "downloads"
+# install Chromium and:
+# - add extensions: lastpass, ghostery
+# - update downloads folder to lower case: "downloads"
 pacman -S chromium
+# add extra fonts to cover the whole UTF-8 spectrum
+pacman -S ttf-liberation ttf-dejavu oto-fonts noto-fonts-emoji noto-fonts-cjk noto-fonts-extra
 
 # setup Git
 git config --global core.editor vim
@@ -423,13 +424,14 @@ yay -S visual-studio-code-bin
 # - gimp: image editor
 # - youtube-dl: video converter
 # - wget: curl alternative
-# - remmina: remote desktop
 # - unzip
-# - Slack
-# - Spotify
-# - Zoom
+# - vlc + zvbi to be able to use webcam with VLC
+# - remmina: remote desktop
+# - Spotify: music
+# - Slack: messaging app
+# - Zoom: video conferencing
 # Additional: imagemagick (converter), peek (gif maker)
-pacman -S gimp youtube-dl wget unzip vlc
+pacman -S gimp youtube-dl wget unzip vlc zvbi remmina
 yay -S spotify slack-desktop zoom
 ```
 
@@ -452,8 +454,6 @@ fwupdmgr update
 
   - scaling governor/energy perf policy https://wiki.archlinux.org/title/CPU_frequency_scaling
   - ACPID event https://wiki.archlinux.org/title/Acpid
-
-- graphic card performance https://wiki.archlinux.org/title/improving_performance#Graphics
 
 - pacman -Syu python2 nodejs npm yarn
 
