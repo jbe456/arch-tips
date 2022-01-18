@@ -165,7 +165,18 @@ yay -S glmark2
 # run benchmark
 glmark2
 
-# TODO add pinch zoom to touchpad + swipe workspace (libinput-gestures?)
+# add extra touch pad gestures using https://github.com/bulletmark/libinput-gestures/
+pacman -s libinput-gestures wmctrl xdotool
+gpasswd -a jbe input
+###########
+# gesture swipe up	_internal ws_up
+# gesture swipe down	_internal ws_down
+# gesture swipe left	xdotool key alt+Left
+# gesture swipe right	xdotool key alt+Right
+# gesture pinch in	xdotool key ctrl+minus
+# gesture pinch out	xdotool key ctrl+plus
+###########
+cp /etc/libinput-gestures.conf .config
 ```
 
 ### Setup sound
