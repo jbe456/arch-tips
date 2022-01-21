@@ -489,6 +489,22 @@ pacman -S foomatic-db-engine foomatic-db foomatic-db-pps
 # connect to http://localhost:631/ then `Administration > Add Printer`
 ```
 
+### Setup VPN
+
+```bash
+# install protonvpn & dependencies
+pacman -S network-manager-applet gnome-keyring
+yay -S protonvpn
+# add public key to pacman. See https://protonvpn.com/support/official-linux-client-arch/
+pacman-key --add downloads/public_key.asc
+pacman-key --finger $XXX
+pacman-key --lsign-key $XXX
+# connect (TODO should be running in the background)
+nm-applet
+protonvpn-cli login $username
+protonvpn-cli connect
+```
+
 ### Others
 
 - TODO frequency scaling
