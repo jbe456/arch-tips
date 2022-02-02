@@ -69,7 +69,7 @@ WINDOW_ICONS = {
     'firefox': fa.icons['firefox'],
     'firefox-esr': fa.icons['firefox'],
     'gimp': fa.icons['image'],
-    'gimp-2.8': fa.icons['image'],
+    'gimp-2.10': fa.icons['image'],
     'gnome-control-center': fa.icons['toggle-on'],
     'gnome-terminal-server': fa.icons['terminal'],
     'google-chrome': fa.icons['chrome'],
