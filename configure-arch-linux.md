@@ -503,18 +503,38 @@ yay -S protonvpn
 pacman-key --add downloads/public_key.asc
 pacman-key --finger $XXX
 pacman-key --lsign-key $XXX
-# connect (TODO should be running in the background)
-nm-applet
+# connect
+# nm-applet should be running in the background
 protonvpn-cli login $username
 protonvpn-cli connect
 ```
 
+### Setup battery management tool
+
+```bash
+# Install TLP https://linrunner.de/tlp/installation/arch.html
+pacman -S tlp tlp-rdw
+
+systemctl enable tlp.service
+systemctl start tlp.service
+systemctl enable NetworkManager-dispatcher.service
+systemctl start NetworkManager-dispatcher.service
+
+systemctl mask systemd-rfkill.service
+systemctl mask systemd-rfkill.socket
+
+# edit conf
+###########
+# CPU_SCALING_GOVERNOR_ON_AC=performance
+# CPU_SCALING_GOVERNOR_ON_BAT=powersave
+# CPU_BOOST_ON_AC=1
+# CPU_BOOST_ON_BAT=0
+# CPU_HWP_DYN_BOOST_ON_AC=1
+# CPU_HWP_DYN_BOOST_ON_BAT=0
+###########
+```
+
 ### Others
-
-- TODO frequency scaling
-
-  - scaling governor/energy perf policy https://wiki.archlinux.org/title/CPU_frequency_scaling
-  - ACPID event https://wiki.archlinux.org/title/Acpid
 
 - TODO detect usb keys
 
