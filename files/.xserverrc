@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
+exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR >> /tmp/xlog-$(date +'%F-%k-%M-%S') 2>&1
