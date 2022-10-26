@@ -509,9 +509,18 @@ protonvpn-cli login $username
 protonvpn-cli connect
 ```
 
-### Setup battery management tool
+### Setup CPU & battery management tool
 
 ```bash
+# ensure performance are optimal
+pacman -S s-tui
+s-tui
+
+# check scaling driver, governor & frequency
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+
 # Install TLP https://linrunner.de/tlp/installation/arch.html
 pacman -S tlp tlp-rdw
 
@@ -532,6 +541,15 @@ systemctl mask systemd-rfkill.socket
 # CPU_HWP_DYN_BOOST_ON_AC=1
 # CPU_HWP_DYN_BOOST_ON_BAT=0
 ###########
+
+# Configure smbios thermal mode
+smbios-thermal-ctl --set-thermal-mode=performance
+
+# Install thermald for Tiger Lake CPUs
+pacman -S thermald
+sensors-detect
+systemctl enable thermald.service
+systemctl start thermald.service
 ```
 
 ### Others
