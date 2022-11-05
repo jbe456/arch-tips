@@ -131,8 +131,8 @@ pacman -S bat
 # check graphic card
 lspci|grep -i VGA
 
-# pick "modesetting" driver. there is nothing to install
-# do not install xf86-video-intel as there are some bugs
+# pick latest intel driver (otherwise fallback is "modesetting" driver)
+pacman -S xf86-video-intel
 
 # enable vulkan
 # use vulkaninfo to confirm
@@ -512,6 +512,9 @@ protonvpn-cli connect
 ### Setup CPU & battery management tool
 
 ```bash
+# Update UEFI setting
+# Switch from RAID to AHCI to prevent battery drain since [11th gen Intel CPU](https://wiki.archlinux.org/title/Dell_XPS_13_(9310)#Sleep.2FModern_Standby_Battery_Drain)
+
 # ensure performance are optimal
 pacman -S s-tui
 s-tui
