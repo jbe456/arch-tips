@@ -322,6 +322,8 @@ vim .config/i3/config
 
 # install xidlehook
 yay -S xidlehook
+# disable DPMS
+xset -dpms
 
 # Copy xinitrc template
 cp /etc/X11/xinit/xinitrc ~/.xinitrc
