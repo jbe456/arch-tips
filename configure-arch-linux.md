@@ -177,6 +177,9 @@ gpasswd -a jbe input
 # gesture pinch out	xdotool key ctrl+plus
 ###########
 cp /etc/libinput-gestures.conf .config
+
+# disable DPMS
+cp 90-disable-dpms.conf /usr/share/X11/xorg.conf.d/
 ```
 
 ### Setup sound
