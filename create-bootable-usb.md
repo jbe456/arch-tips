@@ -1,5 +1,16 @@
 # Create an Arch Linux installer USB drive
 
+1.  Download Arch Linux `iso` from https://www.archlinux.org/download/
+1.  Insert a usb key with a capacity greater than the ISO size
+
+## From Linux
+
+```console
+> sudo -i
+> cat path/to/arch-linux.iso > /dev/sdX; sync
+> exit
+```
+
 ## From MacOS
 
 1.  Convert the `.iso` file to `.img` using the `convert` option of `hdiutil`:
@@ -23,8 +34,6 @@
 ## From Windows
 
 1.  Download Rufus from http://rufus.akeo.ie
-1.  Download Arch Linux `iso` from https://www.archlinux.org/download/
-1.  Insert a usb key with a capacity greater than the ISO size
 1.  Launch Rufus and select the following parameters:
 
     <img src="./images/rufus.png" alt="rufus" height="300px"/>
