@@ -15,6 +15,27 @@ These steps are inspired from [Arch Linux Installation Guide](https://wiki.archl
 ```bash
 # (Optional) Configure the keyboard layout
 # See https://wiki.archlinux.org/index.php/Keyboard_configuration_in_console
+#
+# To list all keyboard layouts related to French:
+localectl list-keymaps|grep fr
+
+# To try a keyboard layout:
+loadkeys fr-latin9
+
+# To compare the layouts:
+mkdir /tmp/layouts # create temporary directory
+ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
+cp -t /tmp/layouts /usr/share/kbd/keymaps/i386/azerty/fr.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz # copy over the layouts
+cd /tmp/layouts
+gunzip *.gz # unzip
+vim -d fr.map fr-latin1.map # compare fr with fr-latin1
+vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
+
+# `fr` differs for several keys from a regular french keyboard.
+# `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset
+# `fr-latin9` is following the [ISO-8859-15](https://en.wikipedia.org/wiki/ISO/IEC_8859-15) charset
+# The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
+
 # Example for french AZERTY:
 loadkeys fr
 
@@ -133,7 +154,7 @@ pacman -Sy archlinux-keyring
 # - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
 # - `networkmanager`: for network configuration over `netctl`, `dhcpcd` or `iwd`
 # - `gvim`: instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`).
-pacstrap -K /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim
+pacstrap -K /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim git
 
 # Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 # The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
@@ -187,8 +208,10 @@ mkinitcpio -p linux
 # > - Arch Linux Wiki
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub
 
-# Setup GRUB theme https://github.com/vandalsoul/darkmatter-grub2-theme
-cp -r dark-matter /boot/grub/themes
+# Setup GRUB theme https://gitlab.com/VandalByte/darkmatter-grub-theme
+git clone --depth 1 https://gitlab.com/VandalByte/darkmatter-grub-theme.git
+cd darkmatter-grub-theme
+python3 darkmatter-theme.py --install
 
 # Edit `/etc/default/grub`:
 ###########
@@ -199,7 +222,9 @@ cp -r dark-matter /boot/grub/themes
 vim /etc/default/grub
 
 # Add additional entries to the GRUB menu
-# Copy content from file ./files/grub/custom.cfg
+cd /tmp
+git clone https://github.com/jbe456/arch-tips
+cp arch-tips/files/grub/custom.cfg /boot/grub/
 vim /boot/grub/custom.cfg
 
 # Generate GRUB config. It will automatically detect the microcode `intel-ucode` and add the relevant instructions in the `grub.cfg` file.
@@ -207,6 +232,79 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 # Fix remaining warning https://wiki.archlinux.org/title/Mkinitcpio#Possibly_missing_firmware_for_module_XXXX
 ```
+
+### Configure timezone
+
+```bash
+ln -sf /usr/share/zoneinfo/$Region/$City /etc/localtime
+hwclock --systohc # Set the Hardware Clock to the current System Time.
+```
+
+### Configure locale
+
+```bash
+# Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where:
+# - "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code
+# - "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code,
+# - "codeset" is a character set or encoding identifier.
+#
+# Here are the main characters sets:
+# - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
+# - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
+# - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
+#
+# Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
+vim /etc/locale.gen # edit locale file
+/en_US + Enter # search for "en_US"
+n # go to next occurence until you find your entry
+i # enter in edit mode
+<Suppr> # uncomment line
+
+# Exit and generate locale
+locale-gen
+
+# Set the system locale & Generate the locale
+###########
+# LANG=en_US.UTF-8
+###########
+vim /etc/locale.conf
+
+# To persist the keyboard layout:
+###########
+# KEYMAP=fr-latin9
+###########
+vim /etc/vconsole.conf
+```
+
+### Reboot
+
+```bash
+# Reboot the machine and make sure GRUB correctly displays with all the desired options
+exit # exit arch-chroot
+umount -R /mnt
+swapoff -a
+reboot
+```
+
+### Next
+
+```bash
+### Configure Network
+
+# Define the hostname
+###########
+# <hostname>
+###########
+> vim /etc/hostname
+
+# Start/Enable the NetworkManager & connect to a wifi
+# As a root
+systemctl enable NetworkManager.service
+systemctl start NetworkManager.service
+# Connect to a wifi
+nmcli device wifi connect SSID_or_BSSID password password
+```
+
 
 ### Configure time and timezone
 
@@ -234,89 +332,5 @@ grub-mkconfig -o /boot/grub/grub.cfg
 #
 # See the explanation from the [Ubuntu wiki](https://help.ubuntu.com/community/UbuntuTime#Multiple_Boot_Systems_Time_Conflicts)
 timedatectl set-ntp true # Synchronize clock with NTP server
-timedatectl set-timezone America/New_York # Set correct time zone. Equivalent to 'ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime'
-hwclock --systohc # Set the Hardware Clock to the current System Time.
 timedatectl status # Check date & time are correct
-```
-
-### Configure locale
-
-```bash
-# Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where:
-# - "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code
-# - "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code,
-# - "codeset" is a character set or encoding identifier.
-#
-# Here are the main characters sets:
-# - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
-# - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
-# - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
-#
-# Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
-vim /etc/locale.gen # edit locale file
-/en_US + Enter # search for "en_US"
-n # go to next occurence until you find your entry
-i # enter in edit mode
-<Suppr> # uncomment line
-
-# Set the system locale & Generate the locale
-###########
-# LANG=en_US.UTF-8
-###########
-vim /etc/locale.conf
-locale-gen
-
-# Configure the keyboard layout
-# To list all keyboard layouts related to French:
-localectl list-keymaps|grep fr
-
-# To try a keyboard layout:
-loadkeys fr-latin9
-
-# To compare the layouts:
-mkdir /tmp/layouts # create temporary directory
-ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
-cp -t /tmp/layouts /usr/share/kbd/keymaps/i386/azerty/fr.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin9.map.gz /usr/share/kbd/keymaps/i386/azerty/fr-latin1.map.gz # copy over the layouts
-cd /tmp/layouts
-gunzip *.gz # unzip
-vim -d fr.map fr-latin1.map # compare fr with fr-latin1
-vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
-
-# `fr` differs for several keys from a regular french keyboard.
-# `fr-latin1` is following the [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) charset
-# `fr-latin9` is following the [ISO-8859-15](https://en.wikipedia.org/wiki/ISO/IEC_8859-15) charset
-# The latter introduces some characters such as [€](https://en.wikipedia.org/wiki/Euro_sign) and [Œ](https://en.wikipedia.org/wiki/%C5%92).
-#
-# To persist the keyboard layout:
-###########
-# KEYMAP=fr-latin9
-###########
-vim /etc/vconsole.conf
-```
-
-### Configure Network
-
-```bash
-# Define the hostname
-###########
-# <hostname>
-###########
-> vim /etc/hostname
-
-# Start/Enable the NetworkManager & connect to a wifi
-# As a root
-systemctl enable NetworkManager.service
-systemctl start NetworkManager.service
-# Connect to a wifi
-nmcli device wifi connect SSID_or_BSSID password password
-```
-
-### Reboot
-
-```bash
-# Reboot the machine and make sure GRUB correctly displays with all the desired options
-exit # exit arch-chroot
-umount -R /mnt
-swapoff -a
-reboot
 ```
