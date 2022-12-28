@@ -86,7 +86,7 @@ mkfs.ext4 /dev/sdXY
 
 # Encrypt the root partition and create swap & root sub partitions
 cryptsetup -c aes-xts-plain64 -h sha512 -s 512 --use-random luksFormat /dev/sdXZ
-cryptsetup luksOpen /dev/sdX3 luks
+cryptsetup luksOpen /dev/sdXZ luks
 pvcreate /dev/mapper/luks
 vgcreate arch /dev/mapper/luks
 lvcreate -L +8G arch -n swap
@@ -116,6 +116,7 @@ mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
 ### Install Arch Linux
 
 ```bash
+# (Optional) Not needed anymore since https://wiki.archlinux.org/title/Reflector
 # Select the mirror closest to your location (United State in this case)
 vim /etc/pacman.d/mirrorlist # edit mirror list
 /United + Enter # search for "United"
@@ -123,13 +124,16 @@ Shit + v # select whole line
 <Down arrow> # select line below
 :m 6 # move both lines to 6th line (i.e. at the top of mirror list)
 
+# Update keyrings
+pacman -Sy archlinux-keyring
+
 # Install required packages
 # - `grub`: the multiboot boot loader.
 # - `efibootmgr`: manipulates the boot manager and creates bootable .efi stub entries used by the GRUB installation script.
 # - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
 # - `networkmanager`: for network configuration over `netctl`, `dhcpcd` or `iwd`
 # - `gvim`: instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`).
-pacstrap /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim
+pacstrap -K /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim
 
 # Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 # The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
@@ -164,7 +168,7 @@ mkdir /esp-backup
 tar cfz /esp-backup/esp-backup.tar.gz /mnt/boot/efi/
 
 # Edit `/etc/mkinitcpio.conf` and add to the list of HOOKS:
-# -  `keymap encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf block keymap encrypt lvm2 resume filesystems keyboard fsck)`
+# -  `encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block filesystems fsck encrypt lvm2 resume)`
 # -  `mdadm_udev` if the PC uses a firmware RAID (module to manage firmware/software RAID configurations). See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details.
 vim /etc/mkinitcpio.conf
 
@@ -188,7 +192,7 @@ cp -r dark-matter /boot/grub/themes
 
 # Edit `/etc/default/grub`:
 ###########
-# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/Arch-swap"
+# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/arch-swap"
 # GRUBTIMEOUT=10
 # GRUB_THEME="/boot/grub/themes/dark-matter/theme.txt"
 ###########
