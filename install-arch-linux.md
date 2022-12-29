@@ -19,9 +19,6 @@ These steps are inspired from [Arch Linux Installation Guide](https://wiki.archl
 # To list all keyboard layouts related to French:
 localectl list-keymaps|grep fr
 
-# To try a keyboard layout:
-loadkeys fr-latin9
-
 # To compare the layouts:
 mkdir /tmp/layouts # create temporary directory
 ls /usr/share/kbd/keymaps/**/*.map.gz|grep fr # locate layouts
@@ -173,7 +170,7 @@ arch-chroot /mnt
 passwd
 # Enable wheel group
 ###########
-# %wheel      ALL=(ALL) ALL
+# %wheel      ALL=(ALL:ALL) ALL
 ###########
 EDITOR=vim visudo
 # Add a new user
