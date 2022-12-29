@@ -189,7 +189,7 @@ mkdir /esp-backup
 tar cfz /esp-backup/esp-backup.tar.gz /mnt/boot/efi/
 
 # Edit `/etc/mkinitcpio.conf` and add to the list of HOOKS:
-# -  `encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block filesystems fsck encrypt lvm2 resume)`
+# -  `encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume filesystems fsck)`
 # -  `mdadm_udev` if the PC uses a firmware RAID (module to manage firmware/software RAID configurations). See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details.
 vim /etc/mkinitcpio.conf
 
