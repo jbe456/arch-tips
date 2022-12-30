@@ -151,7 +151,7 @@ pacman -Sy archlinux-keyring
 # - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
 # - `networkmanager`: for network configuration over `netctl`, `dhcpcd` or `iwd`
 # - `gvim`: instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`).
-pacstrap -K /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim git
+pacstrap -K /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim git os-prober
 
 # Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 # The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
@@ -268,6 +268,7 @@ vim /etc/grub.d/30_uefi-firmware
 # GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/arch-swap"
 # GRUBTIMEOUT=10
 # GRUB_DISABLE_SUBMENU=y
+# GRUB_DISABLE_OS_PROBER=false
 # GRUB_THEME="/boot/grub/themes/dark-matter/theme.txt"
 ###########
 vim /etc/default/grub
