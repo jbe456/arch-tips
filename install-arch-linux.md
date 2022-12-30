@@ -282,6 +282,9 @@ vim /boot/grub/custom.cfg
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # Fix remaining warning https://wiki.archlinux.org/title/Mkinitcpio#Possibly_missing_firmware_for_module_XXXX
+
+# TODO auto detect USB
+# TODO draw inspiration from https://github.com/supergrub/supergrub
 ```
 
 ### Reboot
