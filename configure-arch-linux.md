@@ -47,9 +47,14 @@ timedatectl status # Check date & time are correct
 # See https://www.archlinux.org/pacman/pacman.8.html
 pacman -Syu
 
-# Configure pacman via `/etc/pacman.conf`
-# - uncomment "Color" option
-# - uncomment "multilib" section for 32 bit applications support
+# Configure pacman via `/etc/pacman.conf`.
+# Uncomment the following lines:
+###########
+# Color
+# # for 32 bit applications support
+# [multilib]
+# Include = /etc/pacman.d/mirrorlist
+###########
 vim /etc/pacman.conf
 ```
 
