@@ -296,7 +296,7 @@ reboot
 systemctl enable NetworkManager.service
 systemctl start NetworkManager.service
 # Connect to a wifi
-nmcli device wifi connect SSID_or_BSSID password password
+nmcli --ask device wifi connect SSID_or_BSSID
 
 # Configure time and timezone
 # There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock)
