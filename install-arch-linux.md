@@ -163,6 +163,49 @@ cat /mnt/etc/fstab # check it has been correctly generated
 arch-chroot /mnt
 ```
 
+### Configure timezone
+
+```bash
+ln -sf /usr/share/zoneinfo/$Region/$City /etc/localtime
+hwclock --systohc # Set the Hardware Clock to the current System Time.
+```
+
+### Configure locale
+
+```bash
+# Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where:
+# - "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code
+# - "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code,
+# - "codeset" is a character set or encoding identifier.
+#
+# Here are the main characters sets:
+# - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
+# - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
+# - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
+#
+# Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
+vim /etc/locale.gen # edit locale file
+/en_US + Enter # search for "en_US"
+n # go to next occurence until you find your entry
+i # enter in edit mode
+<Suppr> # uncomment line
+
+# Exit and generate locale
+locale-gen
+
+# Set the system locale & Generate the locale
+###########
+# LANG=en_US.UTF-8
+###########
+vim /etc/locale.conf
+
+# To persist the keyboard layout:
+###########
+# KEYMAP=fr-latin9
+###########
+vim /etc/vconsole.conf
+```
+
 ### Setup users
 
 ```bash
@@ -214,6 +257,7 @@ python3 darkmatter-theme.py --install
 ###########
 # GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/arch-swap"
 # GRUBTIMEOUT=10
+# GRUB_DISABLE_SUBMENU=y
 # GRUB_THEME="/boot/grub/themes/dark-matter/theme.txt"
 ###########
 vim /etc/default/grub
@@ -228,49 +272,6 @@ vim /boot/grub/custom.cfg
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # Fix remaining warning https://wiki.archlinux.org/title/Mkinitcpio#Possibly_missing_firmware_for_module_XXXX
-```
-
-### Configure timezone
-
-```bash
-ln -sf /usr/share/zoneinfo/$Region/$City /etc/localtime
-hwclock --systohc # Set the Hardware Clock to the current System Time.
-```
-
-### Configure locale
-
-```bash
-# Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where:
-# - "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code
-# - "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code,
-# - "codeset" is a character set or encoding identifier.
-#
-# Here are the main characters sets:
-# - [ASCII](https://en.wikipedia.org/wiki/ASCII): 7-bits char set (128 chars)
-# - [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1): a 8-bits/1 byte extended ASCII char set (256 chars) adding Latin characters to ASCII
-# - [UTF-8](https://en.wikipedia.org/wiki/UTF-8): a variable width char set (1 to 4 bytes) encoding all Unicode characters
-#
-# Uncomment the desired locale, in this case `en_US.UTF8 UTF8`.
-vim /etc/locale.gen # edit locale file
-/en_US + Enter # search for "en_US"
-n # go to next occurence until you find your entry
-i # enter in edit mode
-<Suppr> # uncomment line
-
-# Exit and generate locale
-locale-gen
-
-# Set the system locale & Generate the locale
-###########
-# LANG=en_US.UTF-8
-###########
-vim /etc/locale.conf
-
-# To persist the keyboard layout:
-###########
-# KEYMAP=fr-latin9
-###########
-vim /etc/vconsole.conf
 ```
 
 ### Reboot
