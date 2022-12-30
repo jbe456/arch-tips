@@ -257,6 +257,12 @@ git clone --depth 1 https://gitlab.com/VandalByte/darkmatter-grub-theme.git
 cd darkmatter-grub-theme
 python3 darkmatter-theme.py --install
 
+# Add missing class `--class efi`
+###########
+# menuentry '$LABEL' --class efi [...]
+###########
+vim /etc/grub.d/30_uefi-firmware
+
 # Edit `/etc/default/grub`:
 ###########
 # GRUB_CMDLINE_LINUX="cryptdevice=/dev/sdXZ:luks resume=/dev/mapper/arch-swap"
