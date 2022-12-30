@@ -40,13 +40,6 @@ timedatectl status # Check date & time are correct
 ### pacman
 
 ```bash
-# Upgrade the whole system with pacman, Arch Linux package manager
-# - `S` or `sync`: operation to install packages
-# - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf
-# - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date
-# See https://www.archlinux.org/pacman/pacman.8.html
-pacman -Syu
-
 # Configure pacman via `/etc/pacman.conf`.
 # Uncomment the following lines:
 ###########
@@ -56,26 +49,13 @@ pacman -Syu
 # Include = /etc/pacman.d/mirrorlist
 ###########
 vim /etc/pacman.conf
-```
 
-### GRUB
-
-```bash
-# Install GRUB theme from https://github.com/vandalsoul/darkmatter-grub2-theme/
-cd /tmp
-git clone --depth 1 https://github.com/vandalsoul/darkmatter-grub2-theme.git
-cd darkmatter-grub2-theme
-sudo python3 install.py
-
-# Add missing grub icons
-cd /boot/grub/theme/dark-theme/icons
-cp help.png usb.png
-
-# Add missing class `--class efi` next to `menuentry`
-vim /etc/grub.d/30_uefi-firmware
-
-# Ensure theme is correctly setup by rebooting
-reboot
+# Upgrade the whole system with pacman, Arch Linux package manager
+# - `S` or `sync`: operation to install packages
+# - `y` or `refresh`: option to download a fresh copy of the master package database from the servers defined in pacman.conf
+# - `u` or `sysupgrade`: option to upgrade all currently-installed packages that are out-of-date
+# See https://www.archlinux.org/pacman/pacman.8.html
+pacman -Syu
 ```
 
 ## Setup AUR: Yay
