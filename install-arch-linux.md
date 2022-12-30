@@ -163,16 +163,20 @@ cat /mnt/etc/fstab # check it has been correctly generated
 arch-chroot /mnt
 ```
 
-### Configure timezone
+### Configure locale, timezone & hostname
 
 ```bash
+# Define the hostname
+###########
+# <hostname>
+###########
+> vim /etc/hostname
+
+# Configure timezone
 ln -sf /usr/share/zoneinfo/$Region/$City /etc/localtime
 hwclock --systohc # Set the Hardware Clock to the current System Time.
-```
 
-### Configure locale
-
-```bash
+# Configure locale
 # Locale names are typically of the form `language[_territory][.codeset][@modifier]`, where:
 # - "language" is an [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language code
 # - "territory" is an [ISO 3166](https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) country code,
@@ -284,29 +288,17 @@ swapoff -a
 reboot
 ```
 
-### Next
+### Configure Wifi, time & timezone
 
 ```bash
-### Configure Network
-
-# Define the hostname
-###########
-# <hostname>
-###########
-> vim /etc/hostname
-
 # Start/Enable the NetworkManager & connect to a wifi
 # As a root
 systemctl enable NetworkManager.service
 systemctl start NetworkManager.service
 # Connect to a wifi
 nmcli device wifi connect SSID_or_BSSID password password
-```
 
-
-### Configure time and timezone
-
-```bash
+# Configure time and timezone
 # There are two clocks: the system clock managed in-memory by the operating system and the hardware clock (aka RTC for Real-Time Clock)
 # a physical clock powered by a battery. At boot time, the system clock initial value is set from the hardware clock.
 #
