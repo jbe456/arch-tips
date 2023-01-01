@@ -202,6 +202,9 @@ cp /etc/libinput-gestures.conf .config
 
 # disable DPMS
 cp 90-disable-dpms.conf /usr/share/X11/xorg.conf.d/
+
+# copy .xinitrc
+cp .xinitrc ~/
 ```
 
 ### Setup sound
@@ -234,6 +237,7 @@ cp default.pa ~/.config/pulse/default.pa
 lsmod|grep uvc
 
 # check available devices
+pacman -S v4l2-utils
 v4l2-ctl --list-devices
 
 # logout/login to take group changes into effect
@@ -352,32 +356,10 @@ xset -dpms
 
 # Copy xinitrc template
 cp /etc/X11/xinit/xinitrc ~/.xinitrc
-# In the "start some nice programs here" section, under the xinitrc.d part, replace with:
-###########
-# # transparency
-# picom &
-# # background
-# feh --bg-scale ~/.wallpapers/background/arch.png &
-# # auto lock
-# xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen' '' &
-# # polybar
-# ~/.config/polybar/launch.sh --forest &
-# # gestures (normally there's an autostart?)
-# libinput-gestures-setup start &
-# # networkmanager applet
-# nm-applet &
-# # i3
-# exec i3 -V >> /tmp/i3log-$(date +'%F-%k-%M-%S') 2>&1
-###########
 vim .xinitrc
 
 # Copy xserverrc template
 cp /etc/X11/xinit/xserverrc ~/.xserverrc
-# Replace the main exec line with:
-###########
-# exec /usr/bin/X -nolisten tcp "$@" vt$XDG_VTNR
-###########
-vim .xserverrc
 
 # TODO spotify polybar
 ```
