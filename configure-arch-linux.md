@@ -435,7 +435,12 @@ cd your-repo
 git config user.email "your-email@users.noreply.github.com"
 git config user.name "Your Name"
 
-# install vs code + extension Prettier
+# install vs code
+# install extension:
+# - Prettier
+# - Gitlens
+# - JavaScript & TypeScript Nightly
+# - Extension Pack for JAVA
 # update settings
 ###########
 # {
@@ -499,10 +504,11 @@ systemctl enable avahi-daemon.service
 systemctl start avahi-daemon.service
 
 # add drivers: https://wiki.archlinux.org/title/CUPS#Printer_drivers
-pacman -S foomatic-db-engine foomatic-db foomatic-db-pps
+pacman -S foomatic-db-engine foomatic-db foomatic-db-ppds
 
 # use web interface to administer printers
 # connect to http://localhost:631/ then `Administration > Add Printer`
+cupsctl WebInterface=Yes
 ```
 
 ### Setup VPN
@@ -532,8 +538,13 @@ pacman -S s-tui
 s-tui
 
 # check scaling driver, governor & frequency
+# intel_pstate
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
+# performance/powersave
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+# 1=Turbo disabled; 0=Turbo enabled
+cat /sys/devices/system/cpu/intel_pstate/no_turbo
+# returns max frequency - compare against lscpu
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
 # Install TLP https://linrunner.de/tlp/installation/arch.html
@@ -557,7 +568,7 @@ systemctl mask systemd-rfkill.socket
 # CPU_HWP_DYN_BOOST_ON_BAT=0
 ###########
 
-# Configure smbios thermal mode
+# (DELL laptop only) Configure smbios thermal mode
 smbios-thermal-ctl --set-thermal-mode=performance
 
 # Install thermald for Tiger Lake CPUs
@@ -568,10 +579,5 @@ systemctl start thermald.service
 ```
 
 ### Others
-
-- TODO detect usb keys
-
-  - https://wiki.archlinux.org/title/Udisks
-  - https://wiki.archlinux.org/title/List_of_applications/Utilities#Mount_tools
 
 - pacman -Syu python2 nodejs npm yarn
