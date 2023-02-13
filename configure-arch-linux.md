@@ -187,7 +187,7 @@ yay -S glmark2
 # run benchmark
 glmark2
 
-# add extra touch pad gestures using https://github.com/bulletmark/libinput-gestures/
+# (optional) add extra touch pad gestures using https://github.com/bulletmark/libinput-gestures/
 pacman -s libinput-gestures wmctrl xdotool
 gpasswd -a jbe input
 ###########
@@ -214,8 +214,8 @@ cp .xinitrc ~/
 # run `groups` to check groups the user belong to
 gpasswd -a jbe audio
 
-# install console & GUI to control sounds
-pacman -S alsa-utils pulseaudio pavucontrol
+# install console & GUI to control sounds & latest firmware
+pacman -S alsa-utils pulseaudio pavucontrol sof-firmware alsa-ucm-conf
 
 # unmute master
 alsamixer
@@ -249,7 +249,7 @@ gpasswd -a jbe video
 
 ```bash
 # install i3 with gaps
-pacman -S i3-gaps
+pacman -S community/i3-wm
 # edit i3 config
 # - cleanup unwanted lines
 ###########
@@ -400,6 +400,9 @@ yay -S ttf-meslo-nerd-font-powerlevel10k
 # background            #282a36
 ###########
 vim ~/.config/kitty/kitty.conf
+
+# (Optional) Switch leyboard layout
+localectl set-x11-keymap gb
 ```
 
 ### Extra libs
@@ -417,9 +420,8 @@ vim .config/i3/config
 # install Chromium and:
 # - add extensions: lastpass, ghostery
 # - update downloads folder to lower case: "downloads"
-pacman -S chromium
-# add extra fonts to cover the whole UTF-8 spectrum
-pacman -S ttf-liberation ttf-dejavu oto-fonts noto-fonts-emoji noto-fonts-cjk noto-fonts-extra
+# - install extra fonts to cover the whole UTF-8 spectrum
+pacman -S chromium ttf-liberation ttf-dejavu noto-fonts noto-fonts-emoji noto-fonts-cjk noto-fonts-extra
 
 # setup Git
 git config --global core.editor vim
@@ -438,6 +440,7 @@ git config user.name "Your Name"
 ###########
 # {
 #   "workbench.colorTheme": "Default Dark+",
+#   "editor.defaultFormatter": "esbenp.prettier-vscode",
 #   "editor.formatOnSave": true,
 #   "workbench.editor.enablePreview": false,
 #   "javascript.validate.enable": false
