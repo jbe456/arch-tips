@@ -112,6 +112,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+HISTSIZE=1000000
+SAVEHIST=$HISTSIZE
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 if [[ $TERM == linux ]]; then
   POWERLEVEL9K_CONFIG_FILE=~/.p10k-tty.zsh

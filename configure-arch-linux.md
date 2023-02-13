@@ -168,7 +168,7 @@ pacman -S intel-media-driver intel-gpu-tools
 # Configure keyboard if needed https://wiki.archlinux.org/index.php/Keyboard_configuration_in_Xorg
 pacman -S xorg-server xorg-xinit xorg-xrandr
 
-# allow rootless Xorg by editing/creating the following file & content
+# (Optional) allow rootless Xorg by editing/creating the following file & content
 ###########
 # needs_root_rights = no
 ###########
@@ -200,7 +200,7 @@ gpasswd -a jbe input
 ###########
 cp /etc/libinput-gestures.conf .config
 
-# disable DPMS
+# (Optional) disable DPMS
 cp 90-disable-dpms.conf /usr/share/X11/xorg.conf.d/
 
 # copy .xinitrc
