@@ -183,7 +183,7 @@ for_window [class=".*"] border pixel 0
 for_window [class="zoom"] floating enable
 gaps inner 8
 
-bindsym $mod+l exec --no-startup-id betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen
+bindsym $mod+l exec --no-startup-id betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen --fx dim
 bindsym $mod+d exec --no-startup-id ~/.config/polybar/forest/scripts/launcher.sh
 bindsym $mod+Shift+e exec --no-startup-id ~/.config/polybar/forest/scripts/powermenu.sh
 bindsym $mod+x exec --no-startup-id autorandr -c
