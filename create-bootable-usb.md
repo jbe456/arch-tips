@@ -6,6 +6,7 @@
 ## From Linux
 
 ```console
+// Erase disk using fdisk and "d" command
 > sudo -i
 > cat path/to/arch-linux.iso > /dev/sdX; sync
 > exit
