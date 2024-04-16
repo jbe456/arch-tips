@@ -109,7 +109,9 @@ vim .zshrc
 pacman -S zsh-completions
 
 # theme https://github.com/romkatv/powerlevel10k
-pacman -S zsh-theme-powerlevel10k
+yay -S zsh-theme-powerlevel10k-git
+echo 'source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+
 ln -s /usr/share/zsh-theme-powerlevel10k .oh-my-zsh/custom/themes/
 
 # edit .zshrc & add the following theme
@@ -121,6 +123,14 @@ vim .zshrc
 source .zshrc
 
 # configure p10k if not already done
+# 24h format
+# Two lines
+# Disconnected
+# Compact
+# Concise
+# Transient Prompt No
+# Instant Prompt Verbose
+# 
 p10k configure
 ```
 
