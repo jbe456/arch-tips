@@ -293,6 +293,7 @@ vim ~/.config/picom/picom.conf
 # create wallpaper directory and copy image from repository
 mkdir -p .wallpapers/background
 mkdir -p .wallpapers/lockscreen
+# cp wallpapers images
 pacman -S feh
 
 yay -S betterlockscreen
