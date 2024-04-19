@@ -247,7 +247,7 @@ cp default.pa ~/.config/pulse/default.pa
 lsmod|grep uvc
 
 # check available devices
-pacman -S v4l2-utils
+pacman -S v4l-utils
 v4l2-ctl --list-devices
 
 # logout/login to take group changes into effect
