@@ -465,17 +465,16 @@ git config user.name "Your Name"
 yay -S visual-studio-code-bin
 
 # - gimp: image editor
-# - youtube-dl: video converter
+# - yt-dlp: youtube video converter
 # - wget: curl alternative
 # - unzip
 # - vlc + zvbi to be able to use webcam with VLC
 # - remmina: remote desktop
 # - Spotify: music
 # - Slack: messaging app
-# - Zoom: video conferencing
 # Additional: imagemagick (converter), peek (gif maker)
-pacman -S gimp youtube-dl wget unzip vlc zvbi remmina
-yay -S spotify slack-desktop zoom
+pacman -S gimp yt-dlp wget unzip vlc zvbi remmina
+yay -S spotify slack-desktop
 ```
 
 ### Update firmwares
