@@ -5,8 +5,12 @@
 
 ## From Linux
 
+Follow these instructions: [USB flash installation medium](https://wiki.archlinux.org/title/USB_flash_installation_medium)
+
 ```console
-// Erase disk using fdisk and "d" command
+// Erase disk partitions
+> wipefs -a /dev/sdX
+// Copy over iso
 > sudo -i
 > cat path/to/arch-linux.iso > /dev/sdX; sync
 > exit
