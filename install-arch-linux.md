@@ -94,7 +94,7 @@ w # Persist changes
 # The created Linux root partition file system type will be [ext4](https://en.wikipedia.org/wiki/Ext4) (Fourth Extended Filesystem).
 # It is the most commonly used file system on Linux distributions. There exists [many more](https://wiki.archlinux.org/index.php/File_systems).
 # See https://linux.die.net/man/8/mkfs
-mkfs.vfat /dev/sdXX
+mkfs.vfat -F 32 /dev/sdXX
 mkfs.ext4 /dev/sdXY
 
 # Encrypt the root partition and create swap & root sub partitions
