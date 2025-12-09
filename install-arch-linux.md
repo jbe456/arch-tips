@@ -63,8 +63,8 @@ ping google.com
 # If your partition is not listed by `blkid` or `lsblk`, see [how to troubleshoot missing partition](./general-tips.md#partitiondisk-not-visible)
 
 # Create partitions
-# - EFI system partition, 100M: `/dev/sdXX`
-# - BIOS boot partition, 250M: `/dev/sdXY`
+# - EFI system partition, 512M: `/dev/sdXX`
+# - Boot partition, 1G: `/dev/sdXY`
 # - Linux x86-64 root, remaining `/dev/sdXZ`
 #
 # What is an [ESP](https://en.wikipedia.org/wiki/EFI_system_partition)?
@@ -74,20 +74,15 @@ ping google.com
 # > and used by the firmware at boot time, system utility programs that are intended to be run before an
 # > operating system is booted, and data files such as error logs.
 # > - Wikipedia
-fdisk /dev/sdX
+gdisk /dev/sdX
 
 # Example for creating a new partition table (suitable for single boot):
 p # Review partition table
 g # Create new empty GPT partition table
 
-n <Enter> <Enter> +100M # Add a new partition
-t 1 # Set type to EFI System
-
-n <Enter> <Enter> +250M # Add a new partition
-t <Enter> 4 # Set type to BIOS Boot
-
-n <Enter> <Enter> <Enter> # Add a new partition
-t <Enter> 23 # Set type to Linux root (x86-64)
+n <Enter> <Enter> +512M EF00 # Add a new partition of type EFI System partition
+n <Enter> <Enter> +1G 8300 # Add a new partition of type Linux filesystem
+n <Enter> <Enter> <Enter> 8300 # Add a new partition of type Linux filesystem
 
 p # Review partition table
 w # Persist changes
