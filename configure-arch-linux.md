@@ -132,29 +132,33 @@ source .zshrc
 # Instant Prompt Verbose
 # 
 p10k configure
-```
-
-## Spice up shell
-
-```bash
-# install https://github.com/nvbn/thefuck
-pacman -S thefuck
-# edit .zshrc & add the following
-###########
-# eval $(thefuck --alias)
-###########
-vim .zshrc
-
-# install https://github.com/rupa/z
-pacman -S z
-# edit .zshrc & add the following
-###########
-# [[ -r "/usr/share/z/z.sh" ]] && source /usr/share/z/z.sh
-###########
-vim .zshrc
 
 # install https://github.com/sharkdp/bat
 pacman -S bat
+```
+
+### Setup Graphic drivers`
+
+```bash
+# check graphic card
+lspci|grep -i VGA
+
+#### If Intel graphic card
+# pick latest intel driver (otherwise fallback is "modesetting" driver)
+pacman -S xf86-video-intel
+
+# enable vulkan
+# use vulkaninfo to confirm
+pacman -S vulkan-icd-loader vulkan-intel vulkan-tools
+
+# enable Hardware Video Acceleration
+# use intel_gpu_top to confirm
+pacman -S intel-media-driver intel-gpu-tools
+
+#### If Nvidia graphic cqrd
+# Check doc https://wiki.archlinux.org/title/NVIDIA
+# example
+pacman -S nvidia-open nvidia-utils
 ```
 
 ### Setup Xorg
