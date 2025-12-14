@@ -36,7 +36,7 @@ vim -d fr-latin1.map fr-latin9.map # compare fr-latin1 with fr-latin9
 # Example for french AZERTY:
 loadkeys fr
 
-# (Optional) Connect to the internet with Ethernet or Wifi
+# Connect to the internet with Ethernet or Wifi
 # See https://wiki.archlinux.org/title/Network_configuration/Wireless
 # For wifi
 iwctl
@@ -98,6 +98,7 @@ mkfs.vfat -F 32 /dev/sdXX
 mkfs.ext4 /dev/sdXY
 
 # Encrypt the root partition and create swap & root sub partitions
+# Later, to decrypt manually you would enter 'cryptsetup luksOpen /dev/sdXZ luks'
 cryptsetup -c aes-xts-plain64 -h sha512 -s 512 --use-random luksFormat /dev/sdXZ
 cryptsetup luksOpen /dev/sdXZ luks
 pvcreate /dev/mapper/luks
@@ -121,7 +122,7 @@ mkdir /mnt/boot
 mount /dev/sdXY /mnt/boot
 mkdir /mnt/boot/efi
 mount /dev/sdXX /mnt/boot/efi
-# if dual boot
+# (Optional) if dual boot
 mkdir /mnt/windows
 mount /dev/<windows-partition> /mnt/windows # Mount the Windows partition
 ```
@@ -146,7 +147,7 @@ pacman -Sy archlinux-keyring
 # - `intel-ucode`: this is a [microcode](https://wiki.archlinux.org/index.php/microcode) that provides updates and bugfixes on Intel processor. It will be loaded at startup by the GRUB config.
 # - `networkmanager`: for network configuration over `netctl`, `dhcpcd` or `iwd`
 # - `gvim`: instead of `vim` in order to have "copy to clipboard" working on X server (i.e. `vim --version` contains `+xterm_clipboard`).
-pacstrap -K /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim git
+pacstrap -K /mnt base base-devel grub efibootmgr linux linux-firmware linux-headers intel-ucode networkmanager lvm2 gvim git python
 
 # Persist mounted partitions using the [genfstab script](https://git.archlinux.org/arch-install-scripts.git/tree/genfstab.in)
 # The partitions will be persisted in a file called [fstab](https://en.wikipedia.org/wiki/Fstab) (File System Table).
@@ -198,7 +199,7 @@ locale-gen
 ###########
 vim /etc/locale.conf
 
-# To persist the keyboard layout:
+# (Optional) To persist the keyboard layout:
 ###########
 # KEYMAP=fr-latin9
 ###########
@@ -228,7 +229,8 @@ mkdir /esp-backup
 tar cfz /esp-backup/esp-backup.tar.gz /mnt/boot/efi/
 
 # Edit `/etc/mkinitcpio.conf` and add to the list of HOOKS:
-# -  `encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume filesystems fsck)`
+# Note: when adding hooks, make sure to pick busybox or systemd and check for compatibility
+# -  `encrypt lvm2 resume` if encryption has been setup. Ex: `HOOKS=(base udev microcode autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume filesystems fsck)`
 # -  `mdadm_udev` if the PC uses a firmware RAID (module to manage firmware/software RAID configurations). See [Intel RAID and Arch Linux](https://blog.ironbay.co/intel-raid-and-arch-linux-8dcd508354d3) for more details.
 vim /etc/mkinitcpio.conf
 
@@ -238,7 +240,7 @@ vim /etc/mkinitcpio.conf
 # an uncompress archive. By default, the initial ramdisk archived are compressed using GZIP (see `/etc/mkinitcpio.conf`) and have the
 # `.img` extension.
 # By default, `mkinitcpio` generates a default and a fallback image. The first one select the modules to load while the latter loads all modules at startup to make sure the system will start.
-mkinitcpio -p linux
+mkinitcpio -P
 
 # Setup GRUB to install the GRUB UEFI application `grubx64.efi` to `/boot/efi/EFI/grub` and install its modules to `/boot/grub/x86_64-efi/`.
 # [GRUB](https://www.gnu.org/software/grub/) (GRand Unified Bootloader) is a multiboot boot loader.
@@ -250,7 +252,7 @@ grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub
 # Setup GRUB theme https://gitlab.com/VandalByte/darkmatter-grub-theme
 git clone --depth 1 https://gitlab.com/VandalByte/darkmatter-grub-theme.git
 cd darkmatter-grub-theme
-python3 darkmatter-theme.py --install
+python darkmatter-theme.py --install
 
 # Add missing class `--class efi`
 ###########
