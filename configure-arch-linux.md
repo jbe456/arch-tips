@@ -137,7 +137,7 @@ p10k configure
 pacman -S bat
 ```
 
-### Setup Graphic drivers`
+### Setup Graphic drivers
 
 ```bash
 # check graphic card
@@ -155,29 +155,15 @@ pacman -S vulkan-icd-loader vulkan-intel vulkan-tools
 # use intel_gpu_top to confirm
 pacman -S intel-media-driver intel-gpu-tools
 
-#### If Nvidia graphic cqrd
+#### If Nvidia graphic card
 # Check doc https://wiki.archlinux.org/title/NVIDIA
-# example
+# example with Nvidia open:
 pacman -S nvidia-open nvidia-utils
 ```
 
 ### Setup Xorg
 
 ```bash
-# check graphic card
-lspci|grep -i VGA
-
-# pick latest intel driver (otherwise fallback is "modesetting" driver)
-pacman -S xf86-video-intel
-
-# enable vulkan
-# use vulkaninfo to confirm
-pacman -S vulkan-icd-loader vulkan-intel vulkan-tools
-
-# enable Hardware Video Acceleration
-# use intel_gpu_top to confirm
-pacman -S intel-media-driver intel-gpu-tools
-
 # install Xorg server, xinit & xrandr
 # Configure keyboard if needed https://wiki.archlinux.org/index.php/Keyboard_configuration_in_Xorg
 pacman -S xorg-server xorg-xinit xorg-xrandr
