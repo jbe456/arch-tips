@@ -160,10 +160,10 @@ mode "resize" {
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym semicolon resize grow width 10 px or 10 ppt
+        #bindsym j resize shrink width 10 px or 10 ppt
+        #bindsym k resize grow height 10 px or 10 ppt
+        #bindsym l resize shrink height 10 px or 10 ppt
+        #bindsym semicolon resize grow width 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
@@ -191,8 +191,8 @@ bindsym $mod+x exec --no-startup-id autorandr -c
 bindsym XF86MonBrightnessUp exec brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 
-bindsym Print exec sleep 0.2 && scrot -s ~/downloads/screenshot-$(date '+%Y%m%d-%H%M%S').png -e 'xclip -selection clipboard -target image/png -i $f'
-bindsym Shift+Print exec sleep 0.2 && scrot -u ~/downloads/screenshot-fullscreen-$(date '+%Y%m%d-%H%M%S').png -e 'xclip -selection clipboard -target image/png -i $f'
+bindsym Print exec sleep 0.2 && maim -s ~/downloads/screenshot-$(date '+%Y%m%d-%H%M%S').png | xclip -selection clipboard -target image/png -i $f
+bindsym Shift+Print exec sleep 0.2 && maim ~/downloads/screenshot-fullscreen-$(date '+%Y%m%d-%H%M%S').png | xclip -selection clipboard -target image/png -i $f
 
 exec_always --no-startup-id ~/.config/i3/i3scripts/autoname_workspaces.py
 # polybar
