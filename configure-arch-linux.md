@@ -232,17 +232,13 @@ vim .zshrc
 # add font
 yay -S ttf-meslo-nerd-font-powerlevel10k
 
-# configure kitty font and add the following line to it:
+# configure kitty theme
 # inspired from https://github.com/connorholyday/kitty-snazzy/blob/master/snazzy.conf
 # final look & feel should match https://github.com/sindresorhus/pure (zsh + powerline10k pure style + kitty snazzy theme + font meslo)
-###########
-# font_family MesloLGS NF
-# cursor                #97979B
-# cursor_text_color     #282A36
-# foreground            #eff0eb
-# background            #282a36
-###########
-vim ~/.config/kitty/kitty.conf
+# Pick Snazzy
+kitten themes
+# Pick MesloLGS NF
+kitten choose-fonts
 
 # (Optional) Switch leyboard layout
 localectl set-x11-keymap gb
