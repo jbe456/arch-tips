@@ -123,9 +123,3 @@ else
 fi
 
 [[ ! -f $POWERLEVEL9K_CONFIG_FILE ]] || source $POWERLEVEL9K_CONFIG_FILE
-
-# thefuck
-eval $(thefuck --alias)
-
-# z
-[[ -r "/usr/share/z/z.sh" ]] && source /usr/share/z/z.sh
