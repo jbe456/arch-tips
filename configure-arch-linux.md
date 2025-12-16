@@ -207,42 +207,45 @@ cp 90-disable-dpms.conf /usr/share/X11/xorg.conf.d/
 cp .xinitrc ~/
 ```
 
-### Setup sound
+### Setup terminal emulator: Kitty
 
 ```bash
-# logout/login to take group changes into effect
-# run `groups` to check groups the user belong to
-gpasswd -a jbe audio
+pacman -S kitty
+# create template config file by hitting ctrl+shift+f2
 
-# install console & GUI to control sounds & latest firmware
-pacman -S alsa-utils pulseaudio pavucontrol sof-firmware alsa-ucm-conf
-
-# unmute master
-alsamixer
-
-# add auto switch module
+# move current p10k config
+mv .p10k.zsh .p10k-tty.zsh
+# re-run powerlevel10k config & pick the `pure` style
+p10k config
+# edit .zshrc and replace `[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh` with:
 ###########
-# .include /etc/pulse/default.pa
+# if [[ $TERM == linux ]]; then
+#  POWERLEVEL9K_CONFIG_FILE=~/.p10k-tty.zsh
+# else
+#  POWERLEVEL9K_CONFIG_FILE=~/.p10k.zsh
+# fi
 #
-# # automatically switch to newly-connected devices
-# load-module module-switch-on-connect
+# [[ ! -f $POWERLEVEL9K_CONFIG_FILE ]] || source $POWERLEVEL9K_CONFIG_FILE
 ###########
-cp default.pa ~/.config/pulse/default.pa
-```
+vim .zshrc
 
-### Setup webcam
+# add font
+yay -S ttf-meslo-nerd-font-powerlevel10k
 
-```bash
-# check `uvcvideo` is loaded
-lsmod|grep uvc
+# configure kitty font and add the following line to it:
+# inspired from https://github.com/connorholyday/kitty-snazzy/blob/master/snazzy.conf
+# final look & feel should match https://github.com/sindresorhus/pure (zsh + powerline10k pure style + kitty snazzy theme + font meslo)
+###########
+# font_family MesloLGS NF
+# cursor                #97979B
+# cursor_text_color     #282A36
+# foreground            #eff0eb
+# background            #282a36
+###########
+vim ~/.config/kitty/kitty.conf
 
-# check available devices
-pacman -S v4l-utils
-v4l2-ctl --list-devices
-
-# logout/login to take group changes into effect
-# run `groups` to check groups the user belong to
-gpasswd -a jbe video
+# (Optional) Switch leyboard layout
+localectl set-x11-keymap gb
 ```
 
 ### Setup i3
@@ -306,9 +309,10 @@ pacman -S brightnessctl
 vim .config/i3/config
 
 # edit i3 config and add print screen control
-pacman -S scrot xclip
+pacman -S maim xclip
 ###########
-# bindsym Print exec sleep 0.2 && scrot -s ~/downloads/screenshots-$(date '+%Y%m%d-%H%M%S').png -e 'xclip -selection clipboard -target image/png -i $f'
+# bindsym Print exec sleep 0.2 && maim -s ~/downloads/screenshot-$(date '+%Y%m%d-%H%M%S').png | xclip -selection clipboard -target image/png -i $f
+# bindsym Shift+Print exec sleep 0.2 && maim ~/downloads/screenshot-fullscreen-$(date '+%Y%m%d-%H%M%S').png | xclip -selection clipboard -target image/png -i $f
 ###########
 vim .config/i3/config
 
@@ -365,45 +369,42 @@ cp /etc/X11/xinit/xserverrc ~/.xserverrc
 # TODO spotify polybar
 ```
 
-### Setup terminal emulator: Kitty
+### Setup sound
 
 ```bash
-pacman -S kitty
-# create template config file by hitting ctrl+shift+f2
+# logout/login to take group changes into effect
+# run `groups` to check groups the user belong to
+gpasswd -a jbe audio
 
-# move current p10k config
-mv .p10k.zsh .p10k-tty.zsh
-# re-run powerlevel10k config & pick the `pure` style
-p10k config
-# edit .zshrc and replace `[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh` with:
+# install console & GUI to control sounds & latest firmware
+pacman -S alsa-utils pulseaudio pavucontrol sof-firmware alsa-ucm-conf
+
+# unmute master
+alsamixer
+
+# add auto switch module
 ###########
-# if [[ $TERM == linux ]]; then
-#  POWERLEVEL9K_CONFIG_FILE=~/.p10k-tty.zsh
-# else
-#  POWERLEVEL9K_CONFIG_FILE=~/.p10k.zsh
-# fi
+# .include /etc/pulse/default.pa
 #
-# [[ ! -f $POWERLEVEL9K_CONFIG_FILE ]] || source $POWERLEVEL9K_CONFIG_FILE
+# # automatically switch to newly-connected devices
+# load-module module-switch-on-connect
 ###########
-vim .zshrc
+cp default.pa ~/.config/pulse/default.pa
+```
 
-# add font
-yay -S ttf-meslo-nerd-font-powerlevel10k
+### Setup webcam
 
-# configure kitty font and add the following line to it:
-# inspired from https://github.com/connorholyday/kitty-snazzy/blob/master/snazzy.conf
-# final look & feel should match https://github.com/sindresorhus/pure (zsh + powerline10k pure style + kitty snazzy theme + font meslo)
-###########
-# font_family MesloLGS NF
-# cursor                #97979B
-# cursor_text_color     #282A36
-# foreground            #eff0eb
-# background            #282a36
-###########
-vim ~/.config/kitty/kitty.conf
+```bash
+# check `uvcvideo` is loaded
+lsmod|grep uvc
 
-# (Optional) Switch leyboard layout
-localectl set-x11-keymap gb
+# check available devices
+pacman -S v4l-utils
+v4l2-ctl --list-devices
+
+# logout/login to take group changes into effect
+# run `groups` to check groups the user belong to
+gpasswd -a jbe video
 ```
 
 ### Extra libs
