@@ -32,6 +32,8 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
+# resolution
+xrandr --output eDP-1 --mode &920x1200 &
 # transparency
 picom &
 # background
