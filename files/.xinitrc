@@ -40,6 +40,8 @@ picom &
 feh --bg-scale ~/.wallpapers/background/arch.png &
 # auto lock
 xidlehook --not-when-audio --timer 300 'betterlockscreen -l --off 10 & betterlockscreen -u ~/.wallpapers/lockscreen' '' &
+# QWERTY keyboard + accents
+setxkbmap us intl
 
 # gestures (normally there's an autostart?)
 libinput-gestures-setup start &
